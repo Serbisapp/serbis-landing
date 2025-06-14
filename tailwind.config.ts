@@ -23,7 +23,7 @@ export default {
 				mulish: ['Mulish', 'sans-serif'],
 			},
 			colors: {
-				'serbis-primary': '#0d6efd',
+				'serbis-primary': '#eeeeee',
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',

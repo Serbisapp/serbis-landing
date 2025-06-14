@@ -2,7 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
+/* --- CUSTOM DESIGN SYSTEM UPDATES --- */
+
+/* Glassmorphism/Frosted Panel utility */
+@layer components {
+  .glass-panel {
+    background: linear-gradient(122deg, rgba(38,41,47,0.56) 60%, rgba(155,155,155,0.09) 120%);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: 0 6px 40px 0 rgba(20,20,24,0.18);
+    border-radius: 1.25rem;
+  }
+}
 
 @layer base {
   :root {
@@ -233,3 +244,4 @@
         }
     }
 }
+
