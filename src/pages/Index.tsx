@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +20,7 @@ import {
   Apple,
   Menu
 } from "lucide-react";
+import { AnimatedWrapper } from '@/components/AnimatedWrapper';
 
 const PlaceholderImage = ({ className }: { className?: string }) => (
     <div className={`bg-gray-300 animate-pulse ${className}`} />
@@ -98,7 +98,7 @@ const Index = () => {
                             <div className="relative flex justify-center items-center h-full min-h-[520px] [perspective:1800px]">
                                 <div className="iphone-mockup">
                                     <div className="relative w-full h-full bg-black rounded-[calc(var(--iphone-width)_*_0.13)] overflow-hidden iphone-screen-area">
-                                        <PlaceholderImage className="w-full h-full object-cover" />
+                                        <img src="https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=800&auto=format&fit=crop&q=60" alt="App preview on iPhone" className="w-full h-full object-cover" />
                                     </div>
                                     <div className="iphone-notch"></div>
                                 </div>
@@ -108,7 +108,7 @@ const Index = () => {
                 </div>
             </header>
             
-            <section id="how-it-works" className="py-20">
+            <AnimatedWrapper tag="section" id="how-it-works" className="py-20">
                 <div className="container mx-auto px-4">
                     <h2 className="text-center font-newsreader font-semibold text-4xl mb-16">Así de fácil es con Serbis</h2>
                     <div className="grid md:grid-cols-3 gap-10">
@@ -129,9 +129,9 @@ const Index = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </AnimatedWrapper>
             
-            <section className="py-20 bg-gray-50">
+            <AnimatedWrapper tag="section" className="py-20 bg-gray-50">
                 <div className="container mx-auto px-4">
                     <div className="grid md:grid-cols-2 gap-12 items-center">
                         <div className="text-center md:text-left">
@@ -144,17 +144,17 @@ const Index = () => {
                              </ul>
                         </div>
                         <div className="flex justify-center">
-                            <PlaceholderImage className="w-[280px] h-[570px] rounded-3xl shadow-xl app-feature-image" />
+                            <img src="https://images.unsplash.com/photo-1555774698-0b77e0abfe3d?w=800&auto=format&fit=crop&q=60" alt="App home screen" className="w-[280px] h-[570px] rounded-3xl shadow-xl app-feature-image object-cover" />
                         </div>
                     </div>
                 </div>
-            </section>
+            </AnimatedWrapper>
 
-            <section className="py-20">
+            <AnimatedWrapper tag="section" className="py-20">
                 <div className="container mx-auto px-4">
                     <div className="grid md:grid-cols-2 gap-12 items-center">
                         <div className="flex justify-center md:order-last">
-                           <PlaceholderImage className="w-[280px] h-[570px] rounded-3xl shadow-xl app-feature-image" />
+                           <img src="https://images.unsplash.com/photo-1522125670776-3c7abb882bc2?w=800&auto=format&fit=crop&q=60" alt="App chat screen" className="w-[280px] h-[570px] rounded-3xl shadow-xl app-feature-image object-cover" />
                         </div>
                         <div className="text-center md:text-left md:order-first">
                              <h2 className="font-newsreader font-bold text-4xl mb-4">Comunicación segura con el <strong className="text-serbis-primary">Chat</strong></h2>
@@ -167,9 +167,9 @@ const Index = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </AnimatedWrapper>
 
-             <section className="py-20 bg-gray-50">
+             <AnimatedWrapper tag="section" className="py-20 bg-gray-50">
                 <div className="container mx-auto px-4">
                     <div className="grid md:grid-cols-2 gap-12 items-center">
                         <div className="text-center md:text-left">
@@ -182,13 +182,13 @@ const Index = () => {
                              </ul>
                         </div>
                         <div className="flex justify-center">
-                           <PlaceholderImage className="w-[280px] h-[570px] rounded-3xl shadow-xl app-feature-image" />
+                           <img src="https://images.unsplash.com/photo-1583569883582-cc61434b455c?w=800&auto=format&fit=crop&q=60" alt="App status screen" className="w-[280px] h-[570px] rounded-3xl shadow-xl app-feature-image object-cover" />
                         </div>
                     </div>
                 </div>
-            </section>
+            </AnimatedWrapper>
             
-            <section id="why-serbis" className="py-20">
+            <AnimatedWrapper tag="section" id="why-serbis" className="py-20">
                 <div className="container mx-auto px-4">
                     <h2 className="text-center font-newsreader font-semibold text-4xl mb-16">¿Por qué elegir Serbis?</h2>
                     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -219,7 +219,7 @@ const Index = () => {
                         </Button>
                     </div>
                 </div>
-            </section>
+            </AnimatedWrapper>
             
             <footer id="about-us-footer" className="bg-gray-900 text-gray-400 py-12">
                 <div className="container mx-auto px-4 text-center text-sm space-y-1">

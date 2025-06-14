@@ -201,6 +201,13 @@
                     0 22px 50px rgba(0,0,0,0.13);
     }
     
+    .iphone-screen-area img {
+        transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+    .iphone-mockup:hover .iphone-screen-area img {
+        transform: scale(1.03) translateY(-5px);
+    }
+
     @media (max-width: 991.98px) {
         .iphone-mockup {
             --iphone-width: 250px;
