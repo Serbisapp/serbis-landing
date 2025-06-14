@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 
 type UseInViewOptions = {
@@ -8,7 +7,7 @@ type UseInViewOptions = {
 export function useInView(options: UseInViewOptions = {}) {
   const { threshold = 0.1 } = options;
   const [isInView, setIsInView] = useState(false);
-  const ref = useRef<HTMLDivElement | null>(null);
+  const ref = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(

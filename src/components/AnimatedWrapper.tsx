@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 interface AnimatedWrapperProps {
   children: React.ReactNode;
   className?: string;
-  tag?: keyof JSX.IntrinsicElements;
+  tag?: keyof HTMLElementTagNameMap;
   threshold?: number;
   id?: string;
 }
@@ -16,7 +16,7 @@ export const AnimatedWrapper = ({ children, className, tag: Tag = 'div', thresho
 
   return (
     <Tag
-      ref={ref}
+      ref={ref as any}
       id={id}
       className={cn(
         className,
