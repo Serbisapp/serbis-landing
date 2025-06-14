@@ -3,7 +3,12 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Apple,
-  Menu
+  Menu,
+  ArrowRight,
+  Users,
+  BadgeCheck,
+  MessageCircle,
+  Zap,
 } from "lucide-react";
 import { AnimatedWrapper } from '@/components/AnimatedWrapper';
 
@@ -12,222 +17,194 @@ const Index = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
+            setScrolled(window.scrollY > 20);
         };
         window.addEventListener('scroll', handleScroll);
         handleScroll();
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    const navClass = scrolled 
+        ? 'bg-background/80 backdrop-blur-xl border-b' 
+        : 'bg-transparent';
+
     return (
-        <div className="bg-gradient-to-tr from-zinc-950 via-zinc-900 to-zinc-800 font-mulish text-zinc-100 min-h-screen" id="page-top">
-            <nav className={`fixed w-full top-0 z-50 transition-all duration-300 ${scrolled ? 'py-2 shadow-xl bg-zinc-950/80 backdrop-blur-xl' : 'py-3 shadow bg-zinc-900/80 backdrop-blur'}`}>
-                <div className="container mx-auto px-4 flex justify-between items-center">
-                    <a href="#page-top" className="flex items-center gap-3 font-bold">
-                        <div className={`bg-white/10 backdrop-blur rounded-xl flex items-center justify-center transition-all duration-300 border border-zinc-700 shadow ${scrolled ? 'w-8 h-8' : 'w-12 h-12'}`}>
-                            <Apple className="text-zinc-100 w-6 h-6" />
-                        </div>
-                        <span className="text-3xl font-newsreader font-semibold tracking-tight bg-gradient-to-tr from-white to-zinc-200 bg-clip-text text-transparent">Serbis</span>
+        <div className="bg-background font-mulish text-zinc-800 min-h-screen" id="page-top">
+            {/* --- Navigation --- */}
+            <nav className={`fixed w-full top-0 z-50 transition-all duration-300 ${navClass}`}>
+                <div className="container mx-auto px-4 flex justify-between items-center py-3">
+                    <a href="#page-top" className="flex items-center gap-2 font-bold">
+                        <Apple className="text-primary w-7 h-7" />
+                        <span className="text-2xl font-newsreader font-semibold text-primary">Serbis</span>
                     </a>
                     
                     <div className="hidden md:flex items-center space-x-2">
-                        <a href="#!" className="px-3 py-2 text-sm font-semibold text-zinc-50 bg-zinc-800/60 hover:bg-white/10 border border-zinc-600 rounded-xl shadow transition-all">Soy Proveedor</a>
-                        <a href="#how-it-works" className="px-3 py-2 text-sm font-medium text-zinc-300 hover:text-white rounded-xl transition-all">Cómo Funciona</a>
-                        <a href="#about-us-footer" className="px-3 py-2 text-sm font-medium text-zinc-300 hover:text-white rounded-xl transition-all">Nosotros</a>
+                        <a href="#how-it-works" className="px-4 py-2 text-sm font-medium text-zinc-600 hover:text-primary rounded-lg transition-colors">Cómo Funciona</a>
+                        <a href="#why-serbis" className="px-4 py-2 text-sm font-medium text-zinc-600 hover:text-primary rounded-lg transition-colors">Nosotros</a>
+                        <Button variant="outline" className="rounded-full">Soy Proveedor</Button>
                     </div>
+
                     <div className="md:hidden">
-                        <Button variant="ghost" size="icon" className="text-zinc-200 hover:bg-zinc-800/50">
+                        <Button variant="ghost" size="icon" className="text-zinc-700">
                             <Menu />
                         </Button>
                     </div>
                 </div>
             </nav>
 
-            <header className="relative pt-32 pb-20 min-h-[65vh]">
-                {/* Soft hero background lights */}
-                <div className="absolute top-0 left-0 w-full h-[80vh] overflow-hidden pointer-events-none z-0">
-                    <div className="absolute left-0 top-0 w-1/3 h-3/4 bg-gradient-radial from-white/40 via-zinc-200/25 to-transparent blur-2xl opacity-60"></div>
-                    <div className="absolute right-0 bottom-0 w-1/2 h-3/5 bg-gradient-to-br from-zinc-400/25 via-zinc-700/30 to-transparent blur-[72px] opacity-40"></div>
-                </div>
+            {/* --- Hero Section --- */}
+            <header className="relative pt-32 pb-20 text-center">
                 <div className="container mx-auto px-4 relative z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 xl:gap-20 items-center">
-                        <div className="text-center lg:text-left space-y-6 max-w-2xl mx-auto lg:mx-0">
-                            <h1 className="font-newsreader font-bold text-5xl sm:text-6xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 via-white to-zinc-400 drop-shadow-xl tracking-tight mb-0">El estándar Premium para <span className="bg-gradient-to-br from-zinc-100 via-emerald-200 to-white bg-clip-text text-transparent">Servicios Locales</span></h1>
-                            <h2 className="font-mulish font-light text-2xl sm:text-3xl md:text-4xl text-zinc-200/90 mb-2">Conectá con profesionales<br className="sm:hidden"/> en segundos, sin esfuerzo.</h2>
-                            <p className="text-xl text-zinc-300 max-w-lg mx-auto lg:mx-0">
-                                Descubrí la manera <span className="text-white font-semibold">más simple y moderna</span> de resolver tus necesidades con estilo y seguridad. Serbis lleva la experiencia al siguiente nivel.
-                            </p>
-                            <div className="mt-7 flex flex-col sm:flex-row gap-4 sm:justify-start justify-center">
-                                <Button size="lg" className="rounded-xl text-lg font-bold px-10 py-6 bg-gradient-to-tr from-white/90 to-zinc-200 hover:from-white hover:to-white/90 text-zinc-900 shadow-lg border border-zinc-400 shadow-white/10 transition duration-200">
-                                    Publicá tu Pedido Ahora
-                                </Button>
-                                <a href="#why-serbis" className="rounded-xl text-lg font-semibold px-10 py-6 bg-white/5 backdrop-blur border border-zinc-500 text-zinc-200 hover:bg-white/10 hover:text-white shadow-lg transition duration-200">
-                                    Descubrí más
-                                </a>
-                            </div>
-                            <div className="flex flex-col sm:flex-row items-center gap-3 mt-8 justify-center lg:justify-start">
-                                <Button variant="outline" className="w-48 h-14 border-2 border-white/30 bg-zinc-900/50 text-zinc-50 flex items-center gap-2 shadow rounded-2xl hover:bg-zinc-900/80 hover:border-zinc-400 transition-all">
-                                    <Apple className="w-6 h-6" />
-                                    <div className="text-left">
-                                        <div className="text-xs -mb-1 opacity-60">Descargala en el</div>
-                                        <div className="text-xl font-semibold leading-tight">App Store</div>
-                                    </div>
-                                </Button>
-                                <Button variant="outline" className="w-48 h-14 border-2 border-white/30 bg-zinc-900/50 text-zinc-50 flex items-center gap-2 shadow rounded-2xl hover:bg-zinc-900/80 hover:border-zinc-400 transition-all">
-                                    <svg viewBox="30 336.7 120.9 129.2" className="w-6 h-6 fill-current" aria-hidden="true">
-                                        <path d="M153.7 366.2c-3.8 4.5-11.2 8.1-17.3 8.4-1.4..."/>{/* truncated Google Play shape for brevity */}
-                                    </svg>
-                                    <div className="text-left">
-                                        <div className="text-xs -mb-1 opacity-60">Disponible en</div>
-                                        <div className="text-xl font-semibold leading-tight">Google Play</div>
-                                    </div>
-                                </Button>
-                            </div>
+                    <AnimatedWrapper>
+                        <h1 className="font-newsreader font-bold text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-zinc-900 tracking-tighter max-w-4xl mx-auto">
+                            El estándar Premium para Servicios Locales
+                        </h1>
+                    </AnimatedWrapper>
+                    <AnimatedWrapper className="[animation-delay:200ms]">
+                        <p className="mt-6 text-xl md:text-2xl text-zinc-600 max-w-2xl mx-auto">
+                           Conectá con profesionales en segundos, sin esfuerzo. Descubrí la manera más simple y moderna de resolver tus necesidades.
+                        </p>
+                    </AnimatedWrapper>
+                    <AnimatedWrapper className="mt-8 flex flex-col sm:flex-row gap-4 justify-center [animation-delay:400ms]">
+                        <Button size="lg" className="rounded-full text-lg font-semibold px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-blue-500/10 transition group">
+                            Publicá tu Pedido Ahora <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                    </AnimatedWrapper>
+                     <AnimatedWrapper className="mt-16 [animation-delay:600ms]">
+                        <div className="relative max-w-5xl mx-auto">
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-64 bg-primary/10 rounded-full blur-3xl" />
+                            <img src="https://images.unsplash.com/photo-1483058712412-4245e9b90334?w=800&q=80&auto=format" alt="App preview on a modern setup" className="relative rounded-2xl shadow-2xl border-4 border-white" />
                         </div>
-                        <div className="mx-auto flex flex-col items-center lg:items-end relative z-20">
-                            <div className="iphone-mockup scale-110 border-2 border-white/20 shadow-2xl bg-gradient-to-tr from-zinc-800 via-zinc-950 to-zinc-800/90">
-                                <div className="relative w-full h-full glass-panel rounded-[calc(var(--iphone-width)_*_0.13)] overflow-hidden flex justify-center items-center iphone-screen-area">
-                                    <img src="https://images.unsplash.com/photo-1483058712412-4245e9b90334?w=540&q=80&auto=format" alt="App preview on iPhone" className="w-full h-full object-cover mix-blend-luminosity opacity-80 shadow-2xl" />
-                                </div>
-                                <div className="iphone-notch"></div>
-                            </div>
-                            <div className="hidden sm:block pointer-events-none absolute -left-10 -top-10 w-44 h-44 rounded-full bg-gradient-radial from-zinc-300/60 to-transparent blur-2xl opacity-70 z-0" />
-                        </div>
-                    </div>
+                    </AnimatedWrapper>
                 </div>
             </header>
             
-            <AnimatedWrapper tag="section" id="how-it-works" className="py-24 bg-gradient-to-tr from-zinc-800/70 via-zinc-900/90 to-zinc-800/50 border-y border-white/10">
+            {/* --- How it Works Section --- */}
+            <AnimatedWrapper tag="section" id="how-it-works" className="py-24 bg-white border-y">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-center font-newsreader font-bold text-4xl md:text-5xl mb-16 text-zinc-100 drop-shadow">¿Cómo funciona Serbis?</h2>
-                    <div className="grid md:grid-cols-3 gap-10">
-                        <div className="backdrop-blur-xl glass-panel border border-white/10 rounded-2xl p-8 text-center transition-all hover:shadow-xl hover:scale-105">
-                            <div className="text-5xl mb-6">①</div>
-                            <h3 className="font-newsreader font-semibold text-2xl mb-2 text-zinc-50">Describí tu Necesidad</h3>
-                            <p className="text-zinc-300 px-2">Contanos qué servicio necesitás. Es simple y elegante.</p>
+                    <h2 className="text-center font-newsreader font-bold text-4xl md:text-5xl mb-4 text-zinc-900">Simple. Rápido. Seguro.</h2>
+                    <p className="text-center text-lg text-zinc-600 mb-16">Tu solución en tres simples pasos.</p>
+                    <div className="grid md:grid-cols-3 gap-8">
+                        <div className="text-center p-2">
+                            <div className="text-6xl font-bold font-newsreader text-primary/20 mb-4">1</div>
+                            <h3 className="font-semibold text-xl mb-2 text-zinc-900">Describí tu Necesidad</h3>
+                            <p className="text-zinc-600">Contanos qué servicio necesitás. Es simple y elegante.</p>
                         </div>
-                        <div className="backdrop-blur-xl glass-panel border border-white/10 rounded-2xl p-8 text-center transition-all hover:shadow-xl hover:scale-105">
-                            <div className="text-5xl mb-6">②</div>
-                            <h3 className="font-newsreader font-semibold text-2xl mb-2 text-zinc-50">Conectate al Instante</h3>
-                            <p className="text-zinc-300 px-2">Encontrá opciones premium en tu zona al instante.</p>
+                        <div className="text-center p-2">
+                            <div className="text-6xl font-bold font-newsreader text-primary/20 mb-4">2</div>
+                            <h3 className="font-semibold text-xl mb-2 text-zinc-900">Conectate al Instante</h3>
+                            <p className="text-zinc-600">Encontrá opciones premium en tu zona al instante.</p>
                         </div>
-                        <div className="backdrop-blur-xl glass-panel border border-white/10 rounded-2xl p-8 text-center transition-all hover:shadow-xl hover:scale-105">
-                            <div className="text-5xl mb-6">③</div>
-                            <h3 className="font-newsreader font-semibold text-2xl mb-2 text-zinc-50">Resolvé y Calificá</h3>
-                            <p className="text-zinc-300 px-2">Coordiná el servicio y calificá la experiencia. Todo desde la app.</p>
-                        </div>
-                    </div>
-                </div>
-            </AnimatedWrapper>
-            
-            <AnimatedWrapper tag="section" className="py-24">
-                <div className="container mx-auto px-4">
-                    <div className="grid md:grid-cols-2 gap-16 items-center">
-                        <div className="text-center md:text-left">
-                             <h2 className="font-newsreader font-bold text-4xl mb-4 text-zinc-100">Explorá el <span className="bg-gradient-to-tr from-zinc-200 to-zinc-400 bg-clip-text text-transparent">Home</span></h2>
-                             <p className="text-zinc-300 mb-4 leading-relaxed text-lg">Describí el servicio que necesitas, nosotros elegimos profesionalmente el experto perfecto para tu necesidad en tu área. Todo en menos de 5 segundos, en una experiencia premium.</p>
-                             <ul className="space-y-2 text-left inline-block text-zinc-300/90 font-mulish">
-                                <li className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-50 to-zinc-400 shadow mx-1" /> Navegación intuitiva y rápida.</li>
-                                <li className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-50 to-zinc-400 shadow mx-1" /> Opiniones certificadas y ratings de cada experto.</li>
-                                <li className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-50 to-zinc-400 shadow mx-1" /> Accesibilidad total a tus pedidos recientes.</li>
-                             </ul>
-                        </div>
-                        <div className="flex justify-center items-center relative">
-                            <div className="overflow-hidden rounded-3xl glass-panel border border-white/10 shadow-2xl w-[300px] h-[600px]">
-                                <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=540&q=80&auto=format" alt="App home screen" className="w-full h-full object-cover brightness-110" />
-                            </div>
+                        <div className="text-center p-2">
+                            <div className="text-6xl font-bold font-newsreader text-primary/20 mb-4">3</div>
+                            <h3 className="font-semibold text-xl mb-2 text-zinc-900">Resolvé y Calificá</h3>
+                            <p className="text-zinc-600">Coordiná y calificá la experiencia. Todo desde la app.</p>
                         </div>
                     </div>
                 </div>
             </AnimatedWrapper>
 
-            <AnimatedWrapper tag="section" className="py-24 bg-gradient-to-tr from-zinc-800/70 via-zinc-900/90 to-zinc-800/50 border-y border-white/10">
+            {/* --- Feature Sections --- */}
+            <div className="space-y-32 py-32 overflow-hidden">
+                <FeatureSection
+                    title="Explorá el Home"
+                    description="Describí el servicio que necesitas, nosotros elegimos profesionalmente el experto perfecto para tu necesidad en tu área. Todo en menos de 5 segundos, en una experiencia premium."
+                    imageUrl="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=540&q=80&auto=format"
+                    imageAlt="App home screen"
+                />
+                <FeatureSection
+                    title="Comunicación Segura"
+                    description="Negociá el precio y cerrá los detalles usando nuestro chat ultra seguro, con envío de imágenes y archivos. Confiable, elegante y práctico."
+                    imageUrl="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=540&q=80&auto=format"
+                    imageAlt="App chat screen"
+                    reverse
+                />
+                <FeatureSection
+                    title="Seguí el Estado de tus Pedidos"
+                    description="Accedé al progreso de tus pedidos en tiempo real, desde la publicación hasta la finalización. Todo claro y visual."
+                    imageUrl="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=540&q=80&auto=format"
+                    imageAlt="App status screen"
+                />
+            </div>
+            
+            {/* --- Why Serbis Section --- */}
+            <AnimatedWrapper tag="section" id="why-serbis" className="py-24 bg-white border-y">
                 <div className="container mx-auto px-4">
-                    <div className="grid md:grid-cols-2 gap-16 items-center">
-                        <div className="flex justify-center md:order-last">
-                            <div className="overflow-hidden rounded-3xl glass-panel border border-white/10 shadow-2xl w-[300px] h-[600px]">
-                                <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=540&q=80&auto=format"
-                                    alt="App chat screen" className="w-full h-full object-cover brightness-110" />
-                            </div>
-                        </div>
-                        <div className="text-center md:text-left md:order-first">
-                             <h2 className="font-newsreader font-bold text-4xl mb-4 text-zinc-100">Comunicación <span className="bg-gradient-to-br from-zinc-100 via-zinc-400 to-white bg-clip-text text-transparent">Segura</span></h2>
-                             <p className="text-zinc-300 mb-4 leading-relaxed text-lg">Negociá el precio y cerrá los detalles usando nuestro chat ultra seguro, con envío de imágenes y archivos. Confiable, elegante y práctico.</p>
-                             <ul className="space-y-2 text-left inline-block text-zinc-300/90 font-mulish">
-                                <li className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-50 to-zinc-400 shadow mx-1" /> Mensajería instantánea.</li>
-                                <li className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-50 to-zinc-400 shadow mx-1" /> Compartí fotos y archivos en segundos.</li>
-                                <li className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-50 to-zinc-400 shadow mx-1" /> Tus conversaciones, protegidas y privadas.</li>
-                             </ul>
-                        </div>
-                    </div>
-                </div>
-            </AnimatedWrapper>
-
-            <AnimatedWrapper tag="section" className="py-24">
-                <div className="container mx-auto px-4">
-                    <div className="grid md:grid-cols-2 gap-16 items-center">
-                        <div className="text-center md:text-left">
-                             <h2 className="font-newsreader font-bold text-4xl mb-4 text-zinc-100">Seguí el <span className="bg-gradient-to-tr from-zinc-200 to-zinc-400 bg-clip-text text-transparent">Estado</span> de tus Pedidos</h2>
-                             <p className="text-zinc-300 mb-4 leading-relaxed text-lg">Accedé al progreso de tus pedidos en tiempo real, desde la publicación hasta la finalización. Todo claro y visual.</p>
-                             <ul className="space-y-2 text-left inline-block text-zinc-300/90 font-mulish">
-                                <li className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-50 to-zinc-400 shadow mx-1" /> Historial completo y visual.</li>
-                                <li className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-50 to-zinc-400 shadow mx-1" /> Notificaciones en tiempo real.</li>
-                                <li className="flex items-center gap-3"><span className="w-2 h-2 rounded-full bg-gradient-to-br from-zinc-300 via-zinc-50 to-zinc-400 shadow mx-1" /> Cada etapa visualizada al detalle.</li>
-                             </ul>
-                        </div>
-                        <div className="flex justify-center items-center relative">
-                            <div className="overflow-hidden rounded-3xl glass-panel border border-white/10 shadow-2xl w-[300px] h-[600px]">
-                                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=540&q=80&auto=format"
-                                    alt="App status screen" className="w-full h-full object-cover brightness-110" />
-                            </div>
-                        </div>
+                    <h2 className="text-center font-newsreader font-bold text-4xl md:text-5xl mb-4 text-zinc-900">¿Por qué elegir Serbis?</h2>
+                     <p className="text-center text-lg text-zinc-600 mb-16 max-w-2xl mx-auto">Nos enfocamos en la confianza, la calidad y la velocidad para brindarte una experiencia inigualable.</p>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <ReasonCard icon={Users} title="Red real y confiable" description="Personas de tu comunidad, listos para ayudar." />
+                        <ReasonCard icon={BadgeCheck} title="Verificación y reviews" description="Elegí seguro, con calificaciones confiables." />
+                        <ReasonCard icon={MessageCircle} title="Comunicación directa" description="Todo lo que necesitás en una sola app." />
+                        <ReasonCard icon={Zap} title="Premium & Rápido" description="Encontrá lo que buscás y resolvé ya." />
                     </div>
                 </div>
             </AnimatedWrapper>
             
-            <AnimatedWrapper tag="section" id="why-serbis" className="py-28 bg-gradient-to-tr from-zinc-800/70 via-zinc-900/90 to-zinc-800/60">
+            {/* --- Final CTA --- */}
+            <AnimatedWrapper tag="section" className="py-24 text-center">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-center font-newsreader font-bold text-4xl md:text-5xl mb-16 text-zinc-50 drop-shadow">¿Por qué elegir Serbis?</h2>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
-                        <div className="glass-panel backdrop-blur-xl border border-white/10 rounded-2xl px-8 py-12 text-center transition-all hover:shadow-xl hover:scale-105">
-                            <div className="text-3xl mb-3">🤝</div>
-                            <h3 className="font-newsreader font-semibold text-xl mb-2 text-zinc-100">Red real y confiable</h3>
-                            <p className="text-zinc-300">Personas de tu comunidad, listos para ayudar.</p>
-                        </div>
-                        <div className="glass-panel backdrop-blur-xl border border-white/10 rounded-2xl px-8 py-12 text-center transition-all hover:shadow-xl hover:scale-105">
-                            <div className="text-3xl mb-3">✅</div>
-                            <h3 className="font-newsreader font-semibold text-xl mb-2 text-zinc-100">Verificación y reviews</h3>
-                            <p className="text-zinc-300">Elegí seguro, con calificaciones confiables.</p>
-                        </div>
-                        <div className="glass-panel backdrop-blur-xl border border-white/10 rounded-2xl px-8 py-12 text-center transition-all hover:shadow-xl hover:scale-105">
-                            <div className="text-3xl mb-3">💬</div>
-                            <h3 className="font-newsreader font-semibold text-xl mb-2 text-zinc-100">Comunicación directa</h3>
-                            <p className="text-zinc-300">Todo lo que necesitás en una sola app.</p>
-                        </div>
-                        <div className="glass-panel backdrop-blur-xl border border-white/10 rounded-2xl px-8 py-12 text-center transition-all hover:shadow-xl hover:scale-105">
-                            <div className="text-3xl mb-3">⚡️</div>
-                            <h3 className="font-newsreader font-semibold text-xl mb-2 text-zinc-100">Premium & Rápido</h3>
-                            <p className="text-zinc-300">Encontrá lo que buscás y resolvé ya.</p>
-                        </div>
-                    </div>
-                    <div className="text-center mt-16">
-                         <Button size="lg" className="rounded-xl text-lg font-bold px-10 py-6 bg-gradient-to-tr from-white/90 to-zinc-200 hover:from-white hover:to-white/90 text-zinc-900 shadow-lg border border-zinc-400 shadow-white/10 transition duration-200">
-                            Descargá la App y Empezá
+                    <h2 className="font-newsreader font-bold text-4xl md:text-5xl text-zinc-900">¿Listo para empezar?</h2>
+                    <p className="mt-4 text-lg text-zinc-600 max-w-xl mx-auto">Descargá la app hoy mismo y descubrí por qué Serbis es la elección preferida para servicios locales.</p>
+                     <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 justify-center">
+                        <Button variant="outline" className="w-48 h-14 border-2 bg-white text-zinc-900 flex items-center gap-2 shadow-sm rounded-2xl hover:bg-zinc-100 transition-all">
+                            <Apple className="w-7 h-7" />
+                            <div className="text-left">
+                                <div className="text-xs -mb-1 opacity-60">Descargala en el</div>
+                                <div className="text-xl font-semibold leading-tight">App Store</div>
+                            </div>
+                        </Button>
+                        <Button variant="outline" className="w-48 h-14 border-2 bg-white text-zinc-900 flex items-center gap-2 shadow-sm rounded-2xl hover:bg-zinc-100 transition-all">
+                            <svg viewBox="30 336.7 120.9 129.2" className="w-6 h-6 fill-current" aria-hidden="true">
+                                <path d="M153.7 366.2c-3.8 4.5-11.2 8.1-17.3 8.4-1.4 0-2.5.2-3.6.2-4.8 0-11.8-2.1-15.3-5.2-3.5-3.1-6.2-7.3-7.2-12.2-1-4.9-.7-9.5 1.1-13.8 1.8-4.3 4.7-8.3 8.8-11.1 4.1-2.8 9.2-4.3 14-4.3 1.5 0 2.8.2 3.9.2 4.9 0 11.2 2.3 14.5 5.5 1.1 1.1 1.9 2.4 2.4 3.8 2.3-1.5 4.3-3.1 5.9-4.8.2-.2.4-.4.5-.5 3.1-3.3 5.4-7.4 5.4-12.3 0-4-.9-7.1-2.4-9.5-1.5-2.4-3.6-4.2-6.2-5.4-2.6-1.2-5.6-1.8-8.7-1.8-3.1 0-6.1.6-8.7 1.8-2.6 1.2-4.7 3-6.2 5.4s-2.4 5.5-2.4 9.5c0 4.9 2.3 9.1 5.4 12.3.1.1.3.3.5.5 1.6 1.7 3.6 3.3 5.9 4.8-.4 1.4-.9 2.7-1.6 4-3.3 6.4-8.2 10-14.5 10-1.1 0-2.4-.1-3.9-.2-4.8 0-9.9 1.5-14 4.3-4.1 2.8-7 6.8-8.8 11.1-1.8 4.3-2.1 8.9-1.1 13.8 1 4.9 3.7 9.1 7.2 12.2 3.5 3.1 8.5 5.2 15.3 5.2 1.1 0 2.2-.1 3.6-.2 6.1-.3 13.5-3.9 17.3-8.4 1.2-1.4 2.2-3.3 2.9-5.5-2.9-1.3-5.5-3.1-7.5-5.3zm-11.2-22.3c-2.3 2.6-5.4 4.1-8.9 4.1-1.1 0-2-.1-2.9-.2-3.3-.4-6.2-2.1-8.2-4.5-2-2.4-3.1-5.4-3.1-8.7 0-3.3 1.1-6.3 3.1-8.7 2-2.4 4.9-4.1 8.2-4.5 1-.1 1.9-.2 2.9-.2 3.5 0 6.6 1.5 8.9 4.1 1.9 2.1 2.8 4.7 2.8 7.6.1 2.8-1 5.5-2.8 7.6z" />
+                            </svg>
+                            <div className="text-left">
+                                <div className="text-xs -mb-1 opacity-60">Disponible en</div>
+                                <div className="text-xl font-semibold leading-tight">Google Play</div>
+                            </div>
                         </Button>
                     </div>
                 </div>
             </AnimatedWrapper>
             
-            <footer id="about-us-footer" className="bg-gradient-to-tr from-zinc-950 via-zinc-900 to-zinc-800/90 text-zinc-400 py-12 glass-panel border-t border-white/10">
+            {/* --- Footer --- */}
+            <footer id="about-us-footer" className="bg-white text-zinc-500 py-12 border-t">
                 <div className="container mx-auto px-4 text-center text-sm space-y-2">
-                    <p className="text-zinc-500/80">© Serbis 2024. Todos los derechos reservados.</p>
+                    <p>© Serbis 2025. Todos los derechos reservados.</p>
                     <p>Buenos Aires, Argentina</p>
-                    <a href="mailto:inaki.iturriaga@serbis.app" className="hover:text-white transition-colors">inaki.iturriaga@serbis.app</a>
+                    <a href="mailto:inaki.iturriaga@serbis.app" className="hover:text-primary transition-colors">inaki.iturriaga@serbis.app</a>
                 </div>
             </footer>
         </div>
     );
 };
 
-export default Index;
+// Helper components for page sections
+const FeatureSection = ({ title, description, imageUrl, imageAlt, reverse = false }: { title: string, description: string, imageUrl: string, imageAlt: string, reverse?: boolean }) => (
+    <AnimatedWrapper tag="section">
+        <div className="container mx-auto px-4">
+            <div className={`grid md:grid-cols-2 gap-12 md:gap-20 items-center`}>
+                <div className={`text-center md:text-left ${reverse ? 'md:order-last' : ''}`}>
+                     <h2 className="font-newsreader font-bold text-4xl mb-4 text-zinc-900">{title}</h2>
+                     <p className="text-zinc-600 leading-relaxed text-lg">{description}</p>
+                </div>
+                <div className="relative flex justify-center items-center">
+                    <div className="absolute inset-0 bg-primary/10 rounded-full blur-3xl" />
+                    <img src={imageUrl} alt={imageAlt} className="relative rounded-2xl shadow-xl border-2 border-white w-full max-w-lg" />
+                </div>
+            </div>
+        </div>
+    </AnimatedWrapper>
+);
 
+const ReasonCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
+    <div className="bg-white rounded-2xl p-6 text-center border transition-all hover:shadow-lg hover:-translate-y-1">
+        <div className="inline-block bg-primary/10 text-primary p-3 rounded-xl mb-4">
+            <Icon className="w-7 h-7" />
+        </div>
+        <h3 className="font-semibold text-lg mb-2 text-zinc-900">{title}</h3>
+        <p className="text-zinc-600 text-sm">{description}</p>
+    </div>
+);
+
+export default Index;
