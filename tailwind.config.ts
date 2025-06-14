@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,7 +19,12 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				newsreader: ['Newsreader', 'serif'],
+				mulish: ['Mulish', 'sans-serif'],
+			},
 			colors: {
+				'serbis-primary': '#0d6efd',
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',

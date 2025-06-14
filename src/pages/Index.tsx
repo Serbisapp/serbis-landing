@@ -1,386 +1,235 @@
 
-import { ArrowRight, MapPin, MessageSquare, Star, Users, Clock, Shield, MessageCircle } from "lucide-react";
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { useInView } from "@/hooks/use-in-view";
-import { cn } from "@/lib/utils";
+import {
+  Edit,
+  Zap,
+  CheckCircle2,
+  Compass,
+  Star,
+  Bell,
+  Send,
+  Paperclip,
+  ShieldCheck,
+  History,
+  CheckCircle,
+  Users,
+  BadgeCheck,
+  MessageSquare,
+  Gauge,
+  Play,
+  Apple,
+  Menu
+} from "lucide-react";
+
+const PlaceholderImage = ({ className }: { className?: string }) => (
+    <div className={`bg-gray-300 animate-pulse ${className}`} />
+);
 
 const Index = () => {
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+    const [scrolled, setScrolled] = useState(false);
 
-  const useAnim = (options = {}) => useInView({ triggerOnce: true, ...options });
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 50);
+        };
+        window.addEventListener('scroll', handleScroll);
+        handleScroll();
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
-  // Refs para estadísticas
-  const [stats1Ref, stats1InView] = useAnim({ threshold: 0.5 });
-  const [stats2Ref, stats2InView] = useAnim({ threshold: 0.5 });
-  const [stats3Ref, stats3InView] = useAnim({ threshold: 0.5 });
+    return (
+        <div className="bg-white font-mulish text-gray-800" id="page-top">
+            <nav className={`fixed w-full top-0 z-50 bg-white/95 backdrop-blur-sm transition-all duration-300 ${scrolled ? 'py-2 shadow-md' : 'py-3 shadow-sm'}`}>
+                <div className="container mx-auto px-4 flex justify-between items-center">
+                    <a href="#page-top" className="flex items-center gap-2 font-bold text-gray-800">
+                        <div className={`bg-serbis-primary rounded-lg flex items-center justify-center transition-all duration-300 ${scrolled ? 'w-8 h-8' : 'w-10 h-10'}`}>
+                            <span className="text-white font-bold text-xl">S</span>
+                        </div>
+                        <span className="text-2xl font-bold">Serbis</span>
+                    </a>
+                    
+                    <div className="hidden md:flex items-center space-x-1">
+                        <a href="#!" className="px-3 py-2 text-sm font-semibold text-serbis-primary border border-serbis-primary rounded-md hover:bg-serbis-primary hover:text-white transition-colors">Soy Proveedor</a>
+                        <a href="#how-it-works" className="px-3 py-2 text-sm font-medium text-gray-600 hover:text-serbis-primary transition-colors rounded-md">Cómo Funciona</a>
+                        <a href="#about-us-footer" className="px-3 py-2 text-sm font-medium text-gray-600 hover:text-serbis-primary transition-colors rounded-md">Nosotros</a>
+                    </div>
+                    <div className="md:hidden">
+                        <Button variant="ghost" size="icon">
+                            <Menu />
+                        </Button>
+                    </div>
+                </div>
+            </nav>
 
-  // Refs para características
-  const [featuresTitleRef, featuresTitleInView] = useAnim({ threshold: 0.5 });
-  const [feature1Ref, feature1InView] = useAnim({ threshold: 0.2 });
-  const [feature2Ref, feature2InView] = useAnim({ threshold: 0.2 });
-  const [feature3Ref, feature3InView] = useAnim({ threshold: 0.2 });
-  const [feature4Ref, feature4InView] = useAnim({ threshold: 0.2 });
-  const [feature5Ref, feature5InView] = useAnim({ threshold: 0.2 });
-  const [feature6Ref, feature6InView] = useAnim({ threshold: 0.2 });
-
-  // Refs para "cómo funciona"
-  const [howItWorksTitleRef, howItWorksTitleInView] = useAnim({ threshold: 0.5 });
-  const [howItWorksStep1Ref, howItWorksStep1InView] = useAnim({ threshold: 0.5 });
-  const [howItWorksStep2Ref, howItWorksStep2InView] = useAnim({ threshold: 0.5 });
-  const [howItWorksStep3Ref, howItWorksStep3InView] = useAnim({ threshold: 0.5 });
-  
-  // Refs para testimonios
-  const [testimonialsTitleRef, testimonialsTitleInView] = useAnim({ threshold: 0.5 });
-  const [testimonialMainRef, testimonialMainInView] = useAnim({ threshold: 0.2 });
-  const [testimonial1Ref, testimonial1InView] = useAnim({ threshold: 0.2 });
-  const [testimonial2Ref, testimonial2InView] = useAnim({ threshold: 0.2 });
-
-  return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="fixed top-0 w-full bg-white/80 backdrop-blur-xl border-b border-gray-200/50 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-lg">S</span>
-            </div>
-            <span className="text-2xl font-semibold text-gray-900 tracking-tight">Serbis</span>
-          </div>
-          <nav className="hidden md:flex items-center space-x-10">
-            <button 
-              onClick={() => scrollToSection('como-funciona')}
-              className="text-gray-600 hover:text-gray-900 transition-colors font-medium"
-            >
-              ¿Cómo funciona?
-            </button>
-            <button 
-              onClick={() => scrollToSection('testimonios')}
-              className="text-gray-600 hover:text-gray-900 transition-colors font-medium"
-            >
-              Testimonios
-            </button>
-          </nav>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-200">
-            Comenzar
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <section className="pt-32 pb-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-6xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight tracking-tight">
-              Encuentra ayuda{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
-                en minutos
-              </span>
-            </h1>
-            <p className="text-2xl md:text-3xl text-gray-600 mb-6 font-light leading-relaxed">
-              Sin categorías. Sin burocracia.
-            </p>
-            <p className="text-lg text-gray-500 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Describe tu tarea con tus propias palabras. Nuestra IA te conecta al instante con profesionales locales.
-            </p>
+            <header className="pt-28 pb-16 bg-gray-50 overflow-hidden">
+                <div className="container mx-auto px-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                        <div className="lg:col-span-7 text-center lg:text-left">
+                            <h2 className="font-newsreader font-bold text-5xl md:text-6xl text-gray-900">Basta de listas.</h2>
+                            <h1 className="font-newsreader font-bold text-4xl md:text-5xl text-gray-900 mt-2 mb-4">
+                                Encontrá al profesional ideal.<br/>
+                                <strong className="text-serbis-primary">En 5 segundos.</strong>
+                            </h1>
+                            <p className="text-lg text-gray-600 max-w-xl mx-auto lg:mx-0 mb-8">
+                                Servicios de confianza, calificados por tu comunidad. Olvidate de las complicaciones, Serbis te conecta.
+                            </p>
+                            <Button size="lg" className="bg-serbis-primary hover:bg-blue-700 text-white font-bold px-6 py-7 text-base rounded-md">
+                                Publicá tu Pedido Ahora
+                            </Button>
+                            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mt-8">
+                                <Button variant="outline" className="w-48 h-14 border-2 flex items-center justify-center gap-2">
+                                    <Play className="w-7 h-7" />
+                                    <div className="text-left">
+                                        <div className="text-xs -mb-1">GET IT ON</div>
+                                        <div className="text-xl font-semibold leading-tight">Google Play</div>
+                                    </div>
+                                </Button>
+                                <Button variant="outline" className="w-48 h-14 border-2 flex items-center justify-center gap-2">
+                                    <Apple className="w-7 h-7" />
+                                    <div className="text-left">
+                                        <div className="text-xs -mb-1">Download on the</div>
+                                        <div className="text-xl font-semibold leading-tight">App Store</div>
+                                    </div>
+                                </Button>
+                            </div>
+                        </div>
+                        <div className="lg:col-span-5 hidden lg:block">
+                            <div className="relative flex justify-center items-center h-full min-h-[520px] [perspective:1800px]">
+                                <div className="iphone-mockup">
+                                    <div className="relative w-full h-full bg-black rounded-[calc(var(--iphone-width)_*_0.13)] overflow-hidden iphone-screen-area">
+                                        <PlaceholderImage className="w-full h-full object-cover" />
+                                    </div>
+                                    <div className="iphone-notch"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
             
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20">
-              <Button 
-                size="lg" 
-                className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
-              >
-                Publicar mi primera tarea
-                <ArrowRight className="ml-3 h-5 w-5" />
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="lg"
-                onClick={() => scrollToSection('como-funciona')}
-                className="px-10 py-4 text-lg font-medium hover:bg-gray-50 rounded-full transition-all duration-200"
-              >
-                Ver cómo funciona
-              </Button>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-3xl mx-auto">
-              <div ref={stats1Ref} className={cn("text-center transition-all duration-700 ease-out", stats1InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-                <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">5.000+</div>
-                <div className="text-gray-500 font-medium">tareas completadas</div>
-              </div>
-              <div ref={stats2Ref} className={cn("text-center transition-all duration-700 ease-out delay-200", stats2InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-                <div className="text-4xl md:text-5xl font-bold text-gray-900 flex items-center justify-center mb-2">
-                  4.8 <Star className="ml-2 h-8 w-8 fill-amber-400 text-amber-400" />
+            <section id="how-it-works" className="py-20">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-center font-newsreader font-semibold text-4xl mb-16">Así de fácil es con Serbis</h2>
+                    <div className="grid md:grid-cols-3 gap-10">
+                        <div className="text-center">
+                            <Edit className="w-12 h-12 text-serbis-primary mx-auto mb-4"/>
+                            <h3 className="font-newsreader font-semibold text-2xl mb-2">1. Describí tu Necesidad</h3>
+                            <p className="text-gray-600 px-2">Contanos qué servicio necesitás. Es rápido y simple.</p>
+                        </div>
+                        <div className="text-center">
+                            <Zap className="w-12 h-12 text-serbis-primary mx-auto mb-4"/>
+                            <h3 className="font-newsreader font-semibold text-2xl mb-2">2. Conectá al Instante</h3>
+                            <p className="text-gray-600 px-2">Nuestro sistema te encuentra opciones calificadas en tu zona.</p>
+                        </div>
+                        <div className="text-center">
+                            <CheckCircle2 className="w-12 h-12 text-serbis-primary mx-auto mb-4"/>
+                            <h3 className="font-newsreader font-semibold text-2xl mb-2">3. Resolvé y Calificá</h3>
+                            <p className="text-gray-600 px-2">Coordiná el servicio y ayudá a la comunidad con tu reseña. Todo dentro de nuestra app.</p>
+                        </div>
+                    </div>
                 </div>
-                <div className="text-gray-500 font-medium">calificación promedio</div>
-              </div>
-              <div ref={stats3Ref} className={cn("text-center transition-all duration-700 ease-out delay-[400ms]", stats3InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-                <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">Minutos</div>
-                <div className="text-gray-500 font-medium">tiempo de respuesta</div>
-              </div>
-            </div>
-          </div>
+            </section>
+            
+            <section className="py-20 bg-gray-50">
+                <div className="container mx-auto px-4">
+                    <div className="grid md:grid-cols-2 gap-12 items-center">
+                        <div className="text-center md:text-left">
+                             <h2 className="font-newsreader font-bold text-4xl mb-4">Explorá el <strong className="text-serbis-primary">Home</strong></h2>
+                             <p className="text-gray-600 mb-4 leading-relaxed">Describí el servicio que necesitas, nostros te emparejamos con una persona capaz en tu area. No clasificamos, entendemos que se necesita para solucionar tu problema y quien puede hacerlo en tu area. Todo en menos de 5 segundos.</p>
+                             <ul className="space-y-2 text-left inline-block">
+                                <li className="flex items-center gap-3"><Compass className="w-5 h-5 text-serbis-primary flex-shrink-0"/>Navegación intuitiva para encontrar lo que necesitás.</li>
+                                <li className="flex items-center gap-3"><Star className="w-5 h-5 text-serbis-primary flex-shrink-0"/>Ratings y reviews de cada trabajador.</li>
+                                <li className="flex items-center gap-3"><Bell className="w-5 h-5 text-serbis-primary flex-shrink-0"/>Acceso rápido a tus pedidos y chats recientes.</li>
+                             </ul>
+                        </div>
+                        <div className="flex justify-center">
+                            <PlaceholderImage className="w-[280px] h-[570px] rounded-3xl shadow-xl app-feature-image" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section className="py-20">
+                <div className="container mx-auto px-4">
+                    <div className="grid md:grid-cols-2 gap-12 items-center">
+                        <div className="flex justify-center md:order-last">
+                           <PlaceholderImage className="w-[280px] h-[570px] rounded-3xl shadow-xl app-feature-image" />
+                        </div>
+                        <div className="text-center md:text-left md:order-first">
+                             <h2 className="font-newsreader font-bold text-4xl mb-4">Comunicación segura con el <strong className="text-serbis-primary">Chat</strong></h2>
+                             <p className="text-gray-600 mb-4 leading-relaxed">Coordiná detalles, compartí imágenes y <strong>negocia el precio</strong> directamente con los proveedores a través de nuestro chat integrado y seguro.</p>
+                             <ul className="space-y-2 text-left inline-block">
+                                <li className="flex items-center gap-3"><Send className="w-5 h-5 text-serbis-primary flex-shrink-0"/>Mensajería instantánea para respuestas rápidas.</li>
+                                <li className="flex items-center gap-3"><Paperclip className="w-5 h-5 text-serbis-primary flex-shrink-0"/>Compartí archivos y fotos relevantes para el servicio.</li>
+                                <li className="flex items-center gap-3"><ShieldCheck className="w-5 h-5 text-serbis-primary flex-shrink-0"/>Conversaciones seguras y privadas dentro de la app.</li>
+                             </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+             <section className="py-20 bg-gray-50">
+                <div className="container mx-auto px-4">
+                    <div className="grid md:grid-cols-2 gap-12 items-center">
+                        <div className="text-center md:text-left">
+                             <h2 className="font-newsreader font-bold text-4xl mb-4">Seguí el <strong className="text-serbis-primary">Estado</strong> de tus Pedidos</h2>
+                             <p className="text-gray-600 mb-4 leading-relaxed">Mantenete informado en tiempo real sobre el progreso de tus solicitudes de servicio, desde la publicación hasta la finalización.</p>
+                             <ul className="space-y-2 text-left inline-block">
+                                <li className="flex items-center gap-3"><History className="w-5 h-5 text-serbis-primary flex-shrink-0"/>Historial completo de todos tus pedidos y servicios.</li>
+                                <li className="flex items-center gap-3"><Bell className="w-5 h-5 text-serbis-primary flex-shrink-0"/>Notificaciones instantáneas sobre actualizaciones importantes.</li>
+                                <li className="flex items-center gap-3"><CheckCircle className="w-5 h-5 text-serbis-primary flex-shrink-0"/>Visualizá claramente cada etapa del proceso.</li>
+                             </ul>
+                        </div>
+                        <div className="flex justify-center">
+                           <PlaceholderImage className="w-[280px] h-[570px] rounded-3xl shadow-xl app-feature-image" />
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="why-serbis" className="py-20">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-center font-newsreader font-semibold text-4xl mb-16">¿Por qué elegir Serbis?</h2>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
+                        <div className="text-center">
+                            <Users className="w-12 h-12 text-serbis-primary mx-auto mb-4"/>
+                            <h3 className="font-newsreader font-semibold text-xl mb-2">Ayuda de tu Comunidad</h3>
+                            <p className="text-gray-600">Conectate con personas de tu barrio dispuestas a ayudarte.</p>
+                        </div>
+                        <div className="text-center">
+                            <BadgeCheck className="w-12 h-12 text-serbis-primary mx-auto mb-4"/>
+                            <h3 className="font-newsreader font-semibold text-xl mb-2">Calificaciones Reales</h3>
+                            <p className="text-gray-600">Decidí con confianza gracias a las opiniones de otros usuarios.</p>
+                        </div>
+                        <div className="text-center">
+                            <MessageSquare className="w-12 h-12 text-serbis-primary mx-auto mb-4"/>
+                            <h3 className="font-newsreader font-semibold text-xl mb-2">Comunicación Directa</h3>
+                            <p className="text-gray-600">Chat seguro para coordinar todos los detalles del servicio.</p>
+                        </div>
+                        <div className="text-center">
+                            <Gauge className="w-12 h-12 text-serbis-primary mx-auto mb-4"/>
+                            <h3 className="font-newsreader font-semibold text-xl mb-2">Rápido y Eficaz</h3>
+                            <p className="text-gray-600">Encontrá lo que buscás en segundos y resolvé sin demoras.</p>
+                        </div>
+                    </div>
+                    <div className="text-center mt-16">
+                         <Button size="lg" className="bg-serbis-primary hover:bg-blue-700 text-white font-bold px-6 py-7 text-base rounded-md">
+                            Descargá la App y Empezá
+                        </Button>
+                    </div>
+                </div>
+            </section>
+            
+            <footer id="about-us-footer" className="bg-gray-900 text-gray-400 py-12">
+                <div className="container mx-auto px-4 text-center text-sm space-y-1">
+                    <p>© Serbis 2024. Todos los derechos reservados.</p>
+                    <p>Buenos Aires, Argentina</p>
+                    <a href="mailto:inaki.iturriaga@serbis.app" className="hover:text-white transition-colors">inaki.iturriaga@serbis.app</a>
+                </div>
+            </footer>
         </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-32 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div ref={featuresTitleRef} className={cn("text-center mb-20 transition-all duration-700 ease-out", featuresTitleInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 tracking-tight">
-              Todo en una plataforma
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
-              Conectamos clientes y prestadores de servicio de manera inteligente y rápida
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div ref={feature1Ref} className={cn("bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1", "transition-all duration-700 ease-out", feature1InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-8">
-                <MessageSquare className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                Lenguaje natural
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Explica lo que necesitas como si hablaras con un amigo—sin menús complicados.
-              </p>
-            </div>
-
-            <div ref={feature2Ref} className={cn("bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1", "transition-all duration-700 ease-out delay-150", feature2InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-8">
-                <Users className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                IA instantánea
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Encuentra a las personas adecuadas cerca de ti, ordenadas por habilidad y cercanía.
-              </p>
-            </div>
-
-            <div ref={feature3Ref} className={cn("bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1", "transition-all duration-700 ease-out delay-300", feature3InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-8">
-                <MapPin className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                Mapa en vivo
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Sigue tu tarea en tiempo real y rastrea la llegada de tu experto.
-              </p>
-            </div>
-
-            <div ref={feature4Ref} className={cn("bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1", "transition-all duration-700 ease-out", feature4InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-              <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mb-8">
-                <MessageCircle className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                Chat integrado
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Aclara detalles y comparte fotos sin llamadas externas.
-              </p>
-            </div>
-
-            <div ref={feature5Ref} className={cn("bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1", "transition-all duration-700 ease-out delay-150", feature5InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-              <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mb-8">
-                <Shield className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                Perfiles verificados
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Consulta reseñas y trabajos realizados antes de reservar.
-              </p>
-            </div>
-
-            <div ref={feature6Ref} className={cn("bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1", "transition-all duration-700 ease-out delay-300", feature6InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-              <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-8">
-                <Clock className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                Respuesta inmediata
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Recibe respuestas en minutos, no en días.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How it Works Section */}
-      <section id="como-funciona" className="py-32 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div ref={howItWorksTitleRef} className={cn("text-center mb-20 transition-all duration-700 ease-out", howItWorksTitleInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 tracking-tight">
-              Así de simple
-            </h2>
-            <p className="text-xl text-gray-600 font-light">
-              Tres pasos para conseguir la ayuda que necesitas
-            </p>
-          </div>
-
-          <div className="max-w-5xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-16">
-              <div ref={howItWorksStep1Ref} className={cn("text-center group transition-all duration-700 ease-out", howItWorksStep1InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-                <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                  <span className="text-3xl font-bold text-white">1</span>
-                </div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                  Publicá tu tarea
-                </h3>
-                <p className="text-gray-600 leading-relaxed text-lg">
-                  Describí lo que necesitas con palabras cotidianas.
-                </p>
-              </div>
-
-              <div ref={howItWorksStep2Ref} className={cn("text-center group transition-all duration-700 ease-out delay-200", howItWorksStep2InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-                <div className="w-24 h-24 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                  <span className="text-3xl font-bold text-white">2</span>
-                </div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                  Conectá al instante
-                </h3>
-                <p className="text-gray-600 leading-relaxed text-lg">
-                  Nuestra IA encuentra profesionales perfectos en segundos.
-                </p>
-              </div>
-
-              <div ref={howItWorksStep3Ref} className={cn("text-center group transition-all duration-700 ease-out delay-[400ms]", howItWorksStep3InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-                <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                  <span className="text-3xl font-bold text-white">3</span>
-                </div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                  Finalizá y valorá
-                </h3>
-                <p className="text-gray-600 leading-relaxed text-lg">
-                  Pagás solo por el trabajo completado.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section id="testimonios" className="py-32 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div ref={testimonialsTitleRef} className={cn("text-center mb-20 transition-all duration-700 ease-out", testimonialsTitleInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 tracking-tight">
-              Historias reales
-            </h2>
-            <p className="text-xl text-gray-600 font-light">
-              Miles de tareas exitosas nos respaldan
-            </p>
-          </div>
-
-          <div className="max-w-5xl mx-auto">
-            <div ref={testimonialMainRef} className={cn("bg-white rounded-3xl p-12 shadow-sm mb-12 transition-all duration-700 ease-out", testimonialMainInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-              <div className="flex items-start space-x-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-white font-bold text-2xl">M</span>
-                </div>
-                <div>
-                  <div className="flex items-center mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-6 w-6 text-amber-400 fill-current" />
-                    ))}
-                  </div>
-                  <blockquote className="text-2xl text-gray-700 mb-6 font-light leading-relaxed">
-                    "Publiqué un trabajo de pintura al mediodía y a las 14:00 ya tenía tres pintores calificados en mi puerta. Increíble la rapidez y calidad."
-                  </blockquote>
-                  <cite className="text-gray-600 font-semibold text-lg">
-                    María González, Palermo
-                  </cite>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              <div ref={testimonial1Ref} className={cn("bg-white rounded-3xl p-8 shadow-sm transition-all duration-700 ease-out", testimonial1InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-                <div className="flex items-center mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 text-amber-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-lg text-gray-700 mb-4 leading-relaxed">
-                  "Perfecto para emergencias. Cuando se rompió mi canilla un domingo, encontré un plomero en 15 minutos."
-                </p>
-                <cite className="text-gray-600 font-medium">Carlos, Belgrano</cite>
-              </div>
-
-              <div ref={testimonial2Ref} className={cn("bg-white rounded-3xl p-8 shadow-sm transition-all duration-700 ease-out delay-200", testimonial2InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
-                <div className="flex items-center mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 text-amber-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-lg text-gray-700 mb-4 leading-relaxed">
-                  "Como prestador, me encanta la flexibilidad. Trabajo cuando quiero y siempre cerca de casa."
-                </p>
-                <cite className="text-gray-600 font-medium">Ana, Villa Crespo</cite>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-32 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-8 tracking-tight">
-            ¿Listo para comenzar?
-          </h2>
-          <p className="text-xl text-blue-100 mb-12 max-w-3xl mx-auto font-light leading-relaxed">
-            Únete a miles de usuarios que ya confían en Serbis para resolver sus tareas diarias
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Button 
-              size="lg" 
-              className="bg-white text-blue-600 hover:bg-gray-50 px-10 py-4 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
-            >
-              Publicar mi primera tarea
-              <ArrowRight className="ml-3 h-5 w-5" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="border-2 border-white text-white hover:bg-white hover:text-blue-600 px-10 py-4 text-lg font-semibold rounded-full transition-all duration-300"
-            >
-              Registrarme como prestador
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-black text-white py-16">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-3 mb-6 md:mb-0">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
-                <span className="text-white font-bold text-lg">S</span>
-              </div>
-              <span className="text-2xl font-semibold tracking-tight">Serbis</span>
-            </div>
-            <div className="text-gray-400 text-center md:text-right">
-              <p className="font-medium">&copy; 2024 Serbis. Todos los derechos reservados.</p>
-              <p className="text-sm mt-2 font-light">Conectando Argentina, una tarea a la vez.</p>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
-  );
+    );
 };
 
 export default Index;
