@@ -70,7 +70,6 @@ const Floating3DText = ({ text, position, color }: {
       color={color}
       anchorX="center"
       anchorY="middle"
-      font="/fonts/Inter-Bold.woff"
     >
       {text}
     </Text>
