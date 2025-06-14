@@ -1,7 +1,8 @@
 
-import { ArrowRight, MapPin, MessageSquare, Star, Users, CheckCircle, Clock, Shield, MessageCircle } from "lucide-react";
+import { ArrowRight, MapPin, MessageSquare, Star, Users, Clock, Shield, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { useInView } from "@/hooks/use-in-view";
+import { cn } from "@/lib/utils";
 
 const Index = () => {
   const scrollToSection = (sectionId: string) => {
@@ -10,6 +11,34 @@ const Index = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  const useAnim = (options = {}) => useInView({ triggerOnce: true, ...options });
+
+  // Refs para estadísticas
+  const [stats1Ref, stats1InView] = useAnim({ threshold: 0.5 });
+  const [stats2Ref, stats2InView] = useAnim({ threshold: 0.5 });
+  const [stats3Ref, stats3InView] = useAnim({ threshold: 0.5 });
+
+  // Refs para características
+  const [featuresTitleRef, featuresTitleInView] = useAnim({ threshold: 0.5 });
+  const [feature1Ref, feature1InView] = useAnim({ threshold: 0.2 });
+  const [feature2Ref, feature2InView] = useAnim({ threshold: 0.2 });
+  const [feature3Ref, feature3InView] = useAnim({ threshold: 0.2 });
+  const [feature4Ref, feature4InView] = useAnim({ threshold: 0.2 });
+  const [feature5Ref, feature5InView] = useAnim({ threshold: 0.2 });
+  const [feature6Ref, feature6InView] = useAnim({ threshold: 0.2 });
+
+  // Refs para "cómo funciona"
+  const [howItWorksTitleRef, howItWorksTitleInView] = useAnim({ threshold: 0.5 });
+  const [howItWorksStep1Ref, howItWorksStep1InView] = useAnim({ threshold: 0.5 });
+  const [howItWorksStep2Ref, howItWorksStep2InView] = useAnim({ threshold: 0.5 });
+  const [howItWorksStep3Ref, howItWorksStep3InView] = useAnim({ threshold: 0.5 });
+  
+  // Refs para testimonios
+  const [testimonialsTitleRef, testimonialsTitleInView] = useAnim({ threshold: 0.5 });
+  const [testimonialMainRef, testimonialMainInView] = useAnim({ threshold: 0.2 });
+  const [testimonial1Ref, testimonial1InView] = useAnim({ threshold: 0.2 });
+  const [testimonial2Ref, testimonial2InView] = useAnim({ threshold: 0.2 });
 
   return (
     <div className="min-h-screen bg-white">
@@ -80,17 +109,17 @@ const Index = () => {
 
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-3xl mx-auto">
-              <div className="text-center">
+              <div ref={stats1Ref} className={cn("text-center transition-all duration-700 ease-out", stats1InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
                 <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">5.000+</div>
                 <div className="text-gray-500 font-medium">tareas completadas</div>
               </div>
-              <div className="text-center">
+              <div ref={stats2Ref} className={cn("text-center transition-all duration-700 ease-out delay-200", stats2InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
                 <div className="text-4xl md:text-5xl font-bold text-gray-900 flex items-center justify-center mb-2">
                   4.8 <Star className="ml-2 h-8 w-8 fill-amber-400 text-amber-400" />
                 </div>
                 <div className="text-gray-500 font-medium">calificación promedio</div>
               </div>
-              <div className="text-center">
+              <div ref={stats3Ref} className={cn("text-center transition-all duration-700 ease-out delay-[400ms]", stats3InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
                 <div className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">Minutos</div>
                 <div className="text-gray-500 font-medium">tiempo de respuesta</div>
               </div>
@@ -102,7 +131,7 @@ const Index = () => {
       {/* Features Section */}
       <section className="py-32 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-20">
+          <div ref={featuresTitleRef} className={cn("text-center mb-20 transition-all duration-700 ease-out", featuresTitleInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 tracking-tight">
               Todo en una plataforma
             </h2>
@@ -112,7 +141,7 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div ref={feature1Ref} className={cn("bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1", "transition-all duration-700 ease-out", feature1InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-8">
                 <MessageSquare className="h-8 w-8 text-white" />
               </div>
@@ -124,7 +153,7 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div ref={feature2Ref} className={cn("bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1", "transition-all duration-700 ease-out delay-150", feature2InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
               <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-8">
                 <Users className="h-8 w-8 text-white" />
               </div>
@@ -136,7 +165,7 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div ref={feature3Ref} className={cn("bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1", "transition-all duration-700 ease-out delay-300", feature3InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
               <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-8">
                 <MapPin className="h-8 w-8 text-white" />
               </div>
@@ -148,7 +177,7 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div ref={feature4Ref} className={cn("bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1", "transition-all duration-700 ease-out", feature4InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
               <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mb-8">
                 <MessageCircle className="h-8 w-8 text-white" />
               </div>
@@ -160,7 +189,7 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div ref={feature5Ref} className={cn("bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1", "transition-all duration-700 ease-out delay-150", feature5InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
               <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mb-8">
                 <Shield className="h-8 w-8 text-white" />
               </div>
@@ -172,7 +201,7 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <div ref={feature6Ref} className={cn("bg-white rounded-3xl p-10 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1", "transition-all duration-700 ease-out delay-300", feature6InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
               <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-8">
                 <Clock className="h-8 w-8 text-white" />
               </div>
@@ -190,7 +219,7 @@ const Index = () => {
       {/* How it Works Section */}
       <section id="como-funciona" className="py-32 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-20">
+          <div ref={howItWorksTitleRef} className={cn("text-center mb-20 transition-all duration-700 ease-out", howItWorksTitleInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 tracking-tight">
               Así de simple
             </h2>
@@ -201,7 +230,7 @@ const Index = () => {
 
           <div className="max-w-5xl mx-auto">
             <div className="grid md:grid-cols-3 gap-16">
-              <div className="text-center group">
+              <div ref={howItWorksStep1Ref} className={cn("text-center group transition-all duration-700 ease-out", howItWorksStep1InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
                 <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
                   <span className="text-3xl font-bold text-white">1</span>
                 </div>
@@ -213,7 +242,7 @@ const Index = () => {
                 </p>
               </div>
 
-              <div className="text-center group">
+              <div ref={howItWorksStep2Ref} className={cn("text-center group transition-all duration-700 ease-out delay-200", howItWorksStep2InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
                 <div className="w-24 h-24 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
                   <span className="text-3xl font-bold text-white">2</span>
                 </div>
@@ -225,7 +254,7 @@ const Index = () => {
                 </p>
               </div>
 
-              <div className="text-center group">
+              <div ref={howItWorksStep3Ref} className={cn("text-center group transition-all duration-700 ease-out delay-[400ms]", howItWorksStep3InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
                 <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
                   <span className="text-3xl font-bold text-white">3</span>
                 </div>
@@ -244,7 +273,7 @@ const Index = () => {
       {/* Testimonials Section */}
       <section id="testimonios" className="py-32 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-20">
+          <div ref={testimonialsTitleRef} className={cn("text-center mb-20 transition-all duration-700 ease-out", testimonialsTitleInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 tracking-tight">
               Historias reales
             </h2>
@@ -254,7 +283,7 @@ const Index = () => {
           </div>
 
           <div className="max-w-5xl mx-auto">
-            <div className="bg-white rounded-3xl p-12 shadow-sm mb-12">
+            <div ref={testimonialMainRef} className={cn("bg-white rounded-3xl p-12 shadow-sm mb-12 transition-all duration-700 ease-out", testimonialMainInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
               <div className="flex items-start space-x-6">
                 <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
                   <span className="text-white font-bold text-2xl">M</span>
@@ -276,7 +305,7 @@ const Index = () => {
             </div>
 
             <div className="grid md:grid-cols-2 gap-8">
-              <div className="bg-white rounded-3xl p-8 shadow-sm">
+              <div ref={testimonial1Ref} className={cn("bg-white rounded-3xl p-8 shadow-sm transition-all duration-700 ease-out", testimonial1InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
                 <div className="flex items-center mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-5 w-5 text-amber-400 fill-current" />
@@ -288,7 +317,7 @@ const Index = () => {
                 <cite className="text-gray-600 font-medium">Carlos, Belgrano</cite>
               </div>
 
-              <div className="bg-white rounded-3xl p-8 shadow-sm">
+              <div ref={testimonial2Ref} className={cn("bg-white rounded-3xl p-8 shadow-sm transition-all duration-700 ease-out delay-200", testimonial2InView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5')}>
                 <div className="flex items-center mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-5 w-5 text-amber-400 fill-current" />
