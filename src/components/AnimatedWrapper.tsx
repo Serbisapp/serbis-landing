@@ -21,8 +21,8 @@ export const AnimatedWrapper = ({ children, className, tag: Tag = 'div', thresho
       id,
       className: cn(
         className,
-        'opacity-0',
-        isInView && 'animate-fade-in-up'
+        'opacity-0 transform translate-y-8',
+        isInView && 'animate-slide-up-fade'
       ),
     },
     children

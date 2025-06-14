@@ -9,11 +9,15 @@ import {
   BadgeCheck,
   MessageCircle,
   Zap,
+  Sparkles,
+  Rocket,
+  Target,
 } from "lucide-react";
 import { AnimatedWrapper } from '@/components/AnimatedWrapper';
 
 const Index = () => {
     const [scrolled, setScrolled] = useState(false);
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
         const handleScroll = () => {
@@ -24,28 +28,66 @@ const Index = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            setMousePosition({ x: e.clientX, y: e.clientY });
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, []);
+
     const navClass = scrolled 
-        ? 'bg-background/80 backdrop-blur-xl border-b' 
+        ? 'bg-background/95 backdrop-blur-2xl border-b border-zinc-200/60 shadow-lg shadow-black/5' 
         : 'bg-transparent';
 
     return (
-        <div className="bg-background font-mulish text-zinc-800 min-h-screen" id="page-top">
+        <div className="bg-gradient-to-br from-gray-50 via-white to-gray-100 font-mulish text-zinc-800 min-h-screen overflow-hidden" id="page-top">
+            {/* Animated Background Elements */}
+            <div className="fixed inset-0 pointer-events-none">
+                <div 
+                    className="absolute w-96 h-96 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse"
+                    style={{
+                        transform: `translate(${mousePosition.x * 0.02}px, ${mousePosition.y * 0.02}px)`,
+                        transition: 'transform 0.3s ease-out'
+                    }}
+                />
+                <div 
+                    className="absolute top-1/2 right-0 w-96 h-96 bg-gradient-to-l from-pink-400/20 to-orange-400/20 rounded-full blur-3xl animate-pulse"
+                    style={{
+                        transform: `translate(${mousePosition.x * -0.02}px, ${mousePosition.y * -0.02}px)`,
+                        transition: 'transform 0.3s ease-out',
+                        animationDelay: '1s'
+                    }}
+                />
+            </div>
+
             {/* --- Navigation --- */}
-            <nav className={`fixed w-full top-0 z-50 transition-all duration-300 ${navClass}`}>
-                <div className="container mx-auto px-4 flex justify-between items-center py-3">
-                    <a href="#page-top" className="flex items-center gap-2 font-bold">
-                        <Apple className="text-primary w-7 h-7" />
-                        <span className="text-2xl font-newsreader font-semibold text-primary">Serbis</span>
+            <nav className={`fixed w-full top-0 z-50 transition-all duration-700 ${navClass}`}>
+                <div className="container mx-auto px-4 flex justify-between items-center py-4">
+                    <a href="#page-top" className="flex items-center gap-3 font-bold group">
+                        <div className="relative">
+                            <Apple className="text-primary w-8 h-8 transition-all duration-300 group-hover:scale-110 group-hover:rotate-12" />
+                            <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        </div>
+                        <span className="text-3xl font-newsreader font-bold text-primary bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+                            Serbis
+                        </span>
                     </a>
                     
                     <div className="hidden md:flex items-center space-x-2">
-                        <a href="#how-it-works" className="px-4 py-2 text-sm font-medium text-zinc-600 hover:text-primary rounded-lg transition-colors">Cómo Funciona</a>
-                        <a href="#why-serbis" className="px-4 py-2 text-sm font-medium text-zinc-600 hover:text-primary rounded-lg transition-colors">Nosotros</a>
-                        <Button variant="outline" className="rounded-full">Soy Proveedor</Button>
+                        <a href="#how-it-works" className="px-6 py-3 text-sm font-medium text-zinc-600 hover:text-primary rounded-2xl transition-all duration-300 hover:bg-zinc-100/50 hover:scale-105">
+                            Cómo Funciona
+                        </a>
+                        <a href="#why-serbis" className="px-6 py-3 text-sm font-medium text-zinc-600 hover:text-primary rounded-2xl transition-all duration-300 hover:bg-zinc-100/50 hover:scale-105">
+                            Nosotros
+                        </a>
+                        <Button variant="outline" className="rounded-full px-6 py-3 border-2 hover:scale-105 transition-all duration-300 hover:shadow-lg">
+                            Soy Proveedor
+                        </Button>
                     </div>
 
                     <div className="md:hidden">
-                        <Button variant="ghost" size="icon" className="text-zinc-700">
+                        <Button variant="ghost" size="icon" className="text-zinc-700 hover:scale-110 transition-transform duration-300">
                             <Menu />
                         </Button>
                     </div>
@@ -53,158 +95,249 @@ const Index = () => {
             </nav>
 
             {/* --- Hero Section --- */}
-            <header className="relative pt-32 pb-20 text-center">
+            <header className="relative pt-40 pb-32 text-center min-h-screen flex items-center justify-center">
                 <div className="container mx-auto px-4 relative z-10">
                     <AnimatedWrapper>
-                        <h1 className="font-newsreader font-bold text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-zinc-900 tracking-tighter max-w-4xl mx-auto">
-                            El estándar Premium para Servicios Locales
+                        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200/40 rounded-full px-6 py-3 mb-8">
+                            <Sparkles className="w-4 h-4 text-blue-500 animate-pulse" />
+                            <span className="text-sm font-medium text-blue-700">Lanzamiento Oficial</span>
+                        </div>
+                    </AnimatedWrapper>
+                    
+                    <AnimatedWrapper>
+                        <h1 className="font-newsreader font-black text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-transparent bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900 bg-clip-text tracking-tighter max-w-6xl mx-auto leading-tight">
+                            El estándar
+                            <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-pulse">
+                                Premium
+                            </span>
+                            para Servicios Locales
                         </h1>
                     </AnimatedWrapper>
+                    
                     <AnimatedWrapper className="[animation-delay:200ms]">
-                        <p className="mt-6 text-xl md:text-2xl text-zinc-600 max-w-2xl mx-auto">
-                           Conectá con profesionales en segundos, sin esfuerzo. Descubrí la manera más simple y moderna de resolver tus necesidades.
+                        <p className="mt-8 text-2xl md:text-3xl text-zinc-600 max-w-4xl mx-auto leading-relaxed font-light">
+                           Conectá con profesionales en <span className="font-semibold text-primary">segundos</span>, sin esfuerzo. 
+                           <br />Descubrí la manera más <span className="italic">simple y moderna</span> de resolver tus necesidades.
                         </p>
                     </AnimatedWrapper>
-                    <AnimatedWrapper className="mt-8 flex flex-col sm:flex-row gap-4 justify-center [animation-delay:400ms]">
-                        <Button size="lg" className="rounded-full text-lg font-semibold px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-blue-500/10 transition group">
-                            Publicá tu Pedido Ahora <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                        </Button>
+                    
+                    <AnimatedWrapper className="mt-12 [animation-delay:400ms]">
+                        <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                            <Button size="lg" className="group relative overflow-hidden rounded-full text-xl font-bold px-12 py-8 bg-gradient-to-r from-primary via-blue-600 to-purple-600 text-white hover:shadow-2xl hover:shadow-blue-500/25 transition-all duration-500 hover:scale-105 border-0">
+                                <span className="relative z-10 flex items-center gap-3">
+                                    Publicá tu Pedido Ahora 
+                                    <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform duration-300" />
+                                </span>
+                                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            </Button>
+                            
+                            <Button variant="outline" size="lg" className="rounded-full text-xl font-medium px-12 py-8 border-2 border-zinc-300 hover:border-primary hover:scale-105 transition-all duration-300 hover:shadow-lg">
+                                Ver Demo
+                            </Button>
+                        </div>
                     </AnimatedWrapper>
-                     <AnimatedWrapper className="mt-16 [animation-delay:600ms]">
-                        <div className="relative max-w-5xl mx-auto">
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-64 bg-primary/10 rounded-full blur-3xl" />
-                            <img src="https://images.unsplash.com/photo-1483058712412-4245e9b90334?w=800&q=80&auto=format" alt="App preview on a modern setup" className="relative rounded-2xl shadow-2xl border-4 border-white" />
+
+                    <AnimatedWrapper className="mt-20 [animation-delay:600ms]">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 border border-zinc-200/50 hover:scale-105 transition-all duration-500 hover:shadow-xl">
+                                <div className="text-4xl font-bold text-primary mb-2">+10K</div>
+                                <div className="text-zinc-600 font-medium">Usuarios Activos</div>
+                            </div>
+                            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 border border-zinc-200/50 hover:scale-105 transition-all duration-500 hover:shadow-xl">
+                                <div className="text-4xl font-bold text-primary mb-2">98%</div>
+                                <div className="text-zinc-600 font-medium">Satisfacción</div>
+                            </div>
+                            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 border border-zinc-200/50 hover:scale-105 transition-all duration-500 hover:shadow-xl">
+                                <div className="text-4xl font-bold text-primary mb-2">5⭐</div>
+                                <div className="text-zinc-600 font-medium">Calificación</div>
+                            </div>
                         </div>
                     </AnimatedWrapper>
                 </div>
             </header>
             
             {/* --- How it Works Section --- */}
-            <AnimatedWrapper tag="section" id="how-it-works" className="py-24 bg-white border-y">
+            <AnimatedWrapper tag="section" id="how-it-works" className="py-32 bg-gradient-to-b from-white to-gray-50 relative">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-center font-newsreader font-bold text-4xl md:text-5xl mb-4 text-zinc-900">Simple. Rápido. Seguro.</h2>
-                    <p className="text-center text-lg text-zinc-600 mb-16">Tu solución en tres simples pasos.</p>
-                    <div className="grid md:grid-cols-3 gap-8">
-                        <div className="text-center p-2">
-                            <div className="text-6xl font-bold font-newsreader text-primary/20 mb-4">1</div>
-                            <h3 className="font-semibold text-xl mb-2 text-zinc-900">Describí tu Necesidad</h3>
-                            <p className="text-zinc-600">Contanos qué servicio necesitás. Es simple y elegante.</p>
-                        </div>
-                        <div className="text-center p-2">
-                            <div className="text-6xl font-bold font-newsreader text-primary/20 mb-4">2</div>
-                            <h3 className="font-semibold text-xl mb-2 text-zinc-900">Conectate al Instante</h3>
-                            <p className="text-zinc-600">Encontrá opciones premium en tu zona al instante.</p>
-                        </div>
-                        <div className="text-center p-2">
-                            <div className="text-6xl font-bold font-newsreader text-primary/20 mb-4">3</div>
-                            <h3 className="font-semibold text-xl mb-2 text-zinc-900">Resolvé y Calificá</h3>
-                            <p className="text-zinc-600">Coordiná y calificá la experiencia. Todo desde la app.</p>
-                        </div>
+                    <div className="text-center mb-20">
+                        <h2 className="font-newsreader font-black text-5xl md:text-7xl mb-6 text-transparent bg-gradient-to-r from-zinc-900 to-zinc-700 bg-clip-text">
+                            Simple. Rápido. Seguro.
+                        </h2>
+                        <p className="text-2xl text-zinc-600 font-light">Tu solución en tres simples pasos.</p>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
+                        <StepCard 
+                            number="1" 
+                            icon={Target}
+                            title="Describí tu Necesidad" 
+                            description="Contanos qué servicio necesitás. Es simple y elegante."
+                            delay="0ms"
+                        />
+                        <StepCard 
+                            number="2" 
+                            icon={Zap}
+                            title="Conectate al Instante" 
+                            description="Encontrá opciones premium en tu zona al instante."
+                            delay="200ms"
+                        />
+                        <StepCard 
+                            number="3" 
+                            icon={Rocket}
+                            title="Resolvé y Calificá" 
+                            description="Coordiná y calificá la experiencia. Todo desde la app."
+                            delay="400ms"
+                        />
                     </div>
                 </div>
             </AnimatedWrapper>
 
-            {/* --- Feature Sections --- */}
-            <div className="space-y-32 py-32 overflow-hidden">
-                <FeatureSection
-                    title="Explorá el Home"
-                    description="Describí el servicio que necesitas, nosotros elegimos profesionalmente el experto perfecto para tu necesidad en tu área. Todo en menos de 5 segundos, en una experiencia premium."
-                    imageUrl="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=540&q=80&auto=format"
-                    imageAlt="App home screen"
-                />
-                <FeatureSection
-                    title="Comunicación Segura"
-                    description="Negociá el precio y cerrá los detalles usando nuestro chat ultra seguro, con envío de imágenes y archivos. Confiable, elegante y práctico."
-                    imageUrl="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=540&q=80&auto=format"
-                    imageAlt="App chat screen"
-                    reverse
-                />
-                <FeatureSection
-                    title="Seguí el Estado de tus Pedidos"
-                    description="Accedé al progreso de tus pedidos en tiempo real, desde la publicación hasta la finalización. Todo claro y visual."
-                    imageUrl="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=540&q=80&auto=format"
-                    imageAlt="App status screen"
-                />
-            </div>
-            
             {/* --- Why Serbis Section --- */}
-            <AnimatedWrapper tag="section" id="why-serbis" className="py-24 bg-white border-y">
+            <AnimatedWrapper tag="section" id="why-serbis" className="py-32 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-center font-newsreader font-bold text-4xl md:text-5xl mb-4 text-zinc-900">¿Por qué elegir Serbis?</h2>
-                     <p className="text-center text-lg text-zinc-600 mb-16 max-w-2xl mx-auto">Nos enfocamos en la confianza, la calidad y la velocidad para brindarte una experiencia inigualable.</p>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        <ReasonCard icon={Users} title="Red real y confiable" description="Personas de tu comunidad, listos para ayudar." />
-                        <ReasonCard icon={BadgeCheck} title="Verificación y reviews" description="Elegí seguro, con calificaciones confiables." />
-                        <ReasonCard icon={MessageCircle} title="Comunicación directa" description="Todo lo que necesitás en una sola app." />
-                        <ReasonCard icon={Zap} title="Premium & Rápido" description="Encontrá lo que buscás y resolvé ya." />
+                    <div className="text-center mb-20">
+                        <h2 className="font-newsreader font-black text-5xl md:text-7xl mb-6 text-transparent bg-gradient-to-r from-zinc-900 to-zinc-700 bg-clip-text">
+                            ¿Por qué elegir Serbis?
+                        </h2>
+                        <p className="text-2xl text-zinc-600 max-w-3xl mx-auto font-light">
+                            Nos enfocamos en la confianza, la calidad y la velocidad para brindarte una experiencia inigualable.
+                        </p>
+                    </div>
+                    
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+                        <ReasonCard 
+                            icon={Users} 
+                            title="Red real y confiable" 
+                            description="Personas de tu comunidad, listos para ayudar."
+                            delay="0ms"
+                        />
+                        <ReasonCard 
+                            icon={BadgeCheck} 
+                            title="Verificación y reviews" 
+                            description="Elegí seguro, con calificaciones confiables."
+                            delay="100ms"
+                        />
+                        <ReasonCard 
+                            icon={MessageCircle} 
+                            title="Comunicación directa" 
+                            description="Todo lo que necesitás en una sola app."
+                            delay="200ms"
+                        />
+                        <ReasonCard 
+                            icon={Zap} 
+                            title="Premium & Rápido" 
+                            description="Encontrá lo que buscás y resolvé ya."
+                            delay="300ms"
+                        />
                     </div>
                 </div>
             </AnimatedWrapper>
             
             {/* --- Final CTA --- */}
-            <AnimatedWrapper tag="section" className="py-24 text-center">
+            <AnimatedWrapper tag="section" className="py-32 text-center bg-gradient-to-b from-white to-gray-50 relative">
                 <div className="container mx-auto px-4">
-                    <h2 className="font-newsreader font-bold text-4xl md:text-5xl text-zinc-900">¿Listo para empezar?</h2>
-                    <p className="mt-4 text-lg text-zinc-600 max-w-xl mx-auto">Descargá la app hoy mismo y descubrí por qué Serbis es la elección preferida para servicios locales.</p>
-                     <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 justify-center">
-                        <Button variant="outline" className="w-48 h-14 border-2 bg-white text-zinc-900 flex items-center gap-2 shadow-sm rounded-2xl hover:bg-zinc-100 transition-all">
-                            <Apple className="w-7 h-7" />
-                            <div className="text-left">
-                                <div className="text-xs -mb-1 opacity-60">Descargala en el</div>
-                                <div className="text-xl font-semibold leading-tight">App Store</div>
-                            </div>
-                        </Button>
-                        <Button variant="outline" className="w-48 h-14 border-2 bg-white text-zinc-900 flex items-center gap-2 shadow-sm rounded-2xl hover:bg-zinc-100 transition-all">
-                            <svg viewBox="30 336.7 120.9 129.2" className="w-6 h-6 fill-current" aria-hidden="true">
-                                <path d="M153.7 366.2c-3.8 4.5-11.2 8.1-17.3 8.4-1.4 0-2.5.2-3.6.2-4.8 0-11.8-2.1-15.3-5.2-3.5-3.1-6.2-7.3-7.2-12.2-1-4.9-.7-9.5 1.1-13.8 1.8-4.3 4.7-8.3 8.8-11.1 4.1-2.8 9.2-4.3 14-4.3 1.5 0 2.8.2 3.9.2 4.9 0 11.2 2.3 14.5 5.5 1.1 1.1 1.9 2.4 2.4 3.8 2.3-1.5 4.3-3.1 5.9-4.8.2-.2.4-.4.5-.5 3.1-3.3 5.4-7.4 5.4-12.3 0-4-.9-7.1-2.4-9.5-1.5-2.4-3.6-4.2-6.2-5.4-2.6-1.2-5.6-1.8-8.7-1.8-3.1 0-6.1.6-8.7 1.8-2.6 1.2-4.7 3-6.2 5.4s-2.4 5.5-2.4 9.5c0 4.9 2.3 9.1 5.4 12.3.1.1.3.3.5.5 1.6 1.7 3.6 3.3 5.9 4.8-.4 1.4-.9 2.7-1.6 4-3.3 6.4-8.2 10-14.5 10-1.1 0-2.4-.1-3.9-.2-4.8 0-9.9 1.5-14 4.3-4.1 2.8-7 6.8-8.8 11.1-1.8 4.3-2.1 8.9-1.1 13.8 1 4.9 3.7 9.1 7.2 12.2 3.5 3.1 8.5 5.2 15.3 5.2 1.1 0 2.2-.1 3.6-.2 6.1-.3 13.5-3.9 17.3-8.4 1.2-1.4 2.2-3.3 2.9-5.5-2.9-1.3-5.5-3.1-7.5-5.3zm-11.2-22.3c-2.3 2.6-5.4 4.1-8.9 4.1-1.1 0-2-.1-2.9-.2-3.3-.4-6.2-2.1-8.2-4.5-2-2.4-3.1-5.4-3.1-8.7 0-3.3 1.1-6.3 3.1-8.7 2-2.4 4.9-4.1 8.2-4.5 1-.1 1.9-.2 2.9-.2 3.5 0 6.6 1.5 8.9 4.1 1.9 2.1 2.8 4.7 2.8 7.6.1 2.8-1 5.5-2.8 7.6z" />
-                            </svg>
-                            <div className="text-left">
-                                <div className="text-xs -mb-1 opacity-60">Disponible en</div>
-                                <div className="text-xl font-semibold leading-tight">Google Play</div>
-                            </div>
-                        </Button>
+                    <div className="max-w-4xl mx-auto">
+                        <h2 className="font-newsreader font-black text-5xl md:text-7xl text-transparent bg-gradient-to-r from-zinc-900 to-zinc-700 bg-clip-text mb-6">
+                            ¿Listo para empezar?
+                        </h2>
+                        <p className="text-2xl text-zinc-600 max-w-3xl mx-auto mb-12 font-light">
+                            Descargá la app hoy mismo y descubrí por qué Serbis es la elección preferida para servicios locales.
+                        </p>
+                        
+                        <div className="flex flex-col sm:flex-row items-center gap-6 justify-center">
+                            <AppStoreButton 
+                                icon={Apple}
+                                title="App Store"
+                                subtitle="Descargala en el"
+                            />
+                            <AppStoreButton 
+                                icon={({ className }: { className?: string }) => (
+                                    <svg viewBox="30 336.7 120.9 129.2" className={className} fill="currentColor">
+                                        <path d="M119.8,414.3c0,0.9,0.8,1.6,1.6,1.6h4.8c0.9,0,1.6-0.8,1.6-1.6V369c0-0.9-0.8-1.6-1.6-1.6h-4.8c-0.9,0-1.6,0.8-1.6,1.6V414.3z M119.8 336.7c0 0.9 0.8 1.6 1.6 1.6h4.8c0.9 0 1.6-0.8 1.6-1.6v-45.3c0-0.9-0.8-1.6-1.6-1.6h-4.8c-0.9 0-1.6 0.8-1.6 1.6V336.7z" />
+                                    </svg>
+                                )}
+                                title="Google Play"
+                                subtitle="Disponible en"
+                            />
+                        </div>
                     </div>
                 </div>
             </AnimatedWrapper>
             
             {/* --- Footer --- */}
-            <footer id="about-us-footer" className="bg-white text-zinc-500 py-12 border-t">
-                <div className="container mx-auto px-4 text-center text-sm space-y-2">
-                    <p>© Serbis 2025. Todos los derechos reservados.</p>
-                    <p>Buenos Aires, Argentina</p>
-                    <a href="mailto:inaki.iturriaga@serbis.app" className="hover:text-primary transition-colors">inaki.iturriaga@serbis.app</a>
+            <footer className="bg-gradient-to-r from-zinc-900 to-zinc-800 text-zinc-400 py-16">
+                <div className="container mx-auto px-4 text-center space-y-4">
+                    <div className="flex justify-center mb-6">
+                        <Apple className="w-8 h-8 text-white" />
+                    </div>
+                    <p className="text-lg">© Serbis 2025. Todos los derechos reservados.</p>
+                    <p className="text-zinc-500">Buenos Aires, Argentina</p>
+                    <a href="mailto:inaki.iturriaga@serbis.app" className="text-blue-400 hover:text-blue-300 transition-colors text-lg font-medium">
+                        inaki.iturriaga@serbis.app
+                    </a>
                 </div>
             </footer>
         </div>
     );
 };
 
-// Helper components for page sections
-const FeatureSection = ({ title, description, imageUrl, imageAlt, reverse = false }: { title: string, description: string, imageUrl: string, imageAlt: string, reverse?: boolean }) => (
-    <AnimatedWrapper tag="section">
-        <div className="container mx-auto px-4">
-            <div className={`grid md:grid-cols-2 gap-12 md:gap-20 items-center`}>
-                <div className={`text-center md:text-left ${reverse ? 'md:order-last' : ''}`}>
-                     <h2 className="font-newsreader font-bold text-4xl mb-4 text-zinc-900">{title}</h2>
-                     <p className="text-zinc-600 leading-relaxed text-lg">{description}</p>
-                </div>
-                <div className="relative flex justify-center items-center">
-                    <div className="absolute inset-0 bg-primary/10 rounded-full blur-3xl" />
-                    <img src={imageUrl} alt={imageAlt} className="relative rounded-2xl shadow-xl border-2 border-white w-full max-w-lg" />
+// Enhanced Step Card Component
+const StepCard = ({ number, icon: Icon, title, description, delay }: { 
+    number: string, 
+    icon: React.ElementType, 
+    title: string, 
+    description: string,
+    delay: string
+}) => (
+    <AnimatedWrapper className={`group cursor-pointer [animation-delay:${delay}]`}>
+        <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 text-center border border-zinc-200/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/10 hover:bg-white">
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-gradient-to-r from-primary to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                {number}
+            </div>
+            <div className="mb-6 flex justify-center">
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                    <Icon className="w-8 h-8 text-primary" />
                 </div>
             </div>
+            <h3 className="font-bold text-2xl mb-4 text-zinc-900">{title}</h3>
+            <p className="text-zinc-600 text-lg leading-relaxed">{description}</p>
         </div>
     </AnimatedWrapper>
 );
 
-const ReasonCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
-    <div className="bg-white rounded-2xl p-6 text-center border transition-all hover:shadow-lg hover:-translate-y-1">
-        <div className="inline-block bg-primary/10 text-primary p-3 rounded-xl mb-4">
-            <Icon className="w-7 h-7" />
+// Enhanced Reason Card Component
+const ReasonCard = ({ icon: Icon, title, description, delay }: { 
+    icon: React.ElementType, 
+    title: string, 
+    description: string,
+    delay: string
+}) => (
+    <AnimatedWrapper className={`group cursor-pointer [animation-delay:${delay}]`}>
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 text-center border border-zinc-200/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/10 hover:bg-white h-full">
+            <div className="mb-6 flex justify-center">
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                    <Icon className="w-8 h-8 text-primary" />
+                </div>
+            </div>
+            <h3 className="font-bold text-xl mb-4 text-zinc-900">{title}</h3>
+            <p className="text-zinc-600 leading-relaxed">{description}</p>
         </div>
-        <h3 className="font-semibold text-lg mb-2 text-zinc-900">{title}</h3>
-        <p className="text-zinc-600 text-sm">{description}</p>
-    </div>
+    </AnimatedWrapper>
+);
+
+// App Store Button Component
+const AppStoreButton = ({ icon: Icon, title, subtitle }: {
+    icon: React.ElementType,
+    title: string,
+    subtitle: string
+}) => (
+    <button className="group w-60 h-16 border-2 border-zinc-300 bg-white text-zinc-900 flex items-center gap-4 shadow-lg rounded-2xl hover:bg-zinc-50 hover:border-primary hover:scale-105 transition-all duration-300 px-6">
+        <Icon className="w-8 h-8 group-hover:scale-110 transition-transform duration-300" />
+        <div className="text-left">
+            <div className="text-xs text-zinc-500 leading-tight">{subtitle}</div>
+            <div className="text-xl font-bold leading-tight">{title}</div>
+        </div>
+    </button>
 );
 
 export default Index;
