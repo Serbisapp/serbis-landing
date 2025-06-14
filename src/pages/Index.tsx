@@ -17,6 +17,7 @@ import {
   Star,
 } from "lucide-react";
 import { AnimatedWrapper } from '@/components/AnimatedWrapper';
+import { HorizontalScroll3D } from '@/components/HorizontalScroll3D';
 
 const Index = () => {
     const [scrolled, setScrolled] = useState(false);
@@ -174,6 +175,9 @@ const Index = () => {
                     </AnimatedWrapper>
                 </div>
             </header>
+
+            {/* --- 3D Horizontal Scroll Section --- */}
+            <HorizontalScroll3D />
             
             {/* --- How it Works Section --- */}
             <AnimatedWrapper tag="section" id="como-funciona" className="py-32 bg-gradient-to-b from-white to-blue-50/30 relative">
