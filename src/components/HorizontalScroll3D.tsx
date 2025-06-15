@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
@@ -368,17 +369,20 @@ export const HorizontalScroll3D = () => {
             className="flex-shrink-0 w-screen h-full flex items-center justify-end pr-8 md:pr-32"
           >
             <div className="text-right max-w-xl">
-              <h2 className="text-3xl md:text-4xl lg:text-6xl font-black mb-4 text-white">
-                {section.title}
-              </h2>
-              <p className="text-base md:text-lg lg:text-xl text-slate-200 mb-6">
-                {section.subtitle}
-              </p>
-              
-              <div className={`inline-block bg-gradient-to-r from-${section.color}-500/20 to-${section.color}-400/20 rounded-lg px-4 md:px-6 py-2 md:py-3 backdrop-blur-sm border border-${section.color}-500/30`}>
-                <span className={`text-${section.color}-400 font-semibold text-xs md:text-sm`}>
-                  {section.feature}
-                </span>
+              {/* Text with improved readability */}
+              <div className="bg-slate-900/80 backdrop-blur-lg rounded-2xl p-8 border border-slate-700/50">
+                <h2 className="text-3xl md:text-4xl lg:text-6xl font-black mb-4 text-white">
+                  {section.title}
+                </h2>
+                <p className="text-base md:text-lg lg:text-xl text-slate-200 mb-6">
+                  {section.subtitle}
+                </p>
+                
+                <div className={`inline-block bg-gradient-to-r from-${section.color}-500/20 to-${section.color}-400/20 rounded-lg px-4 md:px-6 py-2 md:py-3 backdrop-blur-sm border border-${section.color}-500/30`}>
+                  <span className={`text-${section.color}-400 font-semibold text-xs md:text-sm`}>
+                    {section.feature}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -399,11 +403,11 @@ export const HorizontalScroll3D = () => {
         ))}
       </div>
       
-      {/* Scroll Indicator - Hidden on mobile */}
+      {/* Scroll Indicator - Hidden on mobile, translated to Spanish */}
       {!mobile && (
         <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-white/60 text-sm z-30">
           <div className="flex items-center space-x-2">
-            <span>Scroll slowly for best experience</span>
+            <span>Desplázate lentamente para mejor experiencia</span>
             <div className="w-1 h-6 bg-white/30 rounded-full overflow-hidden">
               <div 
                 className="w-full bg-emerald-400 rounded-full transition-all duration-300"

@@ -320,7 +320,7 @@ const Index = () => {
                             Probá <span className="bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">Serbis</span>
                         </h2>
                         <p className="text-xl text-slate-400 max-w-3xl mx-auto mb-12 font-light">
-                            Únete al futuro de los servicios locales. Descargá la app y resolvé tu problema en 5 segundos.
+                            Descargá la app y resolvé tu problema en 5 segundos.
                         </p>
                         
                         <div className="flex flex-col sm:flex-row items-center gap-6 justify-center">
@@ -332,7 +332,7 @@ const Index = () => {
                 </div>
             </AnimatedWrapper>
             
-            {/* Footer */}
+            {/* Footer - Simplified */}
             <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 py-16">
                 <div className="container mx-auto px-6">
                     <div className="text-center space-y-6">
@@ -343,8 +343,7 @@ const Index = () => {
                                 className="w-12 h-12 rounded-lg shadow-lg shadow-emerald-500/25"
                             />
                         </div>
-                        <h3 className="text-2xl font-bold text-slate-200 mb-4">Serbis</h3>
-                        <p className="text-slate-500">El futuro de los servicios locales • Fase Piloto</p>
+                        <p className="text-slate-500">Fase Piloto</p>
                         <div className="pt-8 border-t border-slate-800">
                             <p className="text-slate-500">© 2025 Serbis. Zona Norte AMBA, Argentina</p>
                             <a href="mailto:hello@serbis.tech" className="text-emerald-400 hover:text-emerald-300 transition-colors text-lg font-medium mt-2 inline-block">
