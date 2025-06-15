@@ -77,7 +77,7 @@ const Floating3DText = ({ text, position, color }: {
 };
 
 // Main 3D Scene
-const Scene3D = ({ scrollProgress }: { scrollProgress: number }) => {
+const Scene3D = () => {
   return (
     <>
       <ambientLight intensity={0.5} />
@@ -102,8 +102,6 @@ const Scene3D = ({ scrollProgress }: { scrollProgress: number }) => {
         enablePan={false} 
         autoRotate 
         autoRotateSpeed={0.5}
-        enableDamping
-        dampingFactor={0.05}
       />
     </>
   );
@@ -179,7 +177,7 @@ export const HorizontalScroll3D = () => {
       {/* Fixed 3D Canvas Background */}
       <div className="absolute inset-0 z-0">
         <Canvas camera={{ position: [0, 0, 8], fov: 60 }}>
-          <Scene3D scrollProgress={scrollProgress} />
+          <Scene3D />
         </Canvas>
       </div>
       
