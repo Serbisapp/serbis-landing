@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -77,9 +78,11 @@ const Index = () => {
                 <div className="container mx-auto px-6 flex justify-between items-center py-6">
                     <a href="#page-top" className="flex items-center gap-3 font-bold group">
                         <div className="relative">
-                            <div className="w-10 h-10 bg-gradient-to-r from-emerald-400 to-blue-500 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 shadow-lg shadow-emerald-500/25">
-                                <span className="text-slate-950 font-black text-lg">S</span>
-                            </div>
+                            <img 
+                                src="/lovable-uploads/9a63b71d-a687-4f28-97c2-dfa5cb7bef35.png" 
+                                alt="Serbis Logo" 
+                                className="w-10 h-10 rounded-lg transition-all duration-300 group-hover:scale-110 shadow-lg shadow-emerald-500/25"
+                            />
                         </div>
                         <span className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">
                             Serbis
@@ -343,9 +346,11 @@ const Index = () => {
                 <div className="container mx-auto px-6">
                     <div className="text-center space-y-6">
                         <div className="flex justify-center mb-8">
-                            <div className="w-12 h-12 bg-gradient-to-r from-emerald-400 to-blue-500 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/25">
-                                <span className="text-slate-950 font-black text-xl">S</span>
-                            </div>
+                            <img 
+                                src="/lovable-uploads/9a63b71d-a687-4f28-97c2-dfa5cb7bef35.png" 
+                                alt="Serbis Logo" 
+                                className="w-12 h-12 rounded-lg shadow-lg shadow-emerald-500/25"
+                            />
                         </div>
                         <h3 className="text-2xl font-bold text-slate-200 mb-4">Serbis</h3>
                         <p className="text-slate-500">El futuro de los servicios locales • Fase Piloto</p>

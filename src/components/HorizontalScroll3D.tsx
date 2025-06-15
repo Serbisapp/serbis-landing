@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
@@ -49,12 +50,12 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   const groupRef = useRef<Group>(null);
   const mobile = isMobile();
   
-  // Only load textures on desktop
-  const profileTexture = !mobile ? useLoader(TextureLoader, 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=200&h=400&fit=crop') : null;
-  const dashboardTexture = !mobile ? useLoader(TextureLoader, 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=200&h=400&fit=crop') : null;
-  const codeTexture = !mobile ? useLoader(TextureLoader, 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=200&h=400&fit=crop') : null;
+  // Load the app screenshots for the phone display
+  const taskTexture = !mobile ? useLoader(TextureLoader, '/lovable-uploads/bba53f7f-ee96-480d-ad5e-325e9823282b.png') : null;
+  const chatTexture = !mobile ? useLoader(TextureLoader, '/lovable-uploads/8d11efbb-db2e-4ceb-9f8e-6bdf05247c33.png') : null;
+  const statusTexture = !mobile ? useLoader(TextureLoader, '/lovable-uploads/98092611-df32-4c24-9a64-4a9a804d80dd.png') : null;
   
-  const frontTextures = mobile ? [] : [profileTexture, dashboardTexture, codeTexture];
+  const frontTextures = mobile ? [] : [taskTexture, chatTexture, statusTexture];
   const currentSection = Math.floor(scrollProgress * 2.99);
   
   const rotationY = scrollProgress * (mobile ? 6.28 : 12.56); // Reduced rotation on mobile
