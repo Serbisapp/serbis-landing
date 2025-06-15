@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useLayoutEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
@@ -160,6 +161,11 @@ export const HorizontalScroll3D = () => {
       color: "purple"
     }
   ];
+
+  // Wait until mobile status is determined to prevent flash of incorrect content
+  if (mobile === undefined) {
+    return <div className="h-screen bg-slate-900" />;
+  }
 
   // Early return for mobile - NO Canvas rendering at all
   if (mobile) {
