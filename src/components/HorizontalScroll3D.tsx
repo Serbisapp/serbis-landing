@@ -15,43 +15,43 @@ const GridBackground = ({ scrollProgress }: { scrollProgress: number }) => {
   useFrame((state) => {
     if (gridRef.current) {
       // Subtle movement with scroll
-      gridRef.current.position.z = -15 + scrollProgress * 5;
-      gridRef.current.rotation.y = scrollProgress * Math.PI * 0.1;
-      // Gentle floating animation
-      gridRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.5;
+      gridRef.current.position.z = -20 + scrollProgress * 3;
+      gridRef.current.rotation.y = scrollProgress * Math.PI * 0.05;
+      // Very gentle floating animation
+      gridRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.2) * 0.3;
     }
   });
 
-  // Create grid lines
+  // Create grid lines - more subtle
   const gridLines = [];
-  const gridSize = 20;
-  const divisions = 20;
+  const gridSize = 15;
+  const divisions = 15;
   
   for (let i = 0; i <= divisions; i++) {
     const position = (i / divisions - 0.5) * gridSize;
     // Vertical lines
     gridLines.push(
-      <mesh key={`v${i}`} position={[position, 0, -15]} rotation={[0, 0, 0]}>
-        <boxGeometry args={[0.02, gridSize, 0.02]} />
+      <mesh key={`v${i}`} position={[position, 0, -20]} rotation={[0, 0, 0]}>
+        <boxGeometry args={[0.01, gridSize, 0.01]} />
         <meshStandardMaterial 
-          color="#1f2937" 
+          color="#334155" 
           transparent 
-          opacity={0.15}
-          emissive="#1f2937"
-          emissiveIntensity={0.1}
+          opacity={0.08}
+          emissive="#334155"
+          emissiveIntensity={0.05}
         />
       </mesh>
     );
     // Horizontal lines
     gridLines.push(
-      <mesh key={`h${i}`} position={[0, position, -15]} rotation={[0, 0, Math.PI / 2]}>
-        <boxGeometry args={[0.02, gridSize, 0.02]} />
+      <mesh key={`h${i}`} position={[0, position, -20]} rotation={[0, 0, Math.PI / 2]}>
+        <boxGeometry args={[0.01, gridSize, 0.01]} />
         <meshStandardMaterial 
-          color="#1f2937" 
+          color="#334155" 
           transparent 
-          opacity={0.15}
-          emissive="#1f2937"
-          emissiveIntensity={0.1}
+          opacity={0.08}
+          emissive="#334155"
+          emissiveIntensity={0.05}
         />
       </mesh>
     );
@@ -64,30 +64,30 @@ const GridBackground = ({ scrollProgress }: { scrollProgress: number }) => {
   );
 };
 
-// Orbiting Particles Component - positioned around the phone
-const OrbitingParticles = ({ scrollProgress }: { scrollProgress: number }) => {
+// Simplified Small Particles Component - much closer to phone
+const SmallParticles = ({ scrollProgress }: { scrollProgress: number }) => {
   const groupRef = useRef<Group>(null);
   
   useFrame((state) => {
     if (groupRef.current) {
-      // Orbit around the phone with scroll influence
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.2 + scrollProgress * Math.PI * 2;
-      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.1) * 0.2;
-      groupRef.current.rotation.z = Math.cos(state.clock.elapsedTime * 0.15) * 0.1;
+      // Very slow rotation around the phone
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.05 + scrollProgress * Math.PI;
+      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.03) * 0.05;
     }
   });
 
-  const particles = Array.from({ length: 8 }, (_, i) => {
-    const angle = (i / 8) * Math.PI * 2;
-    const radius = 4 + Math.sin(i) * 1;
+  // Only 4 small particles, very close to the phone
+  const particles = Array.from({ length: 4 }, (_, i) => {
+    const angle = (i / 4) * Math.PI * 2;
+    const radius = 1.8; // Much closer to phone
     return {
       position: [
         Math.cos(angle) * radius,
-        Math.sin(angle * 0.5) * 2,
-        Math.sin(angle) * radius
+        Math.sin(angle * 0.3) * 0.8,
+        Math.sin(angle) * radius * 0.5
       ] as [number, number, number],
-      color: ['#10b981', '#3b82f6', '#8b5cf6'][i % 3],
-      scale: 0.1 + Math.random() * 0.1,
+      color: ['#10b981', '#3b82f6'][i % 2],
+      scale: 0.05,
     };
   });
 
@@ -95,15 +95,15 @@ const OrbitingParticles = ({ scrollProgress }: { scrollProgress: number }) => {
     <group ref={groupRef}>
       {particles.map((particle, i) => (
         <mesh key={i} position={particle.position} scale={particle.scale}>
-          <sphereGeometry args={[0.2, 8, 8]} />
+          <sphereGeometry args={[0.15, 6, 6]} />
           <meshStandardMaterial 
             color={particle.color} 
             transparent 
-            opacity={0.6}
-            metalness={0.3}
-            roughness={0.4}
+            opacity={0.4}
+            metalness={0.2}
+            roughness={0.6}
             emissive={particle.color}
-            emissiveIntensity={0.2}
+            emissiveIntensity={0.1}
           />
         </mesh>
       ))}
@@ -111,46 +111,41 @@ const OrbitingParticles = ({ scrollProgress }: { scrollProgress: number }) => {
   );
 };
 
-// Flying Elements Component - background elements
+// Simplified Flying Elements Component - fewer and smaller
 const FlyingElements = () => {
   const groupRef = useRef<Group>(null);
   
   useFrame((state) => {
     if (groupRef.current) {
-      // Reduced rotation speed from 0.1 to 0.03
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.03;
-      // Reduced oscillation speed from 0.05 to 0.02
-      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.02) * 0.1;
+      // Very slow rotation
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.01;
+      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.008) * 0.05;
     }
   });
 
-  const elements = Array.from({ length: 12 }, (_, i) => ({
+  // Only 6 elements instead of 12, smaller and further away
+  const elements = Array.from({ length: 6 }, (_, i) => ({
     position: [
-      (Math.random() - 0.5) * 20,
-      (Math.random() - 0.5) * 15,
-      (Math.random() - 0.5) * 15 - 5
+      (Math.random() - 0.5) * 25,
+      (Math.random() - 0.5) * 18,
+      (Math.random() - 0.5) * 12 - 8
     ] as [number, number, number],
-    color: ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b'][Math.floor(Math.random() * 4)],
-    scale: Math.random() * 0.3 + 0.1,
-    // Reduced rotation speed from 0.02 to 0.008
-    rotationSpeed: (Math.random() - 0.5) * 0.008,
+    color: ['#10b981', '#3b82f6'][Math.floor(Math.random() * 2)],
+    scale: Math.random() * 0.15 + 0.05, // Much smaller
+    rotationSpeed: (Math.random() - 0.5) * 0.003, // Much slower
   }));
 
   return (
     <group ref={groupRef}>
       {elements.map((el, i) => (
         <mesh key={i} position={el.position} scale={el.scale}>
-          {Math.random() > 0.5 ? (
-            <boxGeometry args={[0.5, 0.5, 0.5]} />
-          ) : (
-            <sphereGeometry args={[0.3, 8, 8]} />
-          )}
+          <boxGeometry args={[0.3, 0.3, 0.3]} />
           <meshStandardMaterial 
             color={el.color} 
             transparent 
-            opacity={0.4}
-            metalness={0.5}
-            roughness={0.3}
+            opacity={0.25}
+            metalness={0.3}
+            roughness={0.5}
           />
         </mesh>
       ))}
@@ -270,31 +265,24 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   );
 };
 
-// 3D Scene with Realistic Phone, Flying Elements, Orbiting Particles, and Grid Background
+// 3D Scene with Realistic Phone and Simplified Elements
 const Scene3D = ({ scrollProgress }: { scrollProgress: number }) => {
   return (
     <>
-      <ambientLight intensity={0.6} />
+      <ambientLight intensity={0.4} />
       <directionalLight 
-        position={[10, 10, 5]} 
-        intensity={1.8} 
-        castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
-      />
-      <pointLight position={[-10, -10, -5]} intensity={0.8} color="#4facfe" />
-      <pointLight position={[10, -10, 5]} intensity={0.6} color="#00f2fe" />
-      <spotLight 
-        position={[0, 20, 10]} 
-        angle={0.15} 
-        penumbra={1} 
+        position={[8, 8, 5]} 
         intensity={1.2} 
-        castShadow 
+        castShadow
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
       />
+      <pointLight position={[-8, -8, -5]} intensity={0.4} color="#1e40af" />
+      <pointLight position={[8, -8, 5]} intensity={0.3} color="#059669" />
       
       <GridBackground scrollProgress={scrollProgress} />
       <FlyingElements />
-      <OrbitingParticles scrollProgress={scrollProgress} />
+      <SmallParticles scrollProgress={scrollProgress} />
       <RealisticPhone3D scrollProgress={scrollProgress} />
     </>
   );
@@ -371,7 +359,7 @@ export const HorizontalScroll3D = () => {
   };
 
   return (
-    <div ref={containerRef} className="relative h-screen overflow-hidden bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800">
+    <div ref={containerRef} className="relative h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900">
       {/* Fixed 3D Canvas Background with Phone */}
       <div className="absolute inset-0 z-0">
         <Canvas 
@@ -382,7 +370,7 @@ export const HorizontalScroll3D = () => {
           }}
           shadows
           onCreated={({ gl }) => {
-            gl.setClearColor(0x475569, 1);
+            gl.setClearColor(0x0f172a, 1); // Dark blue instead of black
             gl.shadowMap.enabled = true;
           }}
         >
@@ -435,13 +423,13 @@ export const HorizontalScroll3D = () => {
       </div>
       
       {/* Subtle animated background overlay */}
-      <div className="absolute inset-0 pointer-events-none z-5 opacity-10">
+      <div className="absolute inset-0 pointer-events-none z-5 opacity-5">
         <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full animate-float" 
-             style={{ animationDelay: '0s', animationDuration: '6s' }}></div>
+             style={{ animationDelay: '0s', animationDuration: '8s' }}></div>
         <div className="absolute top-3/4 right-1/4 w-24 h-24 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-float" 
-             style={{ animationDelay: '2s', animationDuration: '8s' }}></div>
+             style={{ animationDelay: '3s', animationDuration: '10s' }}></div>
         <div className="absolute top-1/2 left-1/6 w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full animate-float" 
-             style={{ animationDelay: '4s', animationDuration: '7s' }}></div>
+             style={{ animationDelay: '6s', animationDuration: '9s' }}></div>
       </div>
     </div>
   );
