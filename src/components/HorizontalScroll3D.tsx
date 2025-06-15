@@ -1,9 +1,10 @@
 
 import React, { useRef, useEffect, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Group } from 'three';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { TextureLoader } from 'three';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,8 +12,14 @@ gsap.registerPlugin(ScrollTrigger);
 const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   const groupRef = useRef<Group>(null);
   
+  // Load real images for the phone screen
+  const profileTexture = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=800&fit=crop');
+  const dashboardTexture = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=800&fit=crop');
+  const codeTexture = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=800&fit=crop');
+  
   // Calculate which rotation we're on (0, 1, or 2)
   const currentRotation = Math.floor(scrollProgress * 3);
+  const textures = [profileTexture, dashboardTexture, codeTexture];
   
   useFrame(() => {
     if (groupRef.current) {
@@ -24,203 +31,96 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
     }
   });
 
-  // Different app screenshots for each rotation
-  const appScreenshots = [
-    'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=800&fit=crop', // Profile/connection screen
-    'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=800&fit=crop', // Dashboard/interface
-    'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=800&fit=crop'  // Code/tech screen
-  ];
-
   return (
-    <group ref={groupRef} scale={2.2}>
-      {/* Phone body - realistic proportions */}
+    <group ref={groupRef} scale={2.5}>
+      {/* Phone body - realistic iPhone-style */}
       <mesh position={[0, 0, 0]} castShadow receiveShadow>
-        <boxGeometry args={[1.4, 2.8, 0.18]} />
+        <boxGeometry args={[1.2, 2.6, 0.15]} />
         <meshStandardMaterial 
           color="#1a1a1a" 
-          metalness={0.8} 
-          roughness={0.2}
-        />
-      </mesh>
-      
-      {/* Phone screen bezel */}
-      <mesh position={[0, 0, 0.09]} castShadow>
-        <boxGeometry args={[1.3, 2.7, 0.02]} />
-        <meshStandardMaterial 
-          color="#000000" 
           metalness={0.9} 
           roughness={0.1}
         />
       </mesh>
       
-      {/* Main screen with placeholder image */}
-      <mesh position={[0, 0.05, 0.11]}>
-        <planeGeometry args={[1.2, 2.4]} />
+      {/* Phone screen bezel */}
+      <mesh position={[0, 0, 0.076]} castShadow>
+        <boxGeometry args={[1.15, 2.55, 0.01]} />
         <meshStandardMaterial 
-          color="#ffffff"
-          map={null} // We'll use a texture here later
+          color="#000000" 
+          metalness={0.95} 
+          roughness={0.05}
         />
       </mesh>
       
-      {/* Screen content overlay */}
-      <mesh position={[0, 0.05, 0.111]}>
-        <planeGeometry args={[1.18, 2.36]} />
-        <meshBasicMaterial 
-          color={currentRotation === 0 ? "#667eea" : currentRotation === 1 ? "#764ba2" : "#f093fb"}
-          transparent
-          opacity={0.9}
+      {/* Main screen with real image */}
+      <mesh position={[0, 0.05, 0.082]}>
+        <planeGeometry args={[1.1, 2.4]} />
+        <meshStandardMaterial 
+          map={textures[currentRotation] || textures[0]}
+          transparent={false}
         />
       </mesh>
       
-      {/* Status bar */}
-      <mesh position={[0, 1.15, 0.112]}>
-        <planeGeometry args={[1.1, 0.08]} />
-        <meshBasicMaterial color="#000000" transparent opacity={0.3} />
+      {/* Status bar overlay */}
+      <mesh position={[0, 1.15, 0.083]}>
+        <planeGeometry args={[1.08, 0.12]} />
+        <meshBasicMaterial color="#000000" transparent opacity={0.7} />
       </mesh>
-      
-      {/* App icons grid */}
-      {[-0.35, -0.1, 0.15, 0.4].map((x, i) => (
-        <mesh key={i} position={[x, 0.8, 0.112]}>
-          <planeGeometry args={[0.18, 0.18]} />
-          <meshBasicMaterial 
-            color={i === 0 ? "#ff6b6b" : i === 1 ? "#4ecdc4" : i === 2 ? "#45b7d1" : "#96ceb4"}
-            transparent
-            opacity={0.8}
-          />
-        </mesh>
-      ))}
-      
-      {/* Main content area with mock interface */}
-      <mesh position={[0, -0.2, 0.112]}>
-        <planeGeometry args={[1.0, 1.6]} />
-        <meshBasicMaterial 
-          color="#ffffff" 
-          transparent 
-          opacity={0.95}
-        />
-      </mesh>
-      
-      {/* Mock UI elements */}
-      {[-0.3, 0, 0.3].map((y, i) => (
-        <mesh key={i} position={[0, y - 0.2, 0.113]}>
-          <planeGeometry args={[0.8, 0.12]} />
-          <meshBasicMaterial 
-            color={currentRotation === 0 ? "#e3f2fd" : currentRotation === 1 ? "#f3e5f5" : "#e8f5e8"}
-            transparent
-            opacity={0.8}
-          />
-        </mesh>
-      ))}
       
       {/* Home indicator (modern iPhone style) */}
-      <mesh position={[0, -1.25, 0.112]}>
-        <planeGeometry args={[0.25, 0.08]} />
-        <meshBasicMaterial color="#ffffff" transparent opacity={0.8} />
+      <mesh position={[0, -1.15, 0.083]}>
+        <planeGeometry args={[0.3, 0.06]} />
+        <meshBasicMaterial color="#ffffff" transparent opacity={0.9} />
       </mesh>
       
       {/* Camera notch */}
-      <mesh position={[0, 1.3, 0.112]}>
-        <cylinderGeometry args={[0.04, 0.04, 0.01, 16]} />
-        <meshStandardMaterial color="#1a1a1a" metalness={0.9} roughness={0.1} />
+      <mesh position={[0, 1.25, 0.083]}>
+        <boxGeometry args={[0.25, 0.08, 0.02]} />
+        <meshStandardMaterial color="#000000" metalness={0.9} roughness={0.1} />
       </mesh>
       
-      {/* Side buttons */}
-      <mesh position={[-0.72, 0.3, 0]} castShadow>
-        <boxGeometry args={[0.02, 0.15, 0.03]} />
-        <meshStandardMaterial color="#2a2a2a" metalness={0.7} roughness={0.3} />
+      {/* Volume buttons */}
+      <mesh position={[-0.61, 0.4, 0]} castShadow>
+        <boxGeometry args={[0.02, 0.12, 0.03]} />
+        <meshStandardMaterial color="#1a1a1a" metalness={0.8} roughness={0.2} />
       </mesh>
       
-      <mesh position={[-0.72, 0, 0]} castShadow>
+      <mesh position={[-0.61, 0.15, 0]} castShadow>
         <boxGeometry args={[0.02, 0.25, 0.03]} />
-        <meshStandardMaterial color="#2a2a2a" metalness={0.7} roughness={0.3} />
+        <meshStandardMaterial color="#1a1a1a" metalness={0.8} roughness={0.2} />
       </mesh>
       
       {/* Power button */}
-      <mesh position={[0.72, 0.3, 0]} castShadow>
-        <boxGeometry args={[0.02, 0.12, 0.03]} />
-        <meshStandardMaterial color="#2a2a2a" metalness={0.7} roughness={0.3} />
-      </mesh>
-    </group>
-  );
-};
-
-// Floating Text Component with connecting line
-const FloatingText = ({ 
-  position, 
-  text, 
-  phonePosition,
-  side 
-}: { 
-  position: [number, number, number]; 
-  text: string;
-  phonePosition: [number, number, number];
-  side: 'left' | 'right';
-}) => {
-  const groupRef = useRef<Group>(null);
-  
-  useFrame(({ clock }) => {
-    if (groupRef.current) {
-      groupRef.current.position.y = position[1] + Math.sin(clock.elapsedTime * 2) * 0.1;
-    }
-  });
-
-  return (
-    <group ref={groupRef} position={position}>
-      {/* Text background panel */}
-      <mesh position={[0, 0, 0]}>
-        <planeGeometry args={[2.5, 0.8]} />
-        <meshBasicMaterial 
-          color="#000000" 
-          transparent 
-          opacity={0.8}
-        />
+      <mesh position={[0.61, 0.4, 0]} castShadow>
+        <boxGeometry args={[0.02, 0.15, 0.03]} />
+        <meshStandardMaterial color="#1a1a1a" metalness={0.8} roughness={0.2} />
       </mesh>
       
-      {/* Text border */}
-      <mesh position={[0, 0, 0.001]}>
-        <planeGeometry args={[2.48, 0.78]} />
-        <meshBasicMaterial 
-          color="#00ff88" 
-          transparent 
-          opacity={0.9}
-        />
+      {/* Lightning port */}
+      <mesh position={[0, -1.28, 0]} castShadow>
+        <boxGeometry args={[0.15, 0.03, 0.08]} />
+        <meshStandardMaterial color="#333333" metalness={0.6} roughness={0.4} />
       </mesh>
       
-      {/* Inner text area */}
-      <mesh position={[0, 0, 0.002]}>
-        <planeGeometry args={[2.4, 0.7]} />
-        <meshBasicMaterial 
-          color="#000000" 
-          transparent 
-          opacity={1}
-        />
+      {/* Speaker grilles */}
+      {[-0.3, -0.15, 0, 0.15, 0.3].map((x, i) => (
+        <mesh key={i} position={[x, -1.28, 0.02]} castShadow>
+          <cylinderGeometry args={[0.015, 0.015, 0.06, 8]} />
+          <meshStandardMaterial color="#333333" metalness={0.6} roughness={0.4} />
+        </mesh>
+      ))}
+      
+      {/* Camera lens */}
+      <mesh position={[-0.35, 1.05, 0.083]}>
+        <cylinderGeometry args={[0.05, 0.05, 0.02, 16]} />
+        <meshStandardMaterial color="#1a1a1a" metalness={0.9} roughness={0.1} />
       </mesh>
       
-      {/* Connection line to phone */}
-      <mesh 
-        position={[
-          side === 'left' ? 1.25 : -1.25, 
-          0, 
-          0
-        ]} 
-        rotation={[0, 0, side === 'left' ? -0.3 : 0.3]}
-      >
-        <planeGeometry args={[Math.abs(position[0] - phonePosition[0]) * 0.8, 0.02]} />
-        <meshBasicMaterial 
-          color="#00ff88" 
-          transparent 
-          opacity={0.8}
-        />
-      </mesh>
-      
-      {/* Line endpoint dot */}
-      <mesh position={[side === 'left' ? 2.2 : -2.2, 0, 0]}>
-        <circleGeometry args={[0.05, 8]} />
-        <meshBasicMaterial 
-          color="#00ff88" 
-          transparent 
-          opacity={1}
-        />
+      {/* Camera glass */}
+      <mesh position={[-0.35, 1.05, 0.094]}>
+        <cylinderGeometry args={[0.04, 0.04, 0.01, 16]} />
+        <meshStandardMaterial color="#000033" transparent opacity={0.9} />
       </mesh>
     </group>
   );
@@ -228,57 +128,26 @@ const FloatingText = ({
 
 // 3D Scene with Realistic Phone
 const Scene3D = ({ scrollProgress }: { scrollProgress: number }) => {
-  const currentRotation = Math.floor(scrollProgress * 3);
-  
-  // Different text content for each rotation
-  const textContent = [
-    {
-      text: "PERFILES VERIFICADOS",
-      position: [-4, 1, 0] as [number, number, number],
-      side: 'left' as const
-    },
-    {
-      text: "IA MATCHING",
-      position: [4, 0.5, 0] as [number, number, number],
-      side: 'right' as const
-    },
-    {
-      text: "PAGOS SEGUROS",
-      position: [-4, -0.5, 0] as [number, number, number],
-      side: 'left' as const
-    }
-  ];
-
   return (
     <>
-      <ambientLight intensity={0.3} />
+      <ambientLight intensity={0.4} />
       <directionalLight 
         position={[10, 10, 5]} 
-        intensity={1.2} 
+        intensity={1.5} 
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
       />
-      <pointLight position={[-10, -10, -5]} intensity={0.5} color="#4facfe" />
+      <pointLight position={[-10, -10, -5]} intensity={0.6} color="#4facfe" />
       <spotLight 
         position={[0, 20, 10]} 
         angle={0.15} 
         penumbra={1} 
-        intensity={0.8} 
+        intensity={1} 
         castShadow 
       />
       
       <RealisticPhone3D scrollProgress={scrollProgress} />
-      
-      {/* Floating text with connecting lines */}
-      {currentRotation < textContent.length && (
-        <FloatingText
-          position={textContent[currentRotation].position}
-          text={textContent[currentRotation].text}
-          phonePosition={[0, 0, 0]}
-          side={textContent[currentRotation].side}
-        />
-      )}
     </>
   );
 };
@@ -327,19 +196,31 @@ export const HorizontalScroll3D = () => {
     {
       title: "Conectá con Profesionales",
       subtitle: "Miles de expertos verificados esperándote",
-      feature: "Perfiles Completamente Verificados"
+      feature: "Perfiles Completamente Verificados",
+      color: "emerald"
     },
     {
       title: "IA que Entiende",
-      subtitle: "Algoritmos inteligentes para matches perfectos",
-      feature: "Matching Inteligente Avanzado"
+      subtitle: "Algoritmos inteligentes para matches perfectos", 
+      feature: "Matching Inteligente Avanzado",
+      color: "blue"
     },
     {
       title: "Pagos Seguros",
       subtitle: "Transacciones protegidas y garantizadas",
-      feature: "Sistema de Pagos Protegido"
+      feature: "Sistema de Pagos Protegido", 
+      color: "purple"
     }
   ];
+
+  const getColorClasses = (color: string) => {
+    switch(color) {
+      case 'emerald': return 'from-emerald-500 to-emerald-400';
+      case 'blue': return 'from-blue-500 to-blue-400';
+      case 'purple': return 'from-purple-500 to-purple-400';
+      default: return 'from-emerald-500 to-blue-400';
+    }
+  };
 
   return (
     <div ref={containerRef} className="relative h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
@@ -361,13 +242,13 @@ export const HorizontalScroll3D = () => {
         </Canvas>
       </div>
       
-      {/* Professional UI Overlay */}
+      {/* Professional UI Overlay - Top Status */}
       <div className="absolute top-8 left-1/2 transform -translate-x-1/2 text-center z-30">
-        <div className="bg-black/70 backdrop-blur-md rounded-xl p-6 border border-emerald-500/30 shadow-2xl">
-          <div className="text-emerald-400 text-sm font-mono mb-2">
+        <div className="bg-black/80 backdrop-blur-md rounded-xl p-4 border border-emerald-500/30 shadow-2xl">
+          <div className="text-emerald-400 text-xs font-mono mb-1">
             SISTEMA {currentRotation + 1}/3 ACTIVO
           </div>
-          <div className="text-2xl font-bold text-white mb-2">
+          <div className="text-lg font-bold text-white">
             {sections[currentRotation]?.feature || "Sistema Initializing"}
           </div>
         </div>
@@ -378,37 +259,37 @@ export const HorizontalScroll3D = () => {
         {sections.map((section, index) => (
           <div
             key={index}
-            className="flex-shrink-0 w-screen h-full flex items-center justify-center relative"
+            className="flex-shrink-0 w-screen h-full flex items-center justify-end relative pr-32"
           >
-            {/* Content */}
-            <div className="text-center px-8 relative z-20 max-w-4xl">
-              <h2 className="text-5xl md:text-7xl font-black mb-6 text-white">
+            {/* Content positioned to the right, away from phone */}
+            <div className="text-right relative z-20 max-w-xl">
+              <h2 className="text-4xl md:text-6xl font-black mb-4 text-white">
                 {section.title}
               </h2>
-              <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto mb-8">
+              <p className="text-lg md:text-xl text-slate-300 mb-6">
                 {section.subtitle}
               </p>
               
               {/* Tech-style feature highlight */}
-              <div className="inline-block bg-gradient-to-r from-emerald-500/20 to-blue-500/20 rounded-lg px-8 py-4 backdrop-blur-sm border border-emerald-500/30">
-                <span className="text-emerald-400 font-mono font-semibold tracking-wider">
+              <div className={`inline-block bg-gradient-to-r ${getColorClasses(section.color)}/20 rounded-lg px-6 py-3 backdrop-blur-sm border border-${section.color}-500/30`}>
+                <span className={`text-${section.color}-400 font-mono font-semibold tracking-wider text-sm`}>
                   {section.feature.toUpperCase()}
                 </span>
               </div>
             </div>
-            
-            {/* Progress Indicator */}
-            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
-              {sections.map((_, i) => (
-                <div
-                  key={i}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    i === index ? 'bg-emerald-400 scale-150' : 'bg-slate-600'
-                  }`}
-                />
-              ))}
-            </div>
           </div>
+        ))}
+      </div>
+      
+      {/* Progress Indicator */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3 z-30">
+        {sections.map((_, i) => (
+          <div
+            key={i}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              i === currentRotation ? 'bg-emerald-400 scale-150' : 'bg-slate-600'
+            }`}
+          />
         ))}
       </div>
       
