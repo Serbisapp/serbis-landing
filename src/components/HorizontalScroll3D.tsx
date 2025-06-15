@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Group } from 'three';
@@ -8,7 +7,54 @@ import { TextureLoader } from 'three';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Flying Elements Component
+// Orbiting Particles Component - positioned around the phone
+const OrbitingParticles = ({ scrollProgress }: { scrollProgress: number }) => {
+  const groupRef = useRef<Group>(null);
+  
+  useFrame((state) => {
+    if (groupRef.current) {
+      // Orbit around the phone with scroll influence
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.2 + scrollProgress * Math.PI * 2;
+      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.1) * 0.2;
+      groupRef.current.rotation.z = Math.cos(state.clock.elapsedTime * 0.15) * 0.1;
+    }
+  });
+
+  const particles = Array.from({ length: 8 }, (_, i) => {
+    const angle = (i / 8) * Math.PI * 2;
+    const radius = 4 + Math.sin(i) * 1;
+    return {
+      position: [
+        Math.cos(angle) * radius,
+        Math.sin(angle * 0.5) * 2,
+        Math.sin(angle) * radius
+      ] as [number, number, number],
+      color: ['#10b981', '#3b82f6', '#8b5cf6'][i % 3],
+      scale: 0.1 + Math.random() * 0.1,
+    };
+  });
+
+  return (
+    <group ref={groupRef}>
+      {particles.map((particle, i) => (
+        <mesh key={i} position={particle.position} scale={particle.scale}>
+          <sphereGeometry args={[0.2, 8, 8]} />
+          <meshStandardMaterial 
+            color={particle.color} 
+            transparent 
+            opacity={0.6}
+            metalness={0.3}
+            roughness={0.4}
+            emissive={particle.color}
+            emissiveIntensity={0.2}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+};
+
+// Flying Elements Component - background elements
 const FlyingElements = () => {
   const groupRef = useRef<Group>(null);
   
@@ -167,7 +213,7 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   );
 };
 
-// 3D Scene with Realistic Phone and Flying Elements
+// 3D Scene with Realistic Phone, Flying Elements, and Orbiting Particles
 const Scene3D = ({ scrollProgress }: { scrollProgress: number }) => {
   return (
     <>
@@ -190,6 +236,7 @@ const Scene3D = ({ scrollProgress }: { scrollProgress: number }) => {
       />
       
       <FlyingElements />
+      <OrbitingParticles scrollProgress={scrollProgress} />
       <RealisticPhone3D scrollProgress={scrollProgress} />
     </>
   );
