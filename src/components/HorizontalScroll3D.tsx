@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
@@ -8,21 +9,21 @@ import { useLoader } from '@react-three/fiber';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// More Dramatic Camera Controller
+// Optimized Camera Controller
 const CameraController = ({ scrollProgress }: { scrollProgress: number }) => {
   useFrame(({ camera }) => {
     const perspectiveCamera = camera as PerspectiveCamera;
     
-    // Much more dramatic camera movement based on scroll
-    const targetX = Math.sin(scrollProgress * Math.PI * 3) * 5; // Increased range and frequency
-    const targetY = 2 + Math.sin(scrollProgress * Math.PI * 2) * 2; // More vertical movement
-    const targetZ = 8 + scrollProgress * 6; // More depth movement
+    // Simplified camera movement calculations
+    const targetX = Math.sin(scrollProgress * 9.42) * 5; // Pre-calculated PI * 3
+    const targetY = 2 + Math.sin(scrollProgress * 6.28) * 2; // Pre-calculated PI * 2
+    const targetZ = 8 + scrollProgress * 6;
     
     // Smooth interpolation
     perspectiveCamera.position.lerp(new Vector3(targetX, targetY, targetZ), 0.08);
     perspectiveCamera.lookAt(0, 0, 0);
     
-    // More dramatic FOV changes
+    // Simplified FOV changes
     const targetFov = 45 + scrollProgress * 40;
     perspectiveCamera.fov += (targetFov - perspectiveCamera.fov) * 0.08;
     perspectiveCamera.updateProjectionMatrix();
@@ -31,7 +32,7 @@ const CameraController = ({ scrollProgress }: { scrollProgress: number }) => {
   return null;
 };
 
-// Enhanced Phone Component
+// Optimized Phone Component
 const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   const groupRef = useRef<Group>(null);
   
@@ -43,27 +44,27 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   const frontTextures = [profileTexture, dashboardTexture, codeTexture];
   const currentSection = Math.floor(scrollProgress * 2.99);
   
-  // Calculate if we're viewing the front or back based on rotation
-  const rotationY = scrollProgress * Math.PI * 4;
-  const normalizedRotation = ((rotationY % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-  const isViewingBack = normalizedRotation > Math.PI / 2 && normalizedRotation < (3 * Math.PI) / 2;
+  // Simplified rotation calculation
+  const rotationY = scrollProgress * 12.56; // Pre-calculated PI * 4
+  const normalizedRotation = ((rotationY % 6.28) + 6.28) % 6.28; // Pre-calculated PI * 2
+  const isViewingBack = normalizedRotation > 1.57 && normalizedRotation < 4.71; // Pre-calculated PI/2 and 3*PI/2
 
   useFrame((state) => {
     if (groupRef.current) {
       const time = state.clock.elapsedTime;
       
-      // Enhanced rotation
+      // Optimized rotation with pre-calculated values
       groupRef.current.rotation.y = rotationY;
-      groupRef.current.rotation.x = Math.sin(time * 0.8) * 0.2; // More dramatic tilt
-      groupRef.current.rotation.z = Math.sin(time * 0.3) * 0.1; // Add some roll
+      groupRef.current.rotation.x = Math.sin(time * 0.8) * 0.2;
+      groupRef.current.rotation.z = Math.sin(time * 0.3) * 0.1;
       
-      // More dramatic scale and position changes
+      // Simplified scale and position
       const scale = 2.5 + scrollProgress * 1.2;
       groupRef.current.scale.setScalar(scale);
       
       groupRef.current.position.y = Math.sin(time * 0.5) * 0.5;
-      groupRef.current.position.x = Math.cos(scrollProgress * Math.PI * 2) * 1.2;
-      groupRef.current.position.z = Math.sin(scrollProgress * Math.PI) * 0.8;
+      groupRef.current.position.x = Math.cos(scrollProgress * 6.28) * 1.2; // Pre-calculated PI * 2
+      groupRef.current.position.z = Math.sin(scrollProgress * 3.14) * 0.8; // Pre-calculated PI
     }
   });
 
@@ -96,38 +97,24 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
           />
         </mesh>
       )}
-      
-      {/* Camera notch */}
-      <mesh position={[0, 1.25, 0.083]}>
-        <boxGeometry args={[0.25, 0.08, 0.02]} />
-        <meshStandardMaterial color="#000000" />
-      </mesh>
-      
-      {/* Back camera (visible when viewing from behind) */}
-      {isViewingBack && (
-        <mesh position={[0.3, 1.1, -0.083]}>
-          <cylinderGeometry args={[0.08, 0.08, 0.02, 16]} />
-          <meshStandardMaterial color="#1f2937" />
-        </mesh>
-      )}
     </group>
   );
 };
 
-// Simple Particle System
+// Simplified Particle System (reduced from 8 to 4 particles)
 const ParticleSystem = ({ scrollProgress }: { scrollProgress: number }) => {
   const groupRef = useRef<Group>(null);
   
   useFrame((state) => {
     if (groupRef.current) {
       const time = state.clock.elapsedTime;
-      groupRef.current.rotation.y = time * 0.2 + scrollProgress * Math.PI;
+      groupRef.current.rotation.y = time * 0.2 + scrollProgress * 3.14; // Pre-calculated PI
     }
   });
 
-  // Create 8 simple particles
-  const particles = Array.from({ length: 8 }, (_, i) => {
-    const angle = (i / 8) * Math.PI * 2;
+  // Reduced particles for better mobile performance
+  const particles = Array.from({ length: 4 }, (_, i) => {
+    const angle = (i / 4) * 6.28; // Pre-calculated PI * 2
     const radius = 3 + (i % 2) * 0.5;
     
     return {
@@ -145,7 +132,7 @@ const ParticleSystem = ({ scrollProgress }: { scrollProgress: number }) => {
     <group ref={groupRef}>
       {particles.map((particle, i) => (
         <mesh key={i} position={particle.position} scale={particle.scale}>
-          <sphereGeometry args={[0.2, 8, 8]} />
+          <sphereGeometry args={[0.2, 6, 6]} />
           <meshStandardMaterial 
             color={particle.color} 
             transparent 
@@ -168,8 +155,8 @@ const SceneLighting = () => {
         position={[5, 5, 5]} 
         intensity={0.8} 
         castShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
+        shadow-mapSize-width={512}
+        shadow-mapSize-height={512}
       />
       <pointLight 
         position={[-5, 3, -2]} 
@@ -185,7 +172,7 @@ const SceneLighting = () => {
   );
 };
 
-// Background Grid
+// Simplified Background Grid (reduced complexity)
 const BackgroundGrid = ({ scrollProgress }: { scrollProgress: number }) => {
   const gridRef = useRef<Group>(null);
   
@@ -197,11 +184,12 @@ const BackgroundGrid = ({ scrollProgress }: { scrollProgress: number }) => {
   });
 
   const gridLines = [];
-  for (let i = -5; i <= 5; i++) {
+  // Reduced grid lines from 11x11 to 7x7 for better performance
+  for (let i = -3; i <= 3; i++) {
     // Vertical lines
     gridLines.push(
       <mesh key={`v${i}`} position={[i * 2, 0, -10]}>
-        <boxGeometry args={[0.02, 20, 0.02]} />
+        <boxGeometry args={[0.02, 14, 0.02]} />
         <meshStandardMaterial 
           color="#475569" 
           transparent 
@@ -211,8 +199,8 @@ const BackgroundGrid = ({ scrollProgress }: { scrollProgress: number }) => {
     );
     // Horizontal lines
     gridLines.push(
-      <mesh key={`h${i}`} position={[0, i * 2, -10]} rotation={[0, 0, Math.PI / 2]}>
-        <boxGeometry args={[0.02, 20, 0.02]} />
+      <mesh key={`h${i}`} position={[0, i * 2, -10]} rotation={[0, 0, 1.57]}>
+        <boxGeometry args={[0.02, 14, 0.02]} />
         <meshStandardMaterial 
           color="#475569" 
           transparent 
@@ -303,15 +291,20 @@ export const HorizontalScroll3D = () => {
 
   return (
     <div ref={containerRef} className="relative h-screen overflow-hidden">
-      {/* 3D Canvas Background */}
+      {/* 3D Canvas Background with mobile optimizations */}
       <div className="absolute inset-0 z-0">
         <Canvas 
           camera={{ position: [0, 0, 8], fov: 60 }}
           shadows
-          gl={{ antialias: true }}
+          gl={{ 
+            antialias: false, // Disabled for mobile performance
+            powerPreference: "high-performance",
+            pixelRatio: Math.min(window.devicePixelRatio, 2) // Limit pixel ratio for mobile
+          }}
           onCreated={({ gl }) => {
             gl.setClearColor(0x0f172a, 1);
           }}
+          performance={{ min: 0.5 }} // Allow lower framerates on mobile
         >
           <Scene3D scrollProgress={scrollProgress} />
         </Canvas>
