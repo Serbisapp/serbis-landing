@@ -15,6 +15,9 @@ interface MobileCarouselProps {
 }
 
 export const MobileCarousel = ({ sections, currentSection, setCurrentSection }: MobileCarouselProps) => {
+  console.log('MobileCarousel component rendering with sections:', sections);
+  console.log('Current section:', currentSection);
+  
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
@@ -56,10 +59,24 @@ export const MobileCarousel = ({ sections, currentSection, setCurrentSection }: 
     }
   };
 
-  console.log('MobileCarousel rendering, currentSection:', currentSection);
+  if (!sections || sections.length === 0) {
+    console.log('No sections provided to MobileCarousel');
+    return <div className="h-screen bg-red-500 flex items-center justify-center text-white">No sections data</div>;
+  }
+
+  const currentSectionData = sections[currentSection];
+  if (!currentSectionData) {
+    console.log('Current section data not found:', currentSection);
+    return <div className="h-screen bg-yellow-500 flex items-center justify-center text-black">Section data not found</div>;
+  }
+
+  console.log('Rendering section:', currentSectionData);
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
+      {/* Test visibility with bright background */}
+      <div className="absolute inset-0 bg-blue-500 opacity-20" />
+      
       {/* Animated background pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(15,23,42,0.8)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.8)_1px,transparent_1px)] bg-[size:100px_100px] animate-pulse" />
       
@@ -80,22 +97,22 @@ export const MobileCarousel = ({ sections, currentSection, setCurrentSection }: 
               <div className="relative">
                 <div className="w-16 h-28 bg-slate-700 rounded-xl border-2 border-slate-600 flex items-center justify-center">
                   <div className="w-12 h-20 bg-slate-800 rounded-lg flex items-center justify-center">
-                    <div className={`w-8 h-12 bg-gradient-to-b from-${sections[currentSection].color}-400 to-${sections[currentSection].color}-600 rounded opacity-80`} />
+                    <div className="w-8 h-12 bg-gradient-to-b from-emerald-400 to-emerald-600 rounded opacity-80" />
                   </div>
                 </div>
               </div>
             </div>
 
             <h2 className="text-2xl font-black mb-4 text-white leading-tight">
-              {sections[currentSection].title}
+              {currentSectionData.title}
             </h2>
             <p className="text-sm text-slate-200 mb-6 leading-relaxed">
-              {sections[currentSection].subtitle}
+              {currentSectionData.subtitle}
             </p>
             
-            <div className={`inline-block bg-gradient-to-r from-${sections[currentSection].color}-500/20 to-${sections[currentSection].color}-400/20 rounded-xl px-6 py-3 backdrop-blur-sm border border-${sections[currentSection].color}-500/30`}>
-              <span className={`text-${sections[currentSection].color}-400 font-semibold text-sm`}>
-                {sections[currentSection].feature}
+            <div className="inline-block bg-gradient-to-r from-emerald-500/20 to-emerald-400/20 rounded-xl px-6 py-3 backdrop-blur-sm border border-emerald-500/30">
+              <span className="text-emerald-400 font-semibold text-sm">
+                {currentSectionData.feature}
               </span>
             </div>
           </div>
@@ -130,7 +147,7 @@ export const MobileCarousel = ({ sections, currentSection, setCurrentSection }: 
             key={i}
             className={`w-3 h-3 rounded-full transition-all duration-500 ${
               i === currentSection 
-                ? `bg-${sections[currentSection].color}-400 scale-125` 
+                ? 'bg-emerald-400 scale-125' 
                 : 'bg-slate-500'
             }`}
             onClick={() => setCurrentSection(i)}
