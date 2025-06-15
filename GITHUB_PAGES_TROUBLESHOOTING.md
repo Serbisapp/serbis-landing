@@ -19,7 +19,10 @@ const basename = import.meta.env.PROD ? '/your-actual-repo-name' : ''; // Change
 1. Go to your repository settings on GitHub
 2. Navigate to "Pages" section  
 3. Set Source to **"GitHub Actions"** (not "Deploy from a branch")
-4. Save the settings
+4. You should see "GitHub Actions" as an option now
+5. Save the settings
+
+**Important:** After the first successful workflow run, GitHub will automatically create the Pages environment.
 
 ### 3. **Build and Deploy**
 ```bash
