@@ -1,14 +1,13 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Text, OrbitControls, Sphere, Box, Torus, Cone } from '@react-three/drei';
 import { Mesh } from 'three';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Floating 3D Object Component
+// Simple Floating 3D Object Component
 const FloatingObject = ({ position, color, type, scale = 1 }: {
   position: [number, number, number];
   color: string;
@@ -25,31 +24,31 @@ const FloatingObject = ({ position, color, type, scale = 1 }: {
     }
   });
 
-  const renderObject = () => {
+  const renderGeometry = () => {
     switch (type) {
       case 'sphere':
-        return <Sphere args={[0.5 * scale, 32, 32]} />;
+        return <sphereGeometry args={[0.5 * scale, 32, 32]} />;
       case 'box':
-        return <Box args={[0.8 * scale, 0.8 * scale, 0.8 * scale]} />;
+        return <boxGeometry args={[0.8 * scale, 0.8 * scale, 0.8 * scale]} />;
       case 'torus':
-        return <Torus args={[0.5 * scale, 0.2 * scale, 16, 100]} />;
+        return <torusGeometry args={[0.5 * scale, 0.2 * scale, 16, 100]} />;
       case 'cone':
-        return <Cone args={[0.5 * scale, 1 * scale, 8]} />;
+        return <coneGeometry args={[0.5 * scale, 1 * scale, 8]} />;
       default:
-        return <Sphere args={[0.5 * scale, 32, 32]} />;
+        return <sphereGeometry args={[0.5 * scale, 32, 32]} />;
     }
   };
 
   return (
     <mesh ref={meshRef} position={position}>
-      {renderObject()}
+      {renderGeometry()}
       <meshStandardMaterial color={color} />
     </mesh>
   );
 };
 
-// Simplified 3D Text Component
-const Floating3DText = ({ text, position, color }: {
+// Simple 3D Text Component
+const Simple3DText = ({ text, position, color }: {
   text: string;
   position: [number, number, number];
   color: string;
@@ -64,14 +63,10 @@ const Floating3DText = ({ text, position, color }: {
 
   return (
     <group ref={groupRef} position={position}>
-      <Text
-        fontSize={0.8}
-        color={color}
-        anchorX="center"
-        anchorY="middle"
-      >
-        {text}
-      </Text>
+      <mesh>
+        <boxGeometry args={[2, 0.5, 0.1]} />
+        <meshStandardMaterial color={color} />
+      </mesh>
     </group>
   );
 };
@@ -91,18 +86,11 @@ const Scene3D = () => {
       <FloatingObject position={[-3, 3, 1]} color="#f59e0b" type="cone" />
       <FloatingObject position={[3, -2, -1]} color="#ef4444" type="sphere" />
       
-      {/* 3D Text Elements */}
-      <Floating3DText text="SERBIS" position={[0, 0, 0]} color="#ffffff" />
-      <Floating3DText text="INNOVACIÓN" position={[8, 1, -2]} color="#3b82f6" />
-      <Floating3DText text="CALIDAD" position={[-8, -1, 1]} color="#8b5cf6" />
-      <Floating3DText text="CONFIANZA" position={[12, 2, 0]} color="#10b981" />
-      
-      <OrbitControls 
-        enableZoom={false} 
-        enablePan={false} 
-        autoRotate 
-        autoRotateSpeed={0.5}
-      />
+      {/* Simple 3D Text Elements */}
+      <Simple3DText text="SERBIS" position={[0, 0, 0]} color="#ffffff" />
+      <Simple3DText text="INNOVACIÓN" position={[8, 1, -2]} color="#3b82f6" />
+      <Simple3DText text="CALIDAD" position={[-8, -1, 1]} color="#8b5cf6" />
+      <Simple3DText text="CONFIANZA" position={[12, 2, 0]} color="#10b981" />
     </>
   );
 };
@@ -176,7 +164,13 @@ export const HorizontalScroll3D = () => {
     <div ref={containerRef} className="relative h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Fixed 3D Canvas Background */}
       <div className="absolute inset-0 z-0">
-        <Canvas camera={{ position: [0, 0, 8], fov: 60 }}>
+        <Canvas 
+          camera={{ position: [0, 0, 8], fov: 60 }}
+          gl={{ alpha: true, antialias: true }}
+          onCreated={({ gl }) => {
+            gl.setClearColor(0x000000, 0);
+          }}
+        >
           <Scene3D />
         </Canvas>
       </div>
