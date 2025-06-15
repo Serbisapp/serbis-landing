@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
@@ -309,19 +310,19 @@ export const HorizontalScroll3D = () => {
   const sections = [
     {
       title: "Explorá el Home",
-      subtitle: "Describí el servicio que necesitás y te conectamos con un profesional verificado en tu zona en menos de 5 segundos. Navegá de forma intuitiva, mirá ratings de tu comunidad y accedé a tus pedidos.",
+      subtitle: "Describí tu necesidad y te conectamos con un profesional verificado en segundos. Simple, rápido y con ratings de tu comunidad.",
       feature: "Conexión en 5 segundos",
       color: "emerald"
     },
     {
       title: "Comunicación Segura y Directa", 
-      subtitle: "Coordiná todos los detalles, compartí imágenes y negociá el precio directamente con los profesionales a través de nuestro chat integrado. Tu comunicación es privada y segura.",
+      subtitle: "Coordiná todo por nuestro chat integrado: detalles, imágenes y precios. Comunicación directa, privada y segura.",
       feature: "Chat Integrado y Privado",
       color: "blue"
     },
     {
       title: "Seguí el Estado de tus Pedidos",
-      subtitle: "Mantenete informado en tiempo real sobre el progreso de tus servicios. Recibí notificaciones instantáneas y visualizá claramente cada etapa del proceso hasta la finalización.", 
+      subtitle: "Seguí el progreso de tu servicio en tiempo real con notificaciones instantáneas. Control total, desde tu celular.", 
       feature: "Status en Tiempo Real",
       color: "purple"
     }
