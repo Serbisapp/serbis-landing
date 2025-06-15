@@ -6,8 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextureLoader } from 'three';
 import { useLoader } from '@react-three/fiber';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { MobileCarousel } from './MobileCarousel';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -334,6 +333,8 @@ export const HorizontalScroll3D = () => {
   const [currentSection, setCurrentSection] = useState(0);
   const mobile = useIsMobile();
 
+  console.log('HorizontalScroll3D rendering, mobile:', mobile);
+
   const sections = [
     {
       title: "Explorá el Home",
@@ -410,7 +411,7 @@ export const HorizontalScroll3D = () => {
     }
   }, [mobile]);
 
-  // Mobile version
+  // Mobile version - simplified without WebGL
   if (mobile) {
     return <MobileCarousel sections={sections} currentSection={currentSection} setCurrentSection={setCurrentSection} />;
   }
