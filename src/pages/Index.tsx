@@ -399,8 +399,8 @@ const FeatureCard = ({ icon: Icon, title, description, status, delay, color, ani
     };
 
     const statusBadge = status === 'active' 
-        ? <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-400/10 text-emerald-400 border border-emerald-400/20">Activo</span>
-        : <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-400/10 text-orange-400 border border-orange-400/20">Próximamente</span>;
+        ? <span className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-[0.6rem] sm:text-xs font-medium bg-emerald-400/10 text-emerald-400 border border-emerald-400/20 whitespace-nowrap">Activo</span>
+        : <span className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-[0.6rem] sm:text-xs font-medium bg-orange-400/10 text-orange-400 border border-orange-400/20 whitespace-nowrap">Próximamente</span>;
 
     const animationClass = animationType === 'slide-left' 
         ? 'opacity-0 -translate-x-12 animate-[slide-in-from-left_0.8s_ease-out_forwards]'
@@ -411,16 +411,16 @@ const FeatureCard = ({ icon: Icon, title, description, status, delay, color, ani
             className={`group cursor-pointer ${animationClass}`}
             style={{ animationDelay: delay }}
         >
-            <div className={`bg-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border ${colorClasses[color]} transition-all duration-500 hover:scale-105 flex items-start gap-6`}>
-                <div className={`p-4 rounded-xl bg-slate-700/50 group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}>
-                    <Icon className={`w-8 h-8 ${colorClasses[color].split(' ')[0]}`} />
+            <div className={`bg-slate-800/30 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border ${colorClasses[color]} transition-all duration-500 hover:scale-105 flex flex-col sm:flex-row items-start gap-4 sm:gap-6`}>
+                <div className={`p-3 sm:p-4 rounded-xl bg-slate-700/50 group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}>
+                    <Icon className={`w-6 h-6 sm:w-8 sm:h-8 ${colorClasses[color].split(' ')[0]}`} />
                 </div>
-                <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-4">
-                        <h3 className="font-semibold text-2xl text-slate-200">{title}</h3>
+                <div className="flex-1 min-w-0"> {/* Added min-w-0 here to help with flex overflow */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+                        <h3 className="font-semibold text-lg sm:text-xl md:text-2xl text-slate-200 leading-tight">{title}</h3>
                         {statusBadge}
                     </div>
-                    <p className="text-slate-400 text-lg leading-relaxed">{description}</p>
+                    <p className="text-slate-400 text-sm sm:text-base md:text-lg leading-relaxed">{description}</p>
                 </div>
             </div>
         </div>
