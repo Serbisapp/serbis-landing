@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import {
   Apple,
@@ -20,7 +19,10 @@ import {
   Eye,
 } from "lucide-react";
 import { AnimatedWrapper } from '@/components/AnimatedWrapper';
-import { HorizontalScroll3D } from '@/components/HorizontalScroll3D';
+// Lazy load HorizontalScroll3D for better initial page load performance
+const HorizontalScroll3D = React.lazy(() => 
+  import('@/components/HorizontalScroll3D').then(module => ({ default: module.HorizontalScroll3D }))
+);
 
 const Index = () => {
     const [scrolled, setScrolled] = useState(false);
@@ -192,7 +194,9 @@ const Index = () => {
             </header>
 
             {/* 3D Horizontal Scroll Section */}
-            <HorizontalScroll3D />
+            <React.Suspense fallback={<div className="h-screen bg-slate-950 flex items-center justify-center"><p className='text-white'>Cargando experiencia 3D...</p></div>}>
+              <HorizontalScroll3D />
+            </React.Suspense>
             
             {/* How it Works Section */}
             <AnimatedWrapper tag="section" id="como-funciona" className="py-32 bg-slate-950 relative">

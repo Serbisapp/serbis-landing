@@ -1,6 +1,6 @@
 import React, { useRef, useState, useLayoutEffect, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Group, Vector3, PerspectiveCamera, Color, BufferGeometry, Float32BufferAttribute, PointsMaterial, AdditiveBlending, Points } from 'three';
+import { Group, Vector3, PerspectiveCamera, Color, BufferGeometry, Float32BufferAttribute, PointsMaterial, AdditiveBlending, Points, StaticDrawUsage } from 'three';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextureLoader } from 'three';
@@ -39,20 +39,12 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   const groupRef = useRef<Group>(null);
   
   // Load textures for desktop
-  let taskTexture = null;
-  let chatTexture = null;
-  let statusTexture = null;
+  const taskTexture = useLoader(TextureLoader, '/lovable-uploads/bba53f7f-ee96-480d-ad5e-325e9823282b.png');
+  const chatTexture = useLoader(TextureLoader, '/lovable-uploads/8d11efbb-db2e-4ceb-9f8e-6bdf05247c33.png');
+  const statusTexture = useLoader(TextureLoader, '/lovable-uploads/98092611-df32-4c24-9a64-4a9a804d80dd.png');
   
-  try {
-    taskTexture = useLoader(TextureLoader, '/lovable-uploads/bba53f7f-ee96-480d-ad5e-325e9823282b.png');
-    chatTexture = useLoader(TextureLoader, '/lovable-uploads/8d11efbb-db2e-4ceb-9f8e-6bdf05247c33.png');
-    statusTexture = useLoader(TextureLoader, '/lovable-uploads/98092611-df32-4c24-9a64-4a9a804d80dd.png');
-  } catch (error) {
-    console.log('Texture loading error:', error);
-  }
-  
-  const frontTextures = [taskTexture, chatTexture, statusTexture];
-  const currentSection = Math.floor(scrollProgress * 2.99);
+  const frontTextures = useMemo(() => [taskTexture, chatTexture, statusTexture], [taskTexture, chatTexture, statusTexture]);
+  const currentSection = Math.floor(scrollProgress * (frontTextures.length - 0.01)); // Ensure it doesn't exceed bounds
   
   const rotationY = scrollProgress * 12.56; // Two full rotations
   const normalizedRotation = ((rotationY % 6.28) + 6.28) % 6.28;
@@ -130,7 +122,7 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
 // Starfield Component
 const Starfield = () => {
   const starsRef = useRef<Points>(null!);
-  const numStars = 5000;
+  const numStars = 2500; // Reduced number of stars for performance
 
   const positions = useMemo(() => {
     const pos = new Float32Array(numStars * 3);
@@ -178,12 +170,14 @@ const Starfield = () => {
           count={positions.length / 3}
           array={positions}
           itemSize={3}
+          usage={StaticDrawUsage} // Hint for static data
         />
         <bufferAttribute
           attach="attributes-size"
           count={sizes.length}
           array={sizes}
           itemSize={1}
+          usage={StaticDrawUsage} // Hint for static data
         />
         <bufferAttribute
           attach="attributes-color"
@@ -191,6 +185,7 @@ const Starfield = () => {
           array={colors}
           itemSize={3}
           normalized
+          usage={StaticDrawUsage} // Hint for static data
         />
       </bufferGeometry>
       <pointsMaterial
@@ -240,12 +235,11 @@ export const HorizontalScroll3D = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollContentRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [currentSection, setCurrentSection] = useState(0);
   const mobile = useIsMobile();
 
-  console.log('HorizontalScroll3D rendering, mobile:', mobile);
+  // console.log('HorizontalScroll3D rendering, mobile:', mobile);
 
-  const sections = [
+  const sections = useMemo(() => [
     {
       title: "Explorá el Home",
       subtitle: "Describí tu necesidad y te conectamos con un profesional verificado en segundos. Simple, rápido y con ratings de tu comunidad.",
@@ -267,7 +261,7 @@ export const HorizontalScroll3D = () => {
       color: "purple",
       image: "/lovable-uploads/98092611-df32-4c24-9a64-4a9a804d80dd.png"
     }
-  ];
+  ], []);
 
   // Use useLayoutEffect with GSAP context for robust setup and cleanup.
   // This hook is now called unconditionally to comply with the Rules of Hooks.
@@ -319,12 +313,13 @@ export const HorizontalScroll3D = () => {
 
   // Early return for mobile - NO Canvas rendering at all
   if (mobile) {
-    console.log('Rendering mobile carousel, currentSection:', currentSection);
-    return <MobileCarousel sections={sections} currentSection={currentSection} setCurrentSection={setCurrentSection} />;
+    // console.log('Rendering mobile carousel');
+    // Pass a stable setCurrentSection if MobileCarousel manages its own state, or handle currentSection here
+    return <MobileCarousel sections={sections} currentSection={0} setCurrentSection={() => {}} />;
   }
 
   // Desktop version only
-  const desktopCurrentSection = Math.floor(scrollProgress * 2.99);
+  const desktopCurrentSection = Math.floor(scrollProgress * (sections.length - 0.01));
 
   return (
     <div ref={containerRef} className="relative h-screen overflow-hidden">
@@ -334,8 +329,8 @@ export const HorizontalScroll3D = () => {
           camera={{ position: [0, 0, 8], fov: 60 }}
           shadows
           gl={{ 
-            antialias: false,
-            powerPreference: "high-performance",
+            antialias: false, // Consider setting to true if quality is preferred and perf allows
+            powerPreference: "low-power", // Changed to low-power as high-performance might not be needed for this scene
             alpha: false,
             depth: true,
             stencil: false,

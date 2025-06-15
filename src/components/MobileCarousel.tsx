@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -74,45 +73,48 @@ export const MobileCarousel = ({ sections, currentSection, setCurrentSection }: 
   console.log('Rendering section:', currentSectionData);
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
-      {/* Test visibility with bright background */}
-      <div className="absolute inset-0 bg-blue-500 opacity-20" />
+    <div className="relative h-screen w-full overflow-hidden bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 flex flex-col">
+      {/* Test visibility with bright background - REMOVE FOR PRODUCTION */}
+      {/* <div className="absolute inset-0 bg-blue-500 opacity-20" /> */}
       
       {/* Animated background pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(15,23,42,0.8)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.8)_1px,transparent_1px)] bg-[size:100px_100px] animate-pulse" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(15,23,42,0.8)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.8)_1px,transparent_1px)] bg-[size:80px_80px] sm:bg-[size:100px_100px] animate-pulse" />
       
       {/* Gradient overlay for depth */}
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-slate-950/50" />
 
-      {/* Main Content */}
+      {/* Main Content Area - Takes up available space and centers content */}
       <div 
-        className="relative h-full flex items-center justify-center p-4 z-10"
+        className="relative flex-grow flex items-center justify-center p-3 sm:p-4 z-10 w-full"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        <div className="w-full max-w-sm">
-          <div className="bg-slate-900/95 backdrop-blur-xl rounded-3xl p-8 border border-slate-700/50 text-center shadow-2xl">
+        <div className="w-full max-w-xs sm:max-w-sm">
+          <div className="bg-slate-900/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-slate-700/50 text-center shadow-2xl">
             {/* Screenshot Display */}
-            <div className="mb-6 flex justify-center">
-              <div className="relative w-48 h-[24rem] bg-slate-800 rounded-3xl border-4 border-slate-700 p-2 shadow-inner">
+            <div className="mb-4 sm:mb-6 flex justify-center">
+              {/* Responsive Phone Mockup */}
+              <div className="relative w-[calc(100vw*0.4)] max-w-[10rem] sm:w-48 h-[calc(100vw*0.4*(19.5/9))] max-h-[20rem] sm:h-[24rem] bg-slate-800 rounded-xl sm:rounded-3xl border-2 sm:border-4 border-slate-700 p-1 sm:p-2 shadow-inner">
                 <img
                   src={currentSectionData.image}
                   alt={currentSectionData.title}
-                  className="w-full h-full object-cover rounded-2xl"
+                  className="w-full h-full object-cover rounded-md sm:rounded-2xl"
+                  // Add loading="lazy" for potential performance improvement
+                  loading="lazy"
                 />
               </div>
             </div>
 
-            <h2 className="text-2xl font-black mb-4 text-white leading-tight">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-black mb-2 sm:mb-3 md:mb-4 text-white leading-tight">
               {currentSectionData.title}
             </h2>
-            <p className="text-sm text-slate-200 mb-6 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 mb-3 sm:mb-4 md:mb-6 leading-relaxed">
               {currentSectionData.subtitle}
             </p>
             
-            <div className="inline-block bg-gradient-to-r from-emerald-500/20 to-emerald-400/20 rounded-xl px-6 py-3 backdrop-blur-sm border border-emerald-500/30">
-              <span className="text-emerald-400 font-semibold text-sm">
+            <div className="inline-block bg-gradient-to-r from-emerald-500/20 to-emerald-400/20 rounded-lg sm:rounded-xl px-3 py-2 sm:px-4 sm:py-3 md:px-6 backdrop-blur-sm border border-emerald-500/30">
+              <span className="text-emerald-400 font-semibold text-[0.6rem] sm:text-xs md:text-sm">
                 {currentSectionData.feature}
               </span>
             </div>
@@ -120,45 +122,49 @@ export const MobileCarousel = ({ sections, currentSection, setCurrentSection }: 
         </div>
       </div>
 
-      {/* Navigation Buttons */}
-      <Button
-        variant="outline"
-        size="icon"
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-slate-900/90 border-slate-600 hover:bg-slate-800 backdrop-blur-sm"
-        onClick={prevSection}
-        disabled={currentSection === 0}
-      >
-        <ChevronLeft className="h-4 w-4 text-white" />
-      </Button>
+      {/* Navigation and Indicators Area - Fixed height at the bottom */}
+      <div className="relative z-20 py-4 sm:py-6">
+        {/* Navigation Buttons */}
+        <Button
+          variant="outline"
+          size="icon"
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-slate-900/80 hover:bg-slate-800/90 border-slate-700 backdrop-blur-sm text-white w-8 h-8 sm:w-10 sm:h-10"
+          onClick={prevSection}
+          disabled={currentSection === 0}
+        >
+          <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+        </Button>
 
-      <Button
-        variant="outline"
-        size="icon"
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-slate-900/90 border-slate-600 hover:bg-slate-800 backdrop-blur-sm"
-        onClick={nextSection}
-        disabled={currentSection === sections.length - 1}
-      >
-        <ChevronRight className="h-4 w-4 text-white" />
-      </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-slate-900/80 hover:bg-slate-800/90 border-slate-700 backdrop-blur-sm text-white w-8 h-8 sm:w-10 sm:h-10"
+          onClick={nextSection}
+          disabled={currentSection === sections.length - 1}
+        >
+          <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
+        </Button>
 
-      {/* Progress Dots */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3 z-30">
-        {sections.map((_, i) => (
-          <button
-            key={i}
-            className={`w-3 h-3 rounded-full transition-all duration-500 ${
-              i === currentSection 
-                ? 'bg-emerald-400 scale-125' 
-                : 'bg-slate-500'
-            }`}
-            onClick={() => setCurrentSection(i)}
-          />
-        ))}
-      </div>
+        {/* Progress Dots */}
+        <div className="flex justify-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
+          {sections.map((_, i) => (
+            <button
+              key={i}
+              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
+                i === currentSection 
+                  ? 'bg-emerald-400 scale-125' 
+                  : 'bg-slate-500 hover:bg-slate-400'
+              }`}
+              onClick={() => setCurrentSection(i)}
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
+        </div>
 
-      {/* Swipe Indicator */}
-      <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-white/60 text-sm z-30 text-center">
-        <span>Desliza o toca las flechas para navegar</span>
+        {/* Swipe Indicator Text - Smaller and less prominent */}
+        <div className="text-center text-slate-500 text-xs sm:text-sm">
+          <span>Desliza o toca para navegar</span>
+        </div>
       </div>
     </div>
   );
