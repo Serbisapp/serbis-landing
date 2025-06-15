@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
 import { gsap } from 'gsap';
@@ -137,7 +137,8 @@ export const HorizontalScroll3D = () => {
   const scrollContentRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentSection, setCurrentSection] = useState(0);
-  const [isCleaningUp, setIsCleaningUp] = useState(false);
+  const [isMounted, setIsMounted] = useState(true);
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
   const mobile = useIsMobile();
 
   console.log('HorizontalScroll3D rendering, mobile:', mobile);
@@ -169,9 +170,27 @@ export const HorizontalScroll3D = () => {
     return <MobileCarousel sections={sections} currentSection={currentSection} setCurrentSection={setCurrentSection} />;
   }
 
-  // Desktop scroll effect with proper cleanup coordination
+  // Clean up function that prevents DOM manipulation conflicts
+  const cleanupScrollTrigger = useCallback(() => {
+    if (scrollTriggerRef.current) {
+      try {
+        // Kill the ScrollTrigger instance immediately
+        scrollTriggerRef.current.kill(true);
+        scrollTriggerRef.current = null;
+      } catch (error) {
+        console.log('ScrollTrigger cleanup error:', error);
+      }
+    }
+    
+    // Reset body styles immediately
+    if (document.body) {
+      document.body.style.pointerEvents = 'auto';
+    }
+  }, []);
+
+  // Desktop scroll effect with DOM-safe cleanup
   useEffect(() => {
-    if (!containerRef.current || !scrollContentRef.current || isCleaningUp) return;
+    if (!containerRef.current || !scrollContentRef.current || !isMounted) return;
 
     const container = containerRef.current;
     const scrollContent = scrollContentRef.current;
@@ -184,7 +203,8 @@ export const HorizontalScroll3D = () => {
       const scrollMultiplier = 2;
       const scrubValue = 2;
 
-      const scrollTriggerInstance = ScrollTrigger.create({
+      // Create ScrollTrigger with immediate DOM safety checks
+      scrollTriggerRef.current = ScrollTrigger.create({
         trigger: container,
         start: "top top",
         end: () => `+=${scrollDistance * scrollMultiplier}`,
@@ -197,7 +217,7 @@ export const HorizontalScroll3D = () => {
           ease: "none",
         }),
         onUpdate: (self) => {
-          if (!isCleaningUp) {
+          if (isMounted) {
             const smoothProgress = gsap.utils.clamp(0, 1, self.progress);
             setScrollProgress(smoothProgress);
           }
@@ -206,13 +226,15 @@ export const HorizontalScroll3D = () => {
 
       let scrollTimeout: NodeJS.Timeout;
       const handleScroll = () => {
-        if (isCleaningUp) return;
+        if (!isMounted) return;
         
         clearTimeout(scrollTimeout);
-        document.body.style.pointerEvents = 'none';
+        if (document.body) {
+          document.body.style.pointerEvents = 'none';
+        }
         
         scrollTimeout = setTimeout(() => {
-          if (!isCleaningUp) {
+          if (isMounted && document.body) {
             document.body.style.pointerEvents = 'auto';
           }
         }, 100);
@@ -220,41 +242,35 @@ export const HorizontalScroll3D = () => {
 
       window.addEventListener('scroll', handleScroll, { passive: true });
       
+      // Cleanup with immediate execution to prevent React conflicts
       return () => {
-        setIsCleaningUp(true);
-        
-        // Clear timeout first
+        setIsMounted(false);
         clearTimeout(scrollTimeout);
-        
-        // Remove event listener
         window.removeEventListener('scroll', handleScroll);
         
-        // Kill ScrollTrigger instance specifically
-        if (scrollTriggerInstance) {
-          scrollTriggerInstance.kill();
-        }
-        
-        // Reset body styles safely
+        // Use requestAnimationFrame to ensure DOM cleanup happens before React cleanup
         requestAnimationFrame(() => {
-          if (document.body) {
-            document.body.style.pointerEvents = 'auto';
-          }
+          cleanupScrollTrigger();
         });
       };
     } catch (error) {
       console.log('GSAP ScrollTrigger setup error:', error);
     }
-  }, [isCleaningUp]);
+  }, [isMounted, cleanupScrollTrigger]);
 
-  // Reset cleanup flag when component remounts
+  // Cleanup on unmount
   useEffect(() => {
-    setIsCleaningUp(false);
-  }, []);
+    return () => {
+      setIsMounted(false);
+      cleanupScrollTrigger();
+    };
+  }, [cleanupScrollTrigger]);
 
   // Desktop version only
   const desktopCurrentSection = Math.floor(scrollProgress * 2.99);
 
-  if (isCleaningUp) {
+  // Safety check - don't render if not mounted
+  if (!isMounted) {
     return <div className="h-screen bg-slate-900" />;
   }
 
