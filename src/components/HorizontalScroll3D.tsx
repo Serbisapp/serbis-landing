@@ -1,5 +1,3 @@
-
-
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
@@ -362,35 +360,50 @@ export const HorizontalScroll3D = () => {
         </Canvas>
       </div>
       
-      {/* Content - Adjusted to prevent overlap */}
+      {/* Content - Layout dynamically synced with the 3D animation */}
       <div ref={scrollContentRef} className="relative z-10 flex h-full">
-        {sections.map((section, index) => (
-          <div
-            key={index}
-            className="flex-shrink-0 w-screen h-full flex items-center"
-          >
-            {/* Left side for text - positioned to avoid phone overlap */}
-            <div className="w-1/2 pl-8 md:pl-16">
-              <div className="bg-slate-900/80 backdrop-blur-lg rounded-2xl p-6 md:p-8 border border-slate-700/50 max-w-lg">
-                <h2 className="text-2xl md:text-3xl lg:text-4xl font-black mb-4 text-white">
-                  {section.title}
-                </h2>
-                <p className="text-sm md:text-base lg:text-lg text-slate-200 mb-6">
-                  {section.subtitle}
-                </p>
-                
-                <div className={`inline-block bg-gradient-to-r from-${section.color}-500/20 to-${section.color}-400/20 rounded-lg px-3 md:px-4 py-2 backdrop-blur-sm border border-${section.color}-500/30`}>
-                  <span className={`text-${section.color}-400 font-semibold text-xs md:text-sm`}>
-                    {section.feature}
-                  </span>
+        {sections.map((section, index) => {
+          // The middle section's text will be on the right to avoid the 3D model
+          const isTextOnRight = index === 1;
+          
+          return (
+            <div
+              key={index}
+              className={`flex-shrink-0 w-screen h-full flex items-center ${
+                isTextOnRight ? "flex-row-reverse" : ""
+              }`}
+            >
+              {/* Text content half */}
+              <div
+                className={`w-1/2 ${
+                  isTextOnRight ? "pr-8 md:pr-16" : "pl-8 md:pl-16"
+                }`}
+              >
+                <div
+                  className={`bg-slate-900/80 backdrop-blur-lg rounded-2xl p-6 md:p-8 border border-slate-700/50 max-w-lg ${
+                    isTextOnRight ? "ml-auto text-right" : "text-left"
+                  }`}
+                >
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-black mb-4 text-white">
+                    {section.title}
+                  </h2>
+                  <p className="text-sm md:text-base lg:text-lg text-slate-200 mb-6">
+                    {section.subtitle}
+                  </p>
+                  
+                  <div className={`inline-block bg-gradient-to-r from-${section.color}-500/20 to-${section.color}-400/20 rounded-lg px-3 md:px-4 py-2 backdrop-blur-sm border border-${section.color}-500/30`}>
+                    <span className={`text-${section.color}-400 font-semibold text-xs md:text-sm`}>
+                      {section.feature}
+                    </span>
+                  </div>
                 </div>
               </div>
+              
+              {/* The other half is reserved for the 3D model */}
+              <div className="w-1/2"></div>
             </div>
-            
-            {/* Right side reserved for 3D phone */}
-            <div className="w-1/2"></div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       
       {/* Progress Indicator */}
@@ -424,4 +437,3 @@ export const HorizontalScroll3D = () => {
     </div>
   );
 };
-
