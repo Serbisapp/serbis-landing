@@ -1,6 +1,4 @@
-
-
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useState, useLayoutEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
 import { gsap } from 'gsap';
@@ -138,8 +136,6 @@ export const HorizontalScroll3D = () => {
   const scrollContentRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentSection, setCurrentSection] = useState(0);
-  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
-  const isUnmountedRef = useRef(false);
   const mobile = useIsMobile();
 
   console.log('HorizontalScroll3D rendering, mobile:', mobile);
@@ -171,91 +167,42 @@ export const HorizontalScroll3D = () => {
     return <MobileCarousel sections={sections} currentSection={currentSection} setCurrentSection={setCurrentSection} />;
   }
 
-  // Desktop scroll effect - simplified and stable
-  useEffect(() => {
+  // Use useLayoutEffect with GSAP context for robust setup and cleanup
+  useLayoutEffect(() => {
     if (!containerRef.current || !scrollContentRef.current) return;
 
-    const container = containerRef.current;
-    const scrollContent = scrollContentRef.current;
-    
-    try {
+    const ctx = gsap.context(() => {
+      const container = containerRef.current!;
+      const scrollContent = scrollContentRef.current!;
+      
       const totalWidth = scrollContent.scrollWidth;
       const viewportWidth = container.offsetWidth;
       const scrollDistance = totalWidth - viewportWidth;
 
+      if (scrollDistance <= 0) return;
+
       const scrollMultiplier = 2;
       const scrubValue = 2;
 
-      // Create ScrollTrigger instance
-      scrollTriggerRef.current = ScrollTrigger.create({
+      ScrollTrigger.create({
         trigger: container,
         start: "top top",
         end: () => `+=${scrollDistance * scrollMultiplier}`,
         scrub: scrubValue,
         pin: true,
         anticipatePin: 1,
-        refreshPriority: -1,
         animation: gsap.to(scrollContent, {
           x: -scrollDistance,
           ease: "none",
         }),
         onUpdate: (self) => {
-          if (!isUnmountedRef.current) {
-            const smoothProgress = gsap.utils.clamp(0, 1, self.progress);
-            setScrollProgress(smoothProgress);
-          }
-        }
+          const smoothProgress = gsap.utils.clamp(0, 1, self.progress);
+          setScrollProgress(smoothProgress);
+        },
       });
+    }, containerRef);
 
-      let scrollTimeout: NodeJS.Timeout;
-      const handleScroll = () => {
-        if (isUnmountedRef.current) return;
-        
-        clearTimeout(scrollTimeout);
-        if (document.body) {
-          document.body.style.pointerEvents = 'none';
-        }
-        
-        scrollTimeout = setTimeout(() => {
-          if (!isUnmountedRef.current && document.body) {
-            document.body.style.pointerEvents = 'auto';
-          }
-        }, 100);
-      };
-
-      window.addEventListener('scroll', handleScroll, { passive: true });
-      
-      // Cleanup function
-      return () => {
-        isUnmountedRef.current = true;
-        clearTimeout(scrollTimeout);
-        window.removeEventListener('scroll', handleScroll);
-        
-        // Kill ScrollTrigger immediately and synchronously
-        if (scrollTriggerRef.current) {
-          scrollTriggerRef.current.kill(true);
-          scrollTriggerRef.current = null;
-        }
-        
-        // Reset body styles
-        if (document.body) {
-          document.body.style.pointerEvents = 'auto';
-        }
-      };
-    } catch (error) {
-      console.log('GSAP ScrollTrigger setup error:', error);
-    }
-  }, []); // Empty dependency array to prevent re-runs
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      isUnmountedRef.current = true;
-      if (scrollTriggerRef.current) {
-        scrollTriggerRef.current.kill(true);
-        scrollTriggerRef.current = null;
-      }
-    };
+    return () => ctx.revert(); // Cleanup GSAP animations and ScrollTriggers
   }, []);
 
   // Desktop version only
@@ -367,4 +314,3 @@ export const HorizontalScroll3D = () => {
     </div>
   );
 };
-
