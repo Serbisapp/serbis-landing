@@ -114,15 +114,17 @@ const Index = () => {
                     </AnimatedWrapper>
                     
                     <AnimatedWrapper>
-                        <h1 className="font-bold text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-slate-100 tracking-tight max-w-7xl mx-auto leading-none mb-8">
-                            Tu Problema
-                            <span className="block bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                        <div className="font-bold text-slate-100 tracking-tight max-w-7xl mx-auto leading-none mb-8 space-y-4">
+                            <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl">
+                                Tu Problema
+                            </div>
+                            <div className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent font-black">
                                 5 Segundos
-                            </span>
-                            <span className="block text-slate-100">
+                            </div>
+                            <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl">
                                 Tu Solución
-                            </span>
-                        </h1>
+                            </div>
+                        </div>
                     </AnimatedWrapper>
                     
                     <AnimatedWrapper className="[animation-delay:200ms]">
