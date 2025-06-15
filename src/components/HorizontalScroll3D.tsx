@@ -8,6 +8,50 @@ import { TextureLoader } from 'three';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Flying Elements Component
+const FlyingElements = () => {
+  const groupRef = useRef<Group>(null);
+  
+  useFrame((state) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.1;
+      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.05) * 0.1;
+    }
+  });
+
+  const elements = Array.from({ length: 12 }, (_, i) => ({
+    position: [
+      (Math.random() - 0.5) * 20,
+      (Math.random() - 0.5) * 15,
+      (Math.random() - 0.5) * 15 - 5
+    ] as [number, number, number],
+    color: ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b'][Math.floor(Math.random() * 4)],
+    scale: Math.random() * 0.3 + 0.1,
+    rotationSpeed: (Math.random() - 0.5) * 0.02,
+  }));
+
+  return (
+    <group ref={groupRef}>
+      {elements.map((el, i) => (
+        <mesh key={i} position={el.position} scale={el.scale}>
+          {Math.random() > 0.5 ? (
+            <boxGeometry args={[0.5, 0.5, 0.5]} />
+          ) : (
+            <sphereGeometry args={[0.3, 8, 8]} />
+          )}
+          <meshStandardMaterial 
+            color={el.color} 
+            transparent 
+            opacity={0.4}
+            metalness={0.5}
+            roughness={0.3}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+};
+
 // Realistic Phone 3D Model Component
 const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   const groupRef = useRef<Group>(null);
@@ -33,11 +77,11 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
 
   return (
     <group ref={groupRef} scale={2.5}>
-      {/* Phone body - realistic iPhone-style */}
+      {/* Phone body - realistic iPhone-style with lighter color for visibility */}
       <mesh position={[0, 0, 0]} castShadow receiveShadow>
         <boxGeometry args={[1.2, 2.6, 0.15]} />
         <meshStandardMaterial 
-          color="#1a1a1a" 
+          color="#2d3748" 
           metalness={0.9} 
           roughness={0.1}
         />
@@ -68,12 +112,6 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
         <meshBasicMaterial color="#000000" transparent opacity={0.7} />
       </mesh>
       
-      {/* Home indicator (modern iPhone style) */}
-      <mesh position={[0, -1.15, 0.083]}>
-        <planeGeometry args={[0.3, 0.06]} />
-        <meshBasicMaterial color="#ffffff" transparent opacity={0.9} />
-      </mesh>
-      
       {/* Camera notch */}
       <mesh position={[0, 1.25, 0.083]}>
         <boxGeometry args={[0.25, 0.08, 0.02]} />
@@ -83,18 +121,18 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
       {/* Volume buttons */}
       <mesh position={[-0.61, 0.4, 0]} castShadow>
         <boxGeometry args={[0.02, 0.12, 0.03]} />
-        <meshStandardMaterial color="#1a1a1a" metalness={0.8} roughness={0.2} />
+        <meshStandardMaterial color="#2d3748" metalness={0.8} roughness={0.2} />
       </mesh>
       
       <mesh position={[-0.61, 0.15, 0]} castShadow>
         <boxGeometry args={[0.02, 0.25, 0.03]} />
-        <meshStandardMaterial color="#1a1a1a" metalness={0.8} roughness={0.2} />
+        <meshStandardMaterial color="#2d3748" metalness={0.8} roughness={0.2} />
       </mesh>
       
       {/* Power button */}
       <mesh position={[0.61, 0.4, 0]} castShadow>
         <boxGeometry args={[0.02, 0.15, 0.03]} />
-        <meshStandardMaterial color="#1a1a1a" metalness={0.8} roughness={0.2} />
+        <meshStandardMaterial color="#2d3748" metalness={0.8} roughness={0.2} />
       </mesh>
       
       {/* Lightning port */}
@@ -114,7 +152,7 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
       {/* Camera lens */}
       <mesh position={[-0.35, 1.05, 0.083]}>
         <cylinderGeometry args={[0.05, 0.05, 0.02, 16]} />
-        <meshStandardMaterial color="#1a1a1a" metalness={0.9} roughness={0.1} />
+        <meshStandardMaterial color="#2d3748" metalness={0.9} roughness={0.1} />
       </mesh>
       
       {/* Camera glass */}
@@ -126,27 +164,29 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   );
 };
 
-// 3D Scene with Realistic Phone
+// 3D Scene with Realistic Phone and Flying Elements
 const Scene3D = ({ scrollProgress }: { scrollProgress: number }) => {
   return (
     <>
-      <ambientLight intensity={0.4} />
+      <ambientLight intensity={0.6} />
       <directionalLight 
         position={[10, 10, 5]} 
-        intensity={1.5} 
+        intensity={1.8} 
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
       />
-      <pointLight position={[-10, -10, -5]} intensity={0.6} color="#4facfe" />
+      <pointLight position={[-10, -10, -5]} intensity={0.8} color="#4facfe" />
+      <pointLight position={[10, -10, 5]} intensity={0.6} color="#00f2fe" />
       <spotLight 
         position={[0, 20, 10]} 
         angle={0.15} 
         penumbra={1} 
-        intensity={1} 
+        intensity={1.2} 
         castShadow 
       />
       
+      <FlyingElements />
       <RealisticPhone3D scrollProgress={scrollProgress} />
     </>
   );
@@ -223,7 +263,7 @@ export const HorizontalScroll3D = () => {
   };
 
   return (
-    <div ref={containerRef} className="relative h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div ref={containerRef} className="relative h-screen overflow-hidden bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800">
       {/* Fixed 3D Canvas Background with Phone */}
       <div className="absolute inset-0 z-0">
         <Canvas 
@@ -234,7 +274,7 @@ export const HorizontalScroll3D = () => {
           }}
           shadows
           onCreated={({ gl }) => {
-            gl.setClearColor(0x0a0a0f, 1);
+            gl.setClearColor(0x475569, 1);
             gl.shadowMap.enabled = true;
           }}
         >
@@ -266,7 +306,7 @@ export const HorizontalScroll3D = () => {
               <h2 className="text-4xl md:text-6xl font-black mb-4 text-white">
                 {section.title}
               </h2>
-              <p className="text-lg md:text-xl text-slate-300 mb-6">
+              <p className="text-lg md:text-xl text-slate-200 mb-6">
                 {section.subtitle}
               </p>
               
@@ -287,14 +327,14 @@ export const HorizontalScroll3D = () => {
           <div
             key={i}
             className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              i === currentRotation ? 'bg-emerald-400 scale-150' : 'bg-slate-600'
+              i === currentRotation ? 'bg-emerald-400 scale-150' : 'bg-slate-400'
             }`}
           />
         ))}
       </div>
       
       {/* Professional Scroll Hint */}
-      <div className="absolute bottom-8 right-8 text-slate-400 text-sm font-mono z-30">
+      <div className="absolute bottom-8 right-8 text-slate-300 text-sm font-mono z-30">
         <div className="flex items-center space-x-2">
           <span>SCROLL_HORIZONTAL</span>
           <div className="w-6 h-1 bg-emerald-500 animate-pulse" />
@@ -302,7 +342,7 @@ export const HorizontalScroll3D = () => {
       </div>
       
       {/* System progress bar */}
-      <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 w-80 bg-slate-800/50 h-1 rounded-full overflow-hidden z-30 border border-emerald-500/30">
+      <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 w-80 bg-slate-600/50 h-1 rounded-full overflow-hidden z-30 border border-emerald-500/30">
         <div 
           className="h-full bg-gradient-to-r from-emerald-500 to-blue-500 transition-all duration-100"
           style={{ width: `${(scrollProgress * 100)}%` }}
