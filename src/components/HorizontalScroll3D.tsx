@@ -13,28 +13,18 @@ gsap.registerPlugin(ScrollTrigger);
 
 // Optimized Camera Controller
 const CameraController = ({ scrollProgress }: { scrollProgress: number }) => {
-  const mobile = useIsMobile();
-  
   useFrame(({ camera }) => {
     try {
       const perspectiveCamera = camera as PerspectiveCamera;
       
-      if (mobile) {
-        // Simplified mobile camera movement
-        perspectiveCamera.position.lerp(new Vector3(0, 2, 8 + scrollProgress * 3), 0.05);
-        perspectiveCamera.lookAt(0, 0, 0);
-        const targetFov = 50 + scrollProgress * 20;
-        perspectiveCamera.fov += (targetFov - perspectiveCamera.fov) * 0.05;
-      } else {
-        // Smoother, predictable desktop camera movement
-        const targetX = 3 - scrollProgress * 6;
-        const targetY = 2;
-        const targetZ = 8 + scrollProgress * 4;
-        perspectiveCamera.position.lerp(new Vector3(targetX, targetY, targetZ), 0.08);
-        perspectiveCamera.lookAt(0, 0, 0);
-        const targetFov = 45 + scrollProgress * 30;
-        perspectiveCamera.fov += (targetFov - perspectiveCamera.fov) * 0.08;
-      }
+      // Simplified desktop camera movement
+      const targetX = 3 - scrollProgress * 6;
+      const targetY = 2;
+      const targetZ = 8 + scrollProgress * 4;
+      perspectiveCamera.position.lerp(new Vector3(targetX, targetY, targetZ), 0.08);
+      perspectiveCamera.lookAt(0, 0, 0);
+      const targetFov = 45 + scrollProgress * 30;
+      perspectiveCamera.fov += (targetFov - perspectiveCamera.fov) * 0.08;
       
       perspectiveCamera.updateProjectionMatrix();
     } catch (error) {
@@ -45,30 +35,27 @@ const CameraController = ({ scrollProgress }: { scrollProgress: number }) => {
   return null;
 };
 
-// Ultra-optimized Phone Component for Mobile
+// Desktop-only Phone Component
 const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   const groupRef = useRef<Group>(null);
-  const mobile = useIsMobile();
   
-  // Only load textures on desktop to avoid WebGL issues on mobile
+  // Load textures for desktop
   let taskTexture = null;
   let chatTexture = null;
   let statusTexture = null;
   
   try {
-    if (!mobile) {
-      taskTexture = useLoader(TextureLoader, '/lovable-uploads/bba53f7f-ee96-480d-ad5e-325e9823282b.png');
-      chatTexture = useLoader(TextureLoader, '/lovable-uploads/8d11efbb-db2e-4ceb-9f8e-6bdf05247c33.png');
-      statusTexture = useLoader(TextureLoader, '/lovable-uploads/98092611-df32-4c24-9a64-4a9a804d80dd.png');
-    }
+    taskTexture = useLoader(TextureLoader, '/lovable-uploads/bba53f7f-ee96-480d-ad5e-325e9823282b.png');
+    chatTexture = useLoader(TextureLoader, '/lovable-uploads/8d11efbb-db2e-4ceb-9f8e-6bdf05247c33.png');
+    statusTexture = useLoader(TextureLoader, '/lovable-uploads/98092611-df32-4c24-9a64-4a9a804d80dd.png');
   } catch (error) {
     console.log('Texture loading error:', error);
   }
   
-  const frontTextures = mobile ? [] : [taskTexture, chatTexture, statusTexture];
+  const frontTextures = [taskTexture, chatTexture, statusTexture];
   const currentSection = Math.floor(scrollProgress * 2.99);
   
-  const rotationY = scrollProgress * (mobile ? 6.28 : 12.56);
+  const rotationY = scrollProgress * 12.56;
   const normalizedRotation = ((rotationY % 6.28) + 6.28) % 6.28;
   const isViewingBack = normalizedRotation > 1.57 && normalizedRotation < 4.71;
 
@@ -77,20 +64,13 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
       if (groupRef.current) {
         const time = state.clock.elapsedTime;
         
-        if (mobile) {
-          // Minimal mobile animations
-          groupRef.current.rotation.y = rotationY;
-          groupRef.current.scale.setScalar(2);
-          groupRef.current.position.set(0, 0, 0);
-        } else {
-          // Simplified, predictable desktop animations
-          groupRef.current.rotation.y = rotationY;
-          groupRef.current.rotation.x = Math.sin(time * 0.4) * 0.1;
-          groupRef.current.rotation.z = Math.sin(time * 0.2) * 0.05;
-          const scale = 2.5 + scrollProgress * 1.2;
-          groupRef.current.scale.setScalar(scale);
-          groupRef.current.position.set(0, 0, 0);
-        }
+        // Desktop animations
+        groupRef.current.rotation.y = rotationY;
+        groupRef.current.rotation.x = Math.sin(time * 0.4) * 0.1;
+        groupRef.current.rotation.z = Math.sin(time * 0.2) * 0.05;
+        const scale = 2.5 + scrollProgress * 1.2;
+        groupRef.current.scale.setScalar(scale);
+        groupRef.current.position.set(0, 0, 0);
       }
     } catch (error) {
       console.log('Phone3D animation error:', error);
@@ -100,24 +80,23 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   return (
     <group ref={groupRef}>
       {/* Phone body */}
-      <mesh castShadow={!mobile} receiveShadow={!mobile}>
-        <boxGeometry args={mobile ? [1.2, 2.6, 0.1] : [1.2, 2.6, 0.15]} />
+      <mesh castShadow receiveShadow>
+        <boxGeometry args={[1.2, 2.6, 0.15]} />
         <meshBasicMaterial color="#374151" />
       </mesh>
       
       {/* Screen bezel */}
-      <mesh position={[0, 0, mobile ? 0.051 : 0.076]}>
-        <boxGeometry args={mobile ? [1.15, 2.55, 0.005] : [1.15, 2.55, 0.01]} />
+      <mesh position={[0, 0, 0.076]}>
+        <boxGeometry args={[1.15, 2.55, 0.01]} />
         <meshBasicMaterial color="#111827" />
       </mesh>
       
       {/* Screen content */}
       {!isViewingBack && (
-        <mesh position={[0, 0.05, mobile ? 0.053 : 0.082]}>
+        <mesh position={[0, 0.05, 0.082]}>
           <planeGeometry args={[1.1, 2.4]} />
           <meshBasicMaterial 
-            color={mobile ? "#3b82f6" : undefined}
-            map={!mobile && frontTextures[currentSection] ? frontTextures[currentSection] : undefined}
+            map={frontTextures[currentSection] ? frontTextures[currentSection] : undefined}
           />
         </mesh>
       )}
@@ -125,36 +104,29 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   );
 };
 
-// Simplified Scene for Mobile
+// Desktop-only Scene
 const Scene3D = ({ scrollProgress }: { scrollProgress: number }) => {
-  const mobile = useIsMobile();
-  
   return (
     <>
       <CameraController scrollProgress={scrollProgress} />
-      {/* Minimal lighting for mobile */}
-      <ambientLight intensity={mobile ? 0.8 : 0.4} />
-      {!mobile && (
-        <>
-          <directionalLight 
-            position={[5, 5, 5]} 
-            intensity={0.8} 
-            castShadow
-            shadow-mapSize-width={256}
-            shadow-mapSize-height={256}
-          />
-          <pointLight 
-            position={[-5, 3, -2]} 
-            intensity={0.3} 
-            color="#10b981"
-          />
-          <pointLight 
-            position={[5, -3, 2]} 
-            intensity={0.3} 
-            color="#3b82f6"
-          />
-        </>
-      )}
+      <ambientLight intensity={0.4} />
+      <directionalLight 
+        position={[5, 5, 5]} 
+        intensity={0.8} 
+        castShadow
+        shadow-mapSize-width={256}
+        shadow-mapSize-height={256}
+      />
+      <pointLight 
+        position={[-5, 3, -2]} 
+        intensity={0.3} 
+        color="#10b981"
+      />
+      <pointLight 
+        position={[5, -3, 2]} 
+        intensity={0.3} 
+        color="#3b82f6"
+      />
       <Phone3D scrollProgress={scrollProgress} />
     </>
   );
@@ -190,9 +162,15 @@ export const HorizontalScroll3D = () => {
     }
   ];
 
+  // Early return for mobile - NO Canvas rendering at all
+  if (mobile) {
+    console.log('Rendering mobile carousel, currentSection:', currentSection);
+    return <MobileCarousel sections={sections} currentSection={currentSection} setCurrentSection={setCurrentSection} />;
+  }
+
   // Desktop scroll effect
   useEffect(() => {
-    if (mobile || !containerRef.current || !scrollContentRef.current) return;
+    if (!containerRef.current || !scrollContentRef.current) return;
 
     const container = containerRef.current;
     const scrollContent = scrollContentRef.current;
@@ -243,20 +221,14 @@ export const HorizontalScroll3D = () => {
     } catch (error) {
       console.log('GSAP ScrollTrigger setup error:', error);
     }
-  }, [mobile]);
+  }, []);
 
-  // Mobile version - return the mobile carousel directly without any Canvas
-  if (mobile) {
-    console.log('Rendering mobile carousel, currentSection:', currentSection);
-    return <MobileCarousel sections={sections} currentSection={currentSection} setCurrentSection={setCurrentSection} />;
-  }
-
-  // Desktop version
+  // Desktop version only
   const desktopCurrentSection = Math.floor(scrollProgress * 2.99);
 
   return (
     <div ref={containerRef} className="relative h-screen overflow-hidden">
-      {/* 3D Canvas Background */}
+      {/* 3D Canvas Background - Desktop Only */}
       <div className="absolute inset-0 z-0">
         <Canvas 
           camera={{ position: [0, 0, 8], fov: 60 }}
