@@ -14,6 +14,8 @@ import {
   MapPin,
   CheckCircle,
   Phone,
+  Zap,
+  Camera,
 } from "lucide-react";
 import { AnimatedWrapper } from '@/components/AnimatedWrapper';
 import { HorizontalScroll3D } from '@/components/HorizontalScroll3D';
@@ -87,8 +89,8 @@ const Index = () => {
                         <a href="#como-funciona" className="px-6 py-3 text-sm font-medium text-slate-300 hover:text-emerald-400 rounded-xl transition-all duration-300 hover:bg-slate-800/50">
                             Cómo Funciona
                         </a>
-                        <a href="#por-que-serbis" className="px-6 py-3 text-sm font-medium text-slate-300 hover:text-emerald-400 rounded-xl transition-all duration-300 hover:bg-slate-800/50">
-                            Confianza
+                        <a href="#funcionalidades" className="px-6 py-3 text-sm font-medium text-slate-300 hover:text-emerald-400 rounded-xl transition-all duration-300 hover:bg-slate-800/50">
+                            Funcionalidades
                         </a>
                         <Button variant="outline" className="ml-4 rounded-xl px-6 py-3 border border-emerald-400/30 text-emerald-400 hover:bg-emerald-400/10 hover:border-emerald-400 transition-all duration-300">
                             Soy Profesional
@@ -107,25 +109,25 @@ const Index = () => {
             <header className="relative pt-32 pb-20 text-center min-h-screen flex items-center justify-center">
                 <div className="container mx-auto px-6 relative z-10">
                     <AnimatedWrapper>
-                        <div className="inline-flex items-center gap-3 bg-slate-800/30 border border-emerald-400/20 rounded-full px-8 py-4 mb-16 backdrop-blur-sm">
-                            <MapPin className="w-4 h-4 text-emerald-400" />
-                            <span className="text-sm font-medium text-slate-300">Comenzando en Buenos Aires</span>
+                        <div className="inline-flex items-center gap-3 bg-slate-800/30 border border-orange-400/20 rounded-full px-8 py-4 mb-16 backdrop-blur-sm">
+                            <Zap className="w-4 h-4 text-orange-400" />
+                            <span className="text-sm font-medium text-slate-300">Fase Piloto • Zona Norte AMBA</span>
                         </div>
                     </AnimatedWrapper>
                     
                     <AnimatedWrapper>
                         <h1 className="font-bold text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-slate-100 tracking-tight max-w-7xl mx-auto leading-none mb-8">
-                            Servicios
+                            Conectamos
                             <span className="block bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                                Confiables
+                                Localmente
                             </span>
                         </h1>
                     </AnimatedWrapper>
                     
                     <AnimatedWrapper className="[animation-delay:200ms]">
                         <p className="mt-8 text-xl md:text-2xl text-slate-400 max-w-4xl mx-auto leading-relaxed font-light">
-                           Conectamos personas con profesionales locales verificados en Buenos Aires.
-                           <br />Desde <span className="text-emerald-400 font-medium">plomería</span> hasta <span className="text-blue-400 font-medium">diseño</span>. Simple, directo, confiable.
+                           Una plataforma móvil que conecta usuarios con profesionales locales usando <span className="text-emerald-400 font-medium">IA</span> y <span className="text-blue-400 font-medium">geolocalización</span>.
+                           <br />Actualmente en fase piloto en zona norte del AMBA.
                         </p>
                     </AnimatedWrapper>
                     
@@ -133,13 +135,13 @@ const Index = () => {
                         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                             <Button size="lg" className="group relative overflow-hidden rounded-xl text-lg font-semibold px-10 py-6 bg-gradient-to-r from-emerald-500 to-blue-500 text-slate-950 hover:shadow-2xl hover:shadow-emerald-500/25 transition-all duration-500 hover:scale-105 border-0">
                                 <span className="relative z-10 flex items-center gap-3">
-                                    Publicar Solicitud 
+                                    Probar la App 
                                     <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
                                 </span>
                             </Button>
                             
                             <Button variant="outline" size="lg" className="rounded-xl text-lg font-medium px-10 py-6 border border-slate-600 text-slate-300 hover:border-emerald-400 hover:text-emerald-400 hover:bg-emerald-400/5 transition-all duration-300">
-                                Buscar Profesionales
+                                Registrarme como Profesional
                             </Button>
                         </div>
                     </AnimatedWrapper>
@@ -147,19 +149,19 @@ const Index = () => {
                     <AnimatedWrapper className="mt-24 [animation-delay:600ms]">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                             <div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 hover:border-emerald-400/30 transition-all duration-500 hover:bg-slate-800/50">
-                                <CheckCircle className="w-8 h-8 text-emerald-400 mb-4" />
-                                <div className="text-lg font-semibold text-slate-200 mb-2">Verificados</div>
-                                <div className="text-slate-400 text-sm">Perfiles revisados por nuestro equipo</div>
+                                <Zap className="w-8 h-8 text-emerald-400 mb-4" />
+                                <div className="text-lg font-semibold text-slate-200 mb-2">Match con IA</div>
+                                <div className="text-slate-400 text-sm">Conectamos automáticamente según proximidad y habilidades</div>
                             </div>
                             <div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 hover:border-blue-400/30 transition-all duration-500 hover:bg-slate-800/50">
-                                <MapPin className="w-8 h-8 text-blue-400 mb-4" />
-                                <div className="text-lg font-semibold text-slate-200 mb-2">Local</div>
-                                <div className="text-slate-400 text-sm">Profesionales en tu barrio</div>
+                                <MessageCircle className="w-8 h-8 text-blue-400 mb-4" />
+                                <div className="text-lg font-semibold text-slate-200 mb-2">Chat Integrado</div>
+                                <div className="text-slate-400 text-sm">Comunicación directa con fotos y videos</div>
                             </div>
                             <div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 hover:border-purple-400/30 transition-all duration-500 hover:bg-slate-800/50">
-                                <MessageCircle className="w-8 h-8 text-purple-400 mb-4" />
-                                <div className="text-lg font-semibold text-slate-200 mb-2">Directo</div>
-                                <div className="text-slate-400 text-sm">Comunicación sin intermediarios</div>
+                                <MapPin className="w-8 h-8 text-purple-400 mb-4" />
+                                <div className="text-lg font-semibold text-slate-200 mb-2">Geolocalizado</div>
+                                <div className="text-slate-400 text-sm">Profesionales en tu zona específica</div>
                             </div>
                         </div>
                     </AnimatedWrapper>
@@ -174,33 +176,33 @@ const Index = () => {
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
                         <h2 className="font-bold text-5xl md:text-7xl mb-6 text-slate-100">
-                            Cómo Funciona <span className="bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">Serbis</span>
+                            Cómo Funciona <span className="bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">Ahora</span>
                         </h2>
-                        <p className="text-xl text-slate-400 font-light max-w-3xl mx-auto">Tres pasos simples para conectar con profesionales verificados en tu área.</p>
+                        <p className="text-xl text-slate-400 font-light max-w-3xl mx-auto">El proceso actual en nuestra fase piloto.</p>
                     </div>
                     
                     <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                         <StepCard 
                             number="01" 
                             icon={MessageCircle}
-                            title="Definí tu solicitud" 
-                            description="Describí tu necesidad en lenguaje simple. Nuestro sistema identifica la categoría, complejidad y urgencia del trabajo."
+                            title="Publicás tu necesidad" 
+                            description="Describís qué necesitás desde la app. Nuestro algoritmo identifica automáticamente el tipo de trabajo y busca profesionales en tu zona."
                             delay="0ms"
                             color="emerald"
                         />
                         <StepCard 
                             number="02" 
-                            icon={Users}
-                            title="Elegí tu profesional" 
-                            description="Te mostramos profesionales verificados en tu barrio. Comparás experiencia, precios y disponibilidad en un solo lugar."
+                            icon={Zap}
+                            title="Te conectamos" 
+                            description="La IA encuentra profesionales según proximidad y habilidades. Podés chatear directamente con ellos, ver fotos de trabajos anteriores."
                             delay="200ms"
                             color="blue"
                         />
                         <StepCard 
                             number="03" 
-                            icon={Star}
-                            title="Coordiná y calificá" 
-                            description="Coordinás el trabajo directamente con el profesional, realizás el pago y dejás tu calificación al terminar."
+                            icon={Users}
+                            title="Coordinás directo" 
+                            description="Acordás precio, horario y detalles por chat. El pago lo manejás directamente con el profesional. Proximamente: pagos integrados."
                             delay="400ms"
                             color="purple"
                         />
@@ -208,39 +210,66 @@ const Index = () => {
                 </div>
             </AnimatedWrapper>
 
-            {/* Why Serbis Section */}
-            <AnimatedWrapper tag="section" id="por-que-serbis" className="py-32 bg-slate-950 relative">
+            {/* Current Features Section */}
+            <AnimatedWrapper tag="section" id="funcionalidades" className="py-32 bg-slate-950 relative">
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
                         <h2 className="font-bold text-5xl md:text-7xl mb-6 text-slate-100">
-                            ¿Por Qué <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Serbis?</span>
+                            Funcionalidades <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Actuales</span>
                         </h2>
                         <p className="text-xl text-slate-400 max-w-3xl mx-auto font-light">
-                            Una plataforma diseñada para la confianza y transparencia en el mercado argentino.
+                            Lo que ya funciona en Serbis y lo que está en desarrollo.
                         </p>
                     </div>
                     
                     <div className="max-w-4xl mx-auto space-y-8">
-                        <ValuePropCard 
-                            icon={BadgeCheck} 
-                            title="Confianza garantizada" 
-                            description="Todos los proveedores pasan por un proceso de revisión manual donde verificamos identidad, experiencia y referencias."
+                        <FeatureCard 
+                            icon={Zap} 
+                            title="Match inteligente con IA" 
+                            description="Algoritmo que conecta automáticamente tareas con profesionales según ubicación, habilidades y disponibilidad."
+                            status="active"
                             delay="0ms"
                             color="emerald"
                         />
-                        <ValuePropCard 
-                            icon={Clock} 
-                            title="Todo en un lugar" 
-                            description="Podés comparar presupuestos, ver disponibilidad real y leer reseñas auténticas sin dar vueltas por diferentes sitios."
+                        <FeatureCard 
+                            icon={MessageCircle} 
+                            title="Chat con fotos y videos" 
+                            description="Sistema de mensajería integrado que permite compartir imágenes, videos y detalles del trabajo en tiempo real."
+                            status="active"
                             delay="100ms"
                             color="blue"
                         />
-                        <ValuePropCard 
-                            icon={Shield} 
-                            title="Transparencia total" 
-                            description="Verás reseñas reales de otros usuarios, precios claros y el historial completo de trabajos de cada profesional."
+                        <FeatureCard 
+                            icon={Camera} 
+                            title="Portfolio visual" 
+                            description="Los profesionales pueden subir fotos y videos de trabajos anteriores para mostrar su experiencia."
+                            status="active"
                             delay="200ms"
                             color="purple"
+                        />
+                        <FeatureCard 
+                            icon={MapPin} 
+                            title="Geolocalización precisa" 
+                            description="Cada profesional define su zona de trabajo y recibe tareas solo en su área de cobertura."
+                            status="active"
+                            delay="300ms"
+                            color="emerald"
+                        />
+                        <FeatureCard 
+                            icon={Clock} 
+                            title="Pagos integrados" 
+                            description="Próximamente: procesamiento seguro de pagos dentro de la plataforma con Mercado Pago."
+                            status="coming"
+                            delay="400ms"
+                            color="orange"
+                        />
+                        <FeatureCard 
+                            icon={Star} 
+                            title="Sistema de calificaciones" 
+                            description="Próximamente: reseñas y calificaciones de usuarios para generar confianza en la comunidad."
+                            status="coming"
+                            delay="500ms"
+                            color="orange"
                         />
                     </div>
                 </div>
@@ -251,26 +280,26 @@ const Index = () => {
                 <div className="container mx-auto px-6">
                     <div className="max-w-4xl mx-auto">
                         <h2 className="font-bold text-5xl md:text-7xl text-slate-100 mb-6">
-                            Comenzá <span className="bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">Hoy</span>
+                            Probá <span className="bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">Serbis</span>
                         </h2>
                         <p className="text-xl text-slate-400 max-w-3xl mx-auto mb-12 font-light">
-                            Registrate gratis y publicá tu primera solicitud. Conectá con profesionales verificados en Buenos Aires.
+                            Estamos en fase piloto en zona norte del AMBA. Descargá la app y conectá con profesionales locales.
                         </p>
                         
                         <div className="flex flex-col sm:flex-row items-center gap-6 justify-center mb-16">
                             <Button size="lg" className="rounded-xl px-12 py-6 text-lg font-semibold bg-gradient-to-r from-emerald-500 to-blue-500 text-slate-950 hover:shadow-2xl hover:shadow-emerald-500/25 transition-all duration-500 hover:scale-105 border-0">
-                                Registrarme Gratis
+                                Descargar App
                             </Button>
                             <Button size="lg" variant="outline" className="rounded-xl px-12 py-6 text-lg font-medium border border-slate-600 text-slate-300 hover:border-emerald-400 hover:text-emerald-400 hover:bg-emerald-400/5 transition-all duration-300">
-                                Soy Profesional
+                                Registrarme como Profesional
                             </Button>
                         </div>
 
                         <div className="text-center">
-                            <p className="text-slate-500 mb-6">¿Tenés dudas?</p>
+                            <p className="text-slate-500 mb-6">¿Consultas sobre el piloto?</p>
                             <Button size="lg" variant="outline" className="rounded-xl px-8 py-4 text-lg font-medium border border-slate-600 text-slate-300 hover:border-emerald-400 hover:text-emerald-400 hover:bg-emerald-400/5 transition-all duration-300">
                                 <Phone className="w-5 h-5 mr-2" />
-                                Hablemos
+                                Contactanos
                             </Button>
                         </div>
                     </div>
@@ -287,9 +316,9 @@ const Index = () => {
                             </div>
                         </div>
                         <h3 className="text-2xl font-bold text-slate-200 mb-4">Serbis</h3>
-                        <p className="text-slate-500">Conectando profesionales verificados en Buenos Aires</p>
+                        <p className="text-slate-500">Conectando profesionales locales • Fase Piloto</p>
                         <div className="pt-8 border-t border-slate-800">
-                            <p className="text-slate-500">© 2025 Serbis. Buenos Aires, Argentina</p>
+                            <p className="text-slate-500">© 2025 Serbis. Zona Norte AMBA, Argentina</p>
                             <a href="mailto:hello@serbis.tech" className="text-emerald-400 hover:text-emerald-300 transition-colors text-lg font-medium mt-2 inline-block">
                                 hello@serbis.tech
                             </a>
@@ -332,19 +361,25 @@ const StepCard = ({ number, icon: Icon, title, description, delay, color }: {
     );
 };
 
-// Value Proposition Card Component
-const ValuePropCard = ({ icon: Icon, title, description, delay, color }: { 
+// Feature Card Component
+const FeatureCard = ({ icon: Icon, title, description, status, delay, color }: { 
     icon: React.ElementType, 
     title: string, 
     description: string,
+    status: 'active' | 'coming',
     delay: string,
-    color: 'emerald' | 'blue' | 'purple'
+    color: 'emerald' | 'blue' | 'purple' | 'orange'
 }) => {
     const colorClasses = {
         emerald: 'text-emerald-400 border-emerald-400/20 hover:border-emerald-400/40 hover:bg-emerald-400/5',
         blue: 'text-blue-400 border-blue-400/20 hover:border-blue-400/40 hover:bg-blue-400/5',
-        purple: 'text-purple-400 border-purple-400/20 hover:border-purple-400/40 hover:bg-purple-400/5'
+        purple: 'text-purple-400 border-purple-400/20 hover:border-purple-400/40 hover:bg-purple-400/5',
+        orange: 'text-orange-400 border-orange-400/20 hover:border-orange-400/40 hover:bg-orange-400/5'
     };
+
+    const statusBadge = status === 'active' 
+        ? <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-400/10 text-emerald-400 border border-emerald-400/20">Activo</span>
+        : <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-400/10 text-orange-400 border border-orange-400/20">Próximamente</span>;
 
     return (
         <AnimatedWrapper className={`group cursor-pointer [animation-delay:${delay}]`}>
@@ -352,8 +387,11 @@ const ValuePropCard = ({ icon: Icon, title, description, delay, color }: {
                 <div className={`p-4 rounded-xl bg-slate-700/50 group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}>
                     <Icon className={`w-8 h-8 ${colorClasses[color].split(' ')[0]}`} />
                 </div>
-                <div>
-                    <h3 className="font-semibold text-2xl mb-4 text-slate-200">{title}</h3>
+                <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-4">
+                        <h3 className="font-semibold text-2xl text-slate-200">{title}</h3>
+                        {statusBadge}
+                    </div>
                     <p className="text-slate-400 text-lg leading-relaxed">{description}</p>
                 </div>
             </div>
