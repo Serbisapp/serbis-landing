@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
@@ -32,30 +31,22 @@ const CameraController = ({ scrollProgress }: { scrollProgress: number }) => {
   return null;
 };
 
-// Enhanced Phone Component with Back/Front Detection
+// Enhanced Phone Component
 const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   const groupRef = useRef<Group>(null);
   
-  // Load screen textures for front
+  // Load screen textures for front only
   const profileTexture = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=800&fit=crop');
   const dashboardTexture = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=800&fit=crop');
   const codeTexture = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=800&fit=crop');
   
-  // Load textures for back view
-  const backTexture1 = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=800&fit=crop');
-  const backTexture2 = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=800&fit=crop');
-  const backTexture3 = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&h=800&fit=crop');
-  
   const frontTextures = [profileTexture, dashboardTexture, codeTexture];
-  const backTextures = [backTexture1, backTexture2, backTexture3];
   const currentSection = Math.floor(scrollProgress * 2.99);
   
   // Calculate if we're viewing the front or back based on rotation
   const rotationY = scrollProgress * Math.PI * 4;
   const normalizedRotation = ((rotationY % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
   const isViewingBack = normalizedRotation > Math.PI / 2 && normalizedRotation < (3 * Math.PI) / 2;
-  
-  const currentTextures = isViewingBack ? backTextures : frontTextures;
 
   useFrame((state) => {
     if (groupRef.current) {
@@ -94,24 +85,14 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
         <meshStandardMaterial color="#1f2937" />
       </mesh>
       
-      {/* Screen content - changes based on viewing angle */}
-      <mesh position={[0, 0.05, 0.082]}>
-        <planeGeometry args={[1.1, 2.4]} />
-        <meshStandardMaterial 
-          map={currentTextures[currentSection] || currentTextures[0]}
-          emissive="#ffffff"
-          emissiveIntensity={isViewingBack ? 0.05 : 0.1}
-        />
-      </mesh>
-      
-      {/* Back screen content (when viewing from behind) */}
-      {isViewingBack && (
-        <mesh position={[0, 0.05, -0.082]} rotation={[0, Math.PI, 0]}>
+      {/* Screen content - only show on front */}
+      {!isViewingBack && (
+        <mesh position={[0, 0.05, 0.082]}>
           <planeGeometry args={[1.1, 2.4]} />
           <meshStandardMaterial 
-            map={currentTextures[currentSection] || currentTextures[0]}
+            map={frontTextures[currentSection] || frontTextures[0]}
             emissive="#ffffff"
-            emissiveIntensity={0.08}
+            emissiveIntensity={0.1}
           />
         </mesh>
       )}
