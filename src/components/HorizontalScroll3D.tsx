@@ -1,5 +1,6 @@
 
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+
+import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
 import { gsap } from 'gsap';
@@ -137,8 +138,8 @@ export const HorizontalScroll3D = () => {
   const scrollContentRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentSection, setCurrentSection] = useState(0);
-  const [isMounted, setIsMounted] = useState(true);
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+  const isUnmountedRef = useRef(false);
   const mobile = useIsMobile();
 
   console.log('HorizontalScroll3D rendering, mobile:', mobile);
@@ -170,27 +171,9 @@ export const HorizontalScroll3D = () => {
     return <MobileCarousel sections={sections} currentSection={currentSection} setCurrentSection={setCurrentSection} />;
   }
 
-  // Clean up function that prevents DOM manipulation conflicts
-  const cleanupScrollTrigger = useCallback(() => {
-    if (scrollTriggerRef.current) {
-      try {
-        // Kill the ScrollTrigger instance immediately
-        scrollTriggerRef.current.kill(true);
-        scrollTriggerRef.current = null;
-      } catch (error) {
-        console.log('ScrollTrigger cleanup error:', error);
-      }
-    }
-    
-    // Reset body styles immediately
-    if (document.body) {
-      document.body.style.pointerEvents = 'auto';
-    }
-  }, []);
-
-  // Desktop scroll effect with DOM-safe cleanup
+  // Desktop scroll effect - simplified and stable
   useEffect(() => {
-    if (!containerRef.current || !scrollContentRef.current || !isMounted) return;
+    if (!containerRef.current || !scrollContentRef.current) return;
 
     const container = containerRef.current;
     const scrollContent = scrollContentRef.current;
@@ -203,7 +186,7 @@ export const HorizontalScroll3D = () => {
       const scrollMultiplier = 2;
       const scrubValue = 2;
 
-      // Create ScrollTrigger with immediate DOM safety checks
+      // Create ScrollTrigger instance
       scrollTriggerRef.current = ScrollTrigger.create({
         trigger: container,
         start: "top top",
@@ -217,7 +200,7 @@ export const HorizontalScroll3D = () => {
           ease: "none",
         }),
         onUpdate: (self) => {
-          if (isMounted) {
+          if (!isUnmountedRef.current) {
             const smoothProgress = gsap.utils.clamp(0, 1, self.progress);
             setScrollProgress(smoothProgress);
           }
@@ -226,7 +209,7 @@ export const HorizontalScroll3D = () => {
 
       let scrollTimeout: NodeJS.Timeout;
       const handleScroll = () => {
-        if (!isMounted) return;
+        if (isUnmountedRef.current) return;
         
         clearTimeout(scrollTimeout);
         if (document.body) {
@@ -234,7 +217,7 @@ export const HorizontalScroll3D = () => {
         }
         
         scrollTimeout = setTimeout(() => {
-          if (isMounted && document.body) {
+          if (!isUnmountedRef.current && document.body) {
             document.body.style.pointerEvents = 'auto';
           }
         }, 100);
@@ -242,37 +225,41 @@ export const HorizontalScroll3D = () => {
 
       window.addEventListener('scroll', handleScroll, { passive: true });
       
-      // Cleanup with immediate execution to prevent React conflicts
+      // Cleanup function
       return () => {
-        setIsMounted(false);
+        isUnmountedRef.current = true;
         clearTimeout(scrollTimeout);
         window.removeEventListener('scroll', handleScroll);
         
-        // Use requestAnimationFrame to ensure DOM cleanup happens before React cleanup
-        requestAnimationFrame(() => {
-          cleanupScrollTrigger();
-        });
+        // Kill ScrollTrigger immediately and synchronously
+        if (scrollTriggerRef.current) {
+          scrollTriggerRef.current.kill(true);
+          scrollTriggerRef.current = null;
+        }
+        
+        // Reset body styles
+        if (document.body) {
+          document.body.style.pointerEvents = 'auto';
+        }
       };
     } catch (error) {
       console.log('GSAP ScrollTrigger setup error:', error);
     }
-  }, [isMounted, cleanupScrollTrigger]);
+  }, []); // Empty dependency array to prevent re-runs
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      setIsMounted(false);
-      cleanupScrollTrigger();
+      isUnmountedRef.current = true;
+      if (scrollTriggerRef.current) {
+        scrollTriggerRef.current.kill(true);
+        scrollTriggerRef.current = null;
+      }
     };
-  }, [cleanupScrollTrigger]);
+  }, []);
 
   // Desktop version only
   const desktopCurrentSection = Math.floor(scrollProgress * 2.99);
-
-  // Safety check - don't render if not mounted
-  if (!isMounted) {
-    return <div className="h-screen bg-slate-900" />;
-  }
 
   return (
     <div ref={containerRef} className="relative h-screen overflow-hidden">
@@ -380,3 +367,4 @@ export const HorizontalScroll3D = () => {
     </div>
   );
 };
+
