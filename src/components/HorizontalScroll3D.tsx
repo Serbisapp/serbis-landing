@@ -1,7 +1,6 @@
-
-import React, { useRef, useState, useLayoutEffect } from 'react';
+import React, { useRef, useState, useLayoutEffect, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Group, Vector3, PerspectiveCamera } from 'three';
+import { Group, Vector3, PerspectiveCamera, Color, BufferGeometry, Float32BufferAttribute, PointsMaterial, AdditiveBlending, Points } from 'three';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextureLoader } from 'three';
@@ -19,11 +18,11 @@ const CameraController = ({ scrollProgress }: { scrollProgress: number }) => {
       
       // Simplified desktop camera movement
       const targetX = 3 - scrollProgress * 6;
-      const targetY = 2;
-      const targetZ = 8 + scrollProgress * 4;
+      const targetY = 1.5; // Adjusted Y for better framing
+      const targetZ = 7 + scrollProgress * 3; // Adjusted Z for better framing
       perspectiveCamera.position.lerp(new Vector3(targetX, targetY, targetZ), 0.08);
       perspectiveCamera.lookAt(0, 0, 0);
-      const targetFov = 45 + scrollProgress * 30;
+      const targetFov = 50 + scrollProgress * 20; // Adjusted FOV
       perspectiveCamera.fov += (targetFov - perspectiveCamera.fov) * 0.08;
       
       perspectiveCamera.updateProjectionMatrix();
@@ -55,20 +54,19 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   const frontTextures = [taskTexture, chatTexture, statusTexture];
   const currentSection = Math.floor(scrollProgress * 2.99);
   
-  const rotationY = scrollProgress * 12.56;
+  const rotationY = scrollProgress * 12.56; // Two full rotations
   const normalizedRotation = ((rotationY % 6.28) + 6.28) % 6.28;
-  const isViewingBack = normalizedRotation > 1.57 && normalizedRotation < 4.71;
+  const isViewingBack = normalizedRotation > Math.PI / 2 && normalizedRotation < (3 * Math.PI) / 2;
 
   useFrame((state) => {
     try {
       if (groupRef.current) {
         const time = state.clock.elapsedTime;
         
-        // Desktop animations
         groupRef.current.rotation.y = rotationY;
-        groupRef.current.rotation.x = Math.sin(time * 0.4) * 0.1;
-        groupRef.current.rotation.z = Math.sin(time * 0.2) * 0.05;
-        const scale = 2.5 + scrollProgress * 1.2;
+        groupRef.current.rotation.x = Math.sin(time * 0.3) * 0.08; // Subtle tilt
+        groupRef.current.rotation.z = Math.cos(time * 0.2) * 0.04; // Subtle sway
+        const scale = 2.8 + scrollProgress * 1; // Adjusted scale progression
         groupRef.current.scale.setScalar(scale);
         groupRef.current.position.set(0, 0, 0);
       }
@@ -77,30 +75,135 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
     }
   });
 
+  // Screen dimensions (approx 9:19.5 aspect ratio like modern phones)
+  const screenWidth = 1.0;
+  const screenHeight = screenWidth * (19.5 / 9);
+  const phoneWidth = screenWidth + 0.1;
+  const phoneHeight = screenHeight + 0.1;
+  const phoneDepth = 0.12;
+
   return (
     <group ref={groupRef}>
-      {/* Phone body */}
+      {/* Phone body with rounded edges */}
       <mesh castShadow receiveShadow>
-        <boxGeometry args={[1.2, 2.6, 0.15]} />
-        <meshBasicMaterial color="#374151" />
+        <boxGeometry args={[phoneWidth, phoneHeight, phoneDepth]} />
+        {/* Metallic-like material */}
+        <meshStandardMaterial color="#4A4A4A" metalness={0.6} roughness={0.3} />
       </mesh>
       
-      {/* Screen bezel */}
-      <mesh position={[0, 0, 0.076]}>
-        <boxGeometry args={[1.15, 2.55, 0.01]} />
-        <meshBasicMaterial color="#111827" />
+      {/* Screen Bezel */}
+      <mesh position={[0, 0, phoneDepth / 2 + 0.001]}>
+        <planeGeometry args={[screenWidth + 0.02, screenHeight + 0.02]} />
+        <meshBasicMaterial color="#000000" />
       </mesh>
-      
+
       {/* Screen content */}
-      {!isViewingBack && (
-        <mesh position={[0, 0.05, 0.082]}>
-          <planeGeometry args={[1.1, 2.4]} />
+      {!isViewingBack && frontTextures[currentSection] && (
+        <mesh position={[0, 0, phoneDepth / 2 + 0.002]}>
+          <planeGeometry args={[screenWidth, screenHeight]} />
           <meshBasicMaterial 
-            map={frontTextures[currentSection] ? frontTextures[currentSection] : undefined}
+            map={frontTextures[currentSection]}
           />
         </mesh>
       )}
+
+      {/* Notch/Camera Island */}
+      <mesh position={[0, screenHeight / 2 - 0.05, phoneDepth / 2 + 0.0015]}>
+        <boxGeometry args={[0.25, 0.04, 0.01]} />
+        <meshBasicMaterial color="#000000" />
+      </mesh>
+
+      {/* Side Buttons (example) */}
+      <mesh position={[-phoneWidth / 2 - 0.01, 0.3, 0]}> 
+        <boxGeometry args={[0.02, 0.2, 0.06]} />
+        <meshStandardMaterial color="#303030" metalness={0.5} roughness={0.4} />
+      </mesh>
+      <mesh position={[-phoneWidth / 2 - 0.01, 0.0, 0]}> 
+        <boxGeometry args={[0.02, 0.12, 0.06]} />
+        <meshStandardMaterial color="#303030" metalness={0.5} roughness={0.4} />
+      </mesh>
+
     </group>
+  );
+};
+
+// Starfield Component
+const Starfield = () => {
+  const starsRef = useRef<Points>(null!);
+  const numStars = 5000;
+
+  const positions = useMemo(() => {
+    const pos = new Float32Array(numStars * 3);
+    for (let i = 0; i < numStars; i++) {
+      pos[i * 3] = (Math.random() - 0.5) * 200;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 200;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 200;
+    }
+    return pos;
+  }, [numStars]);
+
+  const sizes = useMemo(() => {
+    const s = new Float32Array(numStars);
+    for (let i = 0; i < numStars; i++) {
+      s[i] = Math.random() * 1.5 + 0.5; // Star sizes
+    }
+    return s;
+  }, [numStars]);
+
+  const colors = useMemo(() => {
+    const c = new Float32Array(numStars * 3);
+    const baseColor = new Color(0.6, 0.7, 1.0); // Bluish white
+    for (let i = 0; i < numStars; i++) {
+      const intensity = Math.random() * 0.5 + 0.5;
+      c[i * 3] = baseColor.r * intensity;
+      c[i * 3 + 1] = baseColor.g * intensity;
+      c[i * 3 + 2] = baseColor.b * intensity;
+    }
+    return c;
+  }, [numStars]);
+
+  useFrame((state) => {
+    if (starsRef.current) {
+      starsRef.current.rotation.y += 0.0002;
+      starsRef.current.rotation.x += 0.0001;
+      // Add subtle twinkle effect by modulating opacity or color over time if desired
+    }
+  });
+
+  return (
+    <points ref={starsRef}>
+      <bufferGeometry attach="geometry">
+        <bufferAttribute
+          attach="attributes-position"
+          count={positions.length / 3}
+          array={positions}
+          itemSize={3}
+        />
+        <bufferAttribute
+          attach="attributes-size"
+          count={sizes.length}
+          array={sizes}
+          itemSize={1}
+        />
+        <bufferAttribute
+          attach="attributes-color"
+          count={colors.length / 3}
+          array={colors}
+          itemSize={3}
+          normalized
+        />
+      </bufferGeometry>
+      <pointsMaterial
+        attach="material"
+        size={0.1} // Base size, will be multiplied by attribute
+        sizeAttenuation
+        vertexColors
+        blending={AdditiveBlending}
+        transparent
+        opacity={0.8}
+        depthWrite={false} // Important for blending
+      />
+    </points>
   );
 };
 
@@ -109,25 +212,26 @@ const Scene3D = ({ scrollProgress }: { scrollProgress: number }) => {
   return (
     <>
       <CameraController scrollProgress={scrollProgress} />
-      <ambientLight intensity={0.4} />
+      <ambientLight intensity={0.6} /> {/* Slightly increased ambient light */}
       <directionalLight 
-        position={[5, 5, 5]} 
-        intensity={0.8} 
+        position={[8, 10, 8]} // Adjusted position for better highlights
+        intensity={1.0} // Increased intensity
         castShadow
-        shadow-mapSize-width={256}
-        shadow-mapSize-height={256}
+        shadow-mapSize-width={512} // Increased shadow map for better quality
+        shadow-mapSize-height={512}
       />
       <pointLight 
-        position={[-5, 3, -2]} 
-        intensity={0.3} 
+        position={[-8, 5, -5]} // Adjusted position
+        intensity={0.5} 
         color="#10b981"
       />
       <pointLight 
-        position={[5, -3, 2]} 
-        intensity={0.3} 
+        position={[8, -5, 5]} // Adjusted position
+        intensity={0.5} 
         color="#3b82f6"
       />
       <Phone3D scrollProgress={scrollProgress} />
+      <Starfield />
     </>
   );
 };
