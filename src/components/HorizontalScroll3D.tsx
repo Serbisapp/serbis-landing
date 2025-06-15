@@ -260,10 +260,6 @@ export const HorizontalScroll3D = () => {
           // Smooth the progress updates to prevent jerky animations
           const smoothProgress = gsap.utils.clamp(0, 1, self.progress);
           setScrollProgress(smoothProgress);
-        },
-        // Add scroll resistance for mobile
-        onRefresh: () => {
-          ScrollTrigger.refresh();
         }
       }
     });
