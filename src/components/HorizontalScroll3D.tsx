@@ -14,8 +14,10 @@ const FlyingElements = () => {
   
   useFrame((state) => {
     if (groupRef.current) {
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.1;
-      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.05) * 0.1;
+      // Reduced rotation speed from 0.1 to 0.03
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.03;
+      // Reduced oscillation speed from 0.05 to 0.02
+      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.02) * 0.1;
     }
   });
 
@@ -27,7 +29,8 @@ const FlyingElements = () => {
     ] as [number, number, number],
     color: ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b'][Math.floor(Math.random() * 4)],
     scale: Math.random() * 0.3 + 0.1,
-    rotationSpeed: (Math.random() - 0.5) * 0.02,
+    // Reduced rotation speed from 0.02 to 0.008
+    rotationSpeed: (Math.random() - 0.5) * 0.008,
   }));
 
   return (
@@ -69,21 +72,21 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
     if (groupRef.current) {
       // 3 full rotations (3 * 2π)
       groupRef.current.rotation.y = scrollProgress * Math.PI * 6;
-      // Subtle floating animation
-      groupRef.current.position.y = Math.sin(scrollProgress * Math.PI * 4) * 0.1;
-      groupRef.current.rotation.x = Math.sin(scrollProgress * Math.PI * 2) * 0.05;
+      // Reduced floating animation speed and amplitude
+      groupRef.current.position.y = Math.sin(scrollProgress * Math.PI * 2) * 0.05;
+      groupRef.current.rotation.x = Math.sin(scrollProgress * Math.PI) * 0.02;
     }
   });
 
   return (
     <group ref={groupRef} scale={2.5}>
-      {/* Phone body - realistic iPhone-style with lighter color for visibility */}
+      {/* Phone body - lighter color for better visibility */}
       <mesh position={[0, 0, 0]} castShadow receiveShadow>
         <boxGeometry args={[1.2, 2.6, 0.15]} />
         <meshStandardMaterial 
-          color="#2d3748" 
-          metalness={0.9} 
-          roughness={0.1}
+          color="#6b7280" 
+          metalness={0.8} 
+          roughness={0.2}
         />
       </mesh>
       
@@ -91,9 +94,9 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
       <mesh position={[0, 0, 0.076]} castShadow>
         <boxGeometry args={[1.15, 2.55, 0.01]} />
         <meshStandardMaterial 
-          color="#000000" 
-          metalness={0.95} 
-          roughness={0.05}
+          color="#374151" 
+          metalness={0.9} 
+          roughness={0.1}
         />
       </mesh>
       
@@ -121,38 +124,38 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
       {/* Volume buttons */}
       <mesh position={[-0.61, 0.4, 0]} castShadow>
         <boxGeometry args={[0.02, 0.12, 0.03]} />
-        <meshStandardMaterial color="#2d3748" metalness={0.8} roughness={0.2} />
+        <meshStandardMaterial color="#6b7280" metalness={0.7} roughness={0.3} />
       </mesh>
       
       <mesh position={[-0.61, 0.15, 0]} castShadow>
         <boxGeometry args={[0.02, 0.25, 0.03]} />
-        <meshStandardMaterial color="#2d3748" metalness={0.8} roughness={0.2} />
+        <meshStandardMaterial color="#6b7280" metalness={0.7} roughness={0.3} />
       </mesh>
       
       {/* Power button */}
       <mesh position={[0.61, 0.4, 0]} castShadow>
         <boxGeometry args={[0.02, 0.15, 0.03]} />
-        <meshStandardMaterial color="#2d3748" metalness={0.8} roughness={0.2} />
+        <meshStandardMaterial color="#6b7280" metalness={0.7} roughness={0.3} />
       </mesh>
       
       {/* Lightning port */}
       <mesh position={[0, -1.28, 0]} castShadow>
         <boxGeometry args={[0.15, 0.03, 0.08]} />
-        <meshStandardMaterial color="#333333" metalness={0.6} roughness={0.4} />
+        <meshStandardMaterial color="#4b5563" metalness={0.6} roughness={0.4} />
       </mesh>
       
       {/* Speaker grilles */}
       {[-0.3, -0.15, 0, 0.15, 0.3].map((x, i) => (
         <mesh key={i} position={[x, -1.28, 0.02]} castShadow>
           <cylinderGeometry args={[0.015, 0.015, 0.06, 8]} />
-          <meshStandardMaterial color="#333333" metalness={0.6} roughness={0.4} />
+          <meshStandardMaterial color="#4b5563" metalness={0.6} roughness={0.4} />
         </mesh>
       ))}
       
       {/* Camera lens */}
       <mesh position={[-0.35, 1.05, 0.083]}>
         <cylinderGeometry args={[0.05, 0.05, 0.02, 16]} />
-        <meshStandardMaterial color="#2d3748" metalness={0.9} roughness={0.1} />
+        <meshStandardMaterial color="#6b7280" metalness={0.8} roughness={0.2} />
       </mesh>
       
       {/* Camera glass */}
@@ -282,18 +285,6 @@ export const HorizontalScroll3D = () => {
         </Canvas>
       </div>
       
-      {/* Professional UI Overlay - Top Status */}
-      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 text-center z-30">
-        <div className="bg-black/80 backdrop-blur-md rounded-xl p-4 border border-emerald-500/30 shadow-2xl">
-          <div className="text-emerald-400 text-xs font-mono mb-1">
-            SISTEMA {currentRotation + 1}/3 ACTIVO
-          </div>
-          <div className="text-lg font-bold text-white">
-            {sections[currentRotation]?.feature || "Sistema Initializing"}
-          </div>
-        </div>
-      </div>
-      
       {/* Scrolling Content */}
       <div ref={scrollContentRef} className="relative z-10 flex h-full">
         {sections.map((section, index) => (
@@ -310,10 +301,10 @@ export const HorizontalScroll3D = () => {
                 {section.subtitle}
               </p>
               
-              {/* Tech-style feature highlight */}
+              {/* Clean feature highlight */}
               <div className={`inline-block bg-gradient-to-r ${getColorClasses(section.color)}/20 rounded-lg px-6 py-3 backdrop-blur-sm border border-${section.color}-500/30`}>
-                <span className={`text-${section.color}-400 font-mono font-semibold tracking-wider text-sm`}>
-                  {section.feature.toUpperCase()}
+                <span className={`text-${section.color}-400 font-semibold tracking-wider text-sm`}>
+                  {section.feature}
                 </span>
               </div>
             </div>
@@ -321,7 +312,7 @@ export const HorizontalScroll3D = () => {
         ))}
       </div>
       
-      {/* Progress Indicator */}
+      {/* Simple Progress Indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3 z-30">
         {sections.map((_, i) => (
           <div
@@ -331,22 +322,6 @@ export const HorizontalScroll3D = () => {
             }`}
           />
         ))}
-      </div>
-      
-      {/* Professional Scroll Hint */}
-      <div className="absolute bottom-8 right-8 text-slate-300 text-sm font-mono z-30">
-        <div className="flex items-center space-x-2">
-          <span>SCROLL_HORIZONTAL</span>
-          <div className="w-6 h-1 bg-emerald-500 animate-pulse" />
-        </div>
-      </div>
-      
-      {/* System progress bar */}
-      <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 w-80 bg-slate-600/50 h-1 rounded-full overflow-hidden z-30 border border-emerald-500/30">
-        <div 
-          className="h-full bg-gradient-to-r from-emerald-500 to-blue-500 transition-all duration-100"
-          style={{ width: `${(scrollProgress * 100)}%` }}
-        />
       </div>
     </div>
   );
