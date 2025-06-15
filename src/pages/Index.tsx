@@ -127,7 +127,7 @@ const Index = () => {
                     
                     <AnimatedWrapper className="[animation-delay:200ms]">
                         <p className="mt-8 text-xl md:text-2xl text-slate-400 max-w-4xl mx-auto leading-relaxed font-light">
-                           Olvidate de listas eternas y búsquedas sin fin. <span className="text-emerald-400 font-semibold">Escribí tu problema</span> y nuestra <span className="text-blue-400 font-semibold">IA te conecta en 5 segundos</span> con el profesional perfecto en tu zona.
+                           Olvidate de listas eternas y búsquedas sin fin. <span className="text-emerald-400 font-semibold">Escribí tu problema</span> y <span className="text-blue-400 font-semibold">te conectamos en 5 segundos</span> con el profesional perfecto en tu zona.
                            <br />Todo integrado: chat, negociación de precios y seguimiento en vivo.
                         </p>
                     </AnimatedWrapper>
@@ -144,24 +144,42 @@ const Index = () => {
                     </AnimatedWrapper>
 
                     <AnimatedWrapper className="mt-24 [animation-delay:600ms]">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                            <div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 hover:border-emerald-400/30 transition-all duration-500 hover:bg-slate-800/50">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <Zap className="w-8 h-8 text-emerald-400" />
-                                    <span className="text-2xl font-bold text-emerald-400">5s</span>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                            <div className="bg-slate-800/30 backdrop-blur-sm rounded-3xl p-10 border border-slate-700/50 hover:border-emerald-400/40 transition-all duration-500 hover:bg-slate-800/50 hover:scale-105 group">
+                                <div className="flex flex-col items-center text-center space-y-6">
+                                    <div className="relative">
+                                        <div className="w-16 h-16 bg-gradient-to-br from-emerald-400/20 to-emerald-600/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 border border-emerald-400/30">
+                                            <Zap className="w-8 h-8 text-emerald-400" />
+                                        </div>
+                                        <div className="absolute -top-2 -right-2 bg-emerald-500 text-slate-950 text-sm font-bold px-2 py-1 rounded-full">5s</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-xl font-bold text-slate-100 mb-3">Conexión Instantánea</div>
+                                        <div className="text-slate-400 leading-relaxed">Geolocalización inteligente para matches perfectos al instante</div>
+                                    </div>
                                 </div>
-                                <div className="text-lg font-semibold text-slate-200 mb-2">Conexión Instantánea</div>
-                                <div className="text-slate-400 text-sm">IA + geolocalización para matches perfectos al instante</div>
                             </div>
-                            <div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 hover:border-blue-400/30 transition-all duration-500 hover:bg-slate-800/50">
-                                <MessageCircle className="w-8 h-8 text-blue-400 mb-4" />
-                                <div className="text-lg font-semibold text-slate-200 mb-2">Todo Integrado</div>
-                                <div className="text-slate-400 text-sm">Chat, fotos, videos, negociación de precios en un solo lugar</div>
+                            <div className="bg-slate-800/30 backdrop-blur-sm rounded-3xl p-10 border border-slate-700/50 hover:border-blue-400/40 transition-all duration-500 hover:bg-slate-800/50 hover:scale-105 group">
+                                <div className="flex flex-col items-center text-center space-y-6">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-blue-400/20 to-blue-600/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 border border-blue-400/30">
+                                        <MessageCircle className="w-8 h-8 text-blue-400" />
+                                    </div>
+                                    <div>
+                                        <div className="text-xl font-bold text-slate-100 mb-3">Todo Integrado</div>
+                                        <div className="text-slate-400 leading-relaxed">Chat, fotos, videos, negociación de precios en un solo lugar</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 hover:border-purple-400/30 transition-all duration-500 hover:bg-slate-800/50">
-                                <Eye className="w-8 h-8 text-purple-400 mb-4" />
-                                <div className="text-lg font-semibold text-slate-200 mb-2">Status en Vivo</div>
-                                <div className="text-slate-400 text-sm">Seguí el progreso del trabajo en tiempo real</div>
+                            <div className="bg-slate-800/30 backdrop-blur-sm rounded-3xl p-10 border border-slate-700/50 hover:border-purple-400/40 transition-all duration-500 hover:bg-slate-800/50 hover:scale-105 group">
+                                <div className="flex flex-col items-center text-center space-y-6">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-purple-400/20 to-purple-600/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 border border-purple-400/30">
+                                        <Eye className="w-8 h-8 text-purple-400" />
+                                    </div>
+                                    <div>
+                                        <div className="text-xl font-bold text-slate-100 mb-3">Status en Vivo</div>
+                                        <div className="text-slate-400 leading-relaxed">Seguí el progreso del trabajo en tiempo real</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </AnimatedWrapper>
@@ -186,14 +204,14 @@ const Index = () => {
                             number="01" 
                             icon={MessageCircle}
                             title="Escribí tu problema" 
-                            description="Una línea, una foto. Nuestra IA entiende exactamente qué necesitás y encuentra al profesional perfecto en tu zona."
+                            description="Una línea, una foto. Entendemos exactamente qué necesitás y encontramos al profesional perfecto en tu zona."
                             delay="0ms"
                             color="emerald"
                         />
                         <StepCard 
                             number="02" 
                             icon={Zap}
-                            title="Conectás en 5 segundos" 
+                            title="Te conectamos en 5 segundos" 
                             description="Match instantáneo con el profesional ideal. Chateás directo, ves su portfolio y negociás el precio sin intermediarios."
                             delay="200ms"
                             color="blue"
@@ -225,7 +243,7 @@ const Index = () => {
                     <div className="max-w-4xl mx-auto space-y-8">
                         <FeatureCard 
                             icon={Zap} 
-                            title="Match con IA en 5 segundos" 
+                            title="Te conectamos en 5 segundos" 
                             description="Algoritmo inteligente que conecta automáticamente tu problema con el profesional perfecto según ubicación, experiencia y disponibilidad."
                             status="active"
                             delay="0ms"
