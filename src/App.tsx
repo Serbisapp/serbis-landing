@@ -8,7 +8,7 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Get the base path for GitHub Pages
+// Get the base path for GitHub Pages - change 'serbis-landing' to your actual repository name
 const basename = import.meta.env.PROD ? '/serbis-landing' : '';
 
 const App = () => (
