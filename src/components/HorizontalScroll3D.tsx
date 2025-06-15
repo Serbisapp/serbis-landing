@@ -1,159 +1,93 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Mesh, Group } from 'three';
+import { Group } from 'three';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// 3D Smartphone Model Component
-const SmartphoneModel = ({ position, scale = 1 }: {
-  position: [number, number, number];
-  scale?: number;
-}) => {
+// Argentina 3D Map Component
+const ArgentinaMap = ({ scrollProgress }: { scrollProgress: number }) => {
   const groupRef = useRef<Group>(null);
   
-  useFrame((state) => {
+  useFrame(() => {
     if (groupRef.current) {
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.3;
-      groupRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.8) * 0.3;
+      // Rotate based on scroll progress
+      groupRef.current.rotation.y = scrollProgress * Math.PI * 4;
+      groupRef.current.rotation.x = Math.sin(scrollProgress * Math.PI * 2) * 0.2;
+      groupRef.current.position.y = Math.sin(scrollProgress * Math.PI * 3) * 0.5;
     }
   });
 
+  // Simple Argentina outline using basic shapes
   return (
-    <group ref={groupRef} position={position} scale={scale}>
-      {/* Phone body */}
-      <mesh>
-        <boxGeometry args={[1, 2, 0.1]} />
-        <meshStandardMaterial color="#1a1a1a" />
+    <group ref={groupRef} scale={2}>
+      {/* Main body of Argentina */}
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[1.2, 4, 0.2]} />
+        <meshStandardMaterial color="#4f46e5" />
       </mesh>
       
-      {/* Screen */}
-      <mesh position={[0, 0, 0.051]}>
-        <boxGeometry args={[0.85, 1.7, 0.01]} />
-        <meshStandardMaterial color="#0066ff" emissive="#0033aa" emissiveIntensity={0.3} />
+      {/* Northern provinces */}
+      <mesh position={[0.3, 1.8, 0]}>
+        <boxGeometry args={[0.8, 0.6, 0.15]} />
+        <meshStandardMaterial color="#6366f1" />
       </mesh>
       
-      {/* Home button */}
-      <mesh position={[0, -0.9, 0.051]}>
-        <circleGeometry args={[0.08, 16]} />
-        <meshStandardMaterial color="#333333" />
+      {/* Patagonia */}
+      <mesh position={[0, -1.8, 0]}>
+        <boxGeometry args={[1, 1.2, 0.15]} />
+        <meshStandardMaterial color="#3730a3" />
       </mesh>
       
-      {/* Camera */}
-      <mesh position={[0.3, 0.8, 0.051]}>
-        <circleGeometry args={[0.05, 16]} />
-        <meshStandardMaterial color="#000000" />
+      {/* Buenos Aires area */}
+      <mesh position={[0.4, 0.5, 0]}>
+        <boxGeometry args={[0.4, 0.4, 0.2]} />
+        <meshStandardMaterial color="#8b5cf6" />
       </mesh>
       
-      {/* App icons on screen */}
-      <mesh position={[-0.2, 0.3, 0.052]}>
-        <boxGeometry args={[0.15, 0.15, 0.005]} />
-        <meshStandardMaterial color="#ff6b6b" />
+      {/* Mendoza/Wine region */}
+      <mesh position={[-0.3, 0, 0]}>
+        <boxGeometry args={[0.3, 0.8, 0.15]} />
+        <meshStandardMaterial color="#7c3aed" />
       </mesh>
-      <mesh position={[0.2, 0.3, 0.052]}>
-        <boxGeometry args={[0.15, 0.15, 0.005]} />
-        <meshStandardMaterial color="#4ecdc4" />
+      
+      {/* Tierra del Fuego */}
+      <mesh position={[0.2, -2.8, 0]}>
+        <boxGeometry args={[0.4, 0.2, 0.1]} />
+        <meshStandardMaterial color="#5b21b6" />
       </mesh>
-      <mesh position={[-0.2, 0, 0.052]}>
-        <boxGeometry args={[0.15, 0.15, 0.005]} />
-        <meshStandardMaterial color="#45b7d1" />
+      
+      {/* Floating cities/points of interest */}
+      <mesh position={[0.4, 0.5, 0.5]}>
+        <sphereGeometry args={[0.05, 8, 8]} />
+        <meshStandardMaterial color="#fbbf24" emissive="#f59e0b" emissiveIntensity={0.3} />
       </mesh>
-      <mesh position={[0.2, 0, 0.052]}>
-        <boxGeometry args={[0.15, 0.15, 0.005]} />
-        <meshStandardMaterial color="#f9ca24" />
+      
+      <mesh position={[-0.2, 0.8, 0.5]}>
+        <sphereGeometry args={[0.05, 8, 8]} />
+        <meshStandardMaterial color="#ef4444" emissive="#dc2626" emissiveIntensity={0.3} />
+      </mesh>
+      
+      <mesh position={[0.1, -1.2, 0.5]}>
+        <sphereGeometry args={[0.05, 8, 8]} />
+        <meshStandardMaterial color="#10b981" emissive="#059669" emissiveIntensity={0.3} />
       </mesh>
     </group>
   );
 };
 
-// Simple Floating 3D Object Component
-const FloatingObject = ({ position, color, type, scale = 1 }: {
-  position: [number, number, number];
-  color: string;
-  type: 'sphere' | 'box' | 'torus' | 'cone';
-  scale?: number;
-}) => {
-  const meshRef = useRef<Mesh>(null);
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x = state.clock.elapsedTime * 0.5;
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.3;
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + position[0]) * 0.2;
-    }
-  });
-
-  const renderGeometry = () => {
-    switch (type) {
-      case 'sphere':
-        return <sphereGeometry args={[0.5 * scale, 32, 32]} />;
-      case 'box':
-        return <boxGeometry args={[0.8 * scale, 0.8 * scale, 0.8 * scale]} />;
-      case 'torus':
-        return <torusGeometry args={[0.5 * scale, 0.2 * scale, 16, 100]} />;
-      case 'cone':
-        return <coneGeometry args={[0.5 * scale, 1 * scale, 8]} />;
-      default:
-        return <sphereGeometry args={[0.5 * scale, 32, 32]} />;
-    }
-  };
-
-  return (
-    <mesh ref={meshRef} position={position}>
-      {renderGeometry()}
-      <meshStandardMaterial color={color} />
-    </mesh>
-  );
-};
-
-// Simple 3D Text Component
-const Simple3DText = ({ text, position, color }: {
-  text: string;
-  position: [number, number, number];
-  color: string;
-}) => {
-  const groupRef = useRef<any>(null);
-  
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.2;
-    }
-  });
-
-  return (
-    <group ref={groupRef} position={position}>
-      <mesh>
-        <boxGeometry args={[2, 0.5, 0.1]} />
-        <meshStandardMaterial color={color} />
-      </mesh>
-    </group>
-  );
-};
-
-// Main 3D Scene
-const Scene3D = () => {
+// 3D Scene with Argentina Map
+const Scene3D = ({ scrollProgress }: { scrollProgress: number }) => {
   return (
     <>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
-      <pointLight position={[-10, -10, -10]} color="#8b5cf6" />
+      <ambientLight intensity={0.4} />
+      <pointLight position={[10, 10, 10]} intensity={0.8} />
+      <pointLight position={[-10, -10, -10]} color="#8b5cf6" intensity={0.6} />
+      <spotLight position={[0, 15, 0]} angle={0.3} penumbra={1} intensity={1} castShadow />
       
-      {/* Central Smartphone Model */}
-      <SmartphoneModel position={[0, 0, -1]} scale={1.5} />
-      
-      {/* Floating Objects */}
-      <FloatingObject position={[-5, 0, 0]} color="#3b82f6" type="sphere" scale={1.2} />
-      <FloatingObject position={[5, 2, -2]} color="#8b5cf6" type="box" />
-      <FloatingObject position={[0, -1, 3]} color="#10b981" type="torus" scale={0.8} />
-      <FloatingObject position={[-3, 3, 1]} color="#f59e0b" type="cone" />
-      <FloatingObject position={[3, -2, -1]} color="#ef4444" type="sphere" />
-      
-      {/* Simple 3D Text Elements */}
-      <Simple3DText text="SERBIS" position={[0, 0, 0]} color="#ffffff" />
-      <Simple3DText text="INNOVACIÓN" position={[8, 1, -2]} color="#3b82f6" />
-      <Simple3DText text="CALIDAD" position={[-8, -1, 1]} color="#8b5cf6" />
-      <Simple3DText text="CONFIANZA" position={[12, 2, 0]} color="#10b981" />
+      <ArgentinaMap scrollProgress={scrollProgress} />
     </>
   );
 };
@@ -224,17 +158,17 @@ export const HorizontalScroll3D = () => {
   ];
 
   return (
-    <div ref={containerRef} className="relative h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Fixed 3D Canvas Background */}
+    <div ref={containerRef} className="relative h-screen overflow-hidden bg-slate-950">
+      {/* Fixed 3D Canvas Background with Argentina Map */}
       <div className="absolute inset-0 z-0">
         <Canvas 
           camera={{ position: [0, 0, 8], fov: 60 }}
           gl={{ alpha: true, antialias: true }}
           onCreated={({ gl }) => {
-            gl.setClearColor(0x000000, 0);
+            gl.setClearColor(0x0f1629, 1);
           }}
         >
-          <Scene3D />
+          <Scene3D scrollProgress={scrollProgress} />
         </Canvas>
       </div>
       
@@ -245,15 +179,6 @@ export const HorizontalScroll3D = () => {
             key={index}
             className="flex-shrink-0 w-screen h-full flex items-center justify-center relative"
           >
-            {/* Animated Background Gradient */}
-            <div 
-              className={`absolute inset-0 bg-gradient-to-br ${section.color} opacity-20 animate-pulse`}
-              style={{
-                animationDelay: `${index * 0.5}s`,
-                animationDuration: '3s'
-              }}
-            />
-            
             {/* Content */}
             <div className="text-center px-8 relative z-20">
               <h2 
@@ -276,8 +201,8 @@ export const HorizontalScroll3D = () => {
               </p>
               
               {/* Floating Elements */}
-              <div className="absolute -top-20 -left-20 w-40 h-40 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-xl animate-pulse" />
-              <div className="absolute -bottom-20 -right-20 w-60 h-60 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-xl animate-pulse" />
+              <div className="absolute -top-20 -left-20 w-40 h-40 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-xl animate-pulse" />
+              <div className="absolute -bottom-20 -right-20 w-60 h-60 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full blur-xl animate-pulse" />
             </div>
             
             {/* Progress Indicator */}
