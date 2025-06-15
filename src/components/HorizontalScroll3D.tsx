@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Group } from 'three';
@@ -8,50 +7,125 @@ import { TextureLoader } from 'three';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Grid Background Component
+// 3D Background Scene with depth and atmosphere
+const Background3D = ({ scrollProgress }: { scrollProgress: number }) => {
+  const backgroundRef = useRef<Group>(null);
+  
+  useFrame((state) => {
+    if (backgroundRef.current) {
+      // Subtle movement with scroll and time
+      backgroundRef.current.rotation.y = state.clock.elapsedTime * 0.01 + scrollProgress * 0.1;
+      backgroundRef.current.position.z = -30 + scrollProgress * 2;
+    }
+  });
+
+  // Create layered background elements for depth
+  const backgroundElements = [];
+  
+  // Layer 1: Far background spheres
+  for (let i = 0; i < 8; i++) {
+    const angle = (i / 8) * Math.PI * 2;
+    const radius = 25;
+    backgroundElements.push(
+      <mesh 
+        key={`far-${i}`} 
+        position={[
+          Math.cos(angle) * radius,
+          Math.sin(angle * 0.5) * 10,
+          Math.sin(angle) * radius - 40
+        ]}
+        scale={0.8}
+      >
+        <sphereGeometry args={[1.5, 12, 12]} />
+        <meshStandardMaterial 
+          color={i % 2 === 0 ? "#1e293b" : "#334155"} 
+          transparent 
+          opacity={0.3}
+          metalness={0.7}
+          roughness={0.3}
+        />
+      </mesh>
+    );
+  }
+
+  // Layer 2: Mid background geometric shapes
+  for (let i = 0; i < 6; i++) {
+    const angle = (i / 6) * Math.PI * 2;
+    const radius = 18;
+    backgroundElements.push(
+      <mesh 
+        key={`mid-${i}`} 
+        position={[
+          Math.cos(angle + Math.PI/6) * radius,
+          Math.sin(angle * 0.7) * 8,
+          Math.sin(angle) * radius * 0.6 - 25
+        ]}
+        rotation={[angle * 0.3, angle * 0.5, 0]}
+        scale={0.4}
+      >
+        <boxGeometry args={[2, 2, 2]} />
+        <meshStandardMaterial 
+          color="#475569" 
+          transparent 
+          opacity={0.2}
+          metalness={0.5}
+          roughness={0.4}
+        />
+      </mesh>
+    );
+  }
+
+  return (
+    <group ref={backgroundRef}>
+      {backgroundElements}
+    </group>
+  );
+};
+
+// Grid Background Component - more subtle
 const GridBackground = ({ scrollProgress }: { scrollProgress: number }) => {
   const gridRef = useRef<Group>(null);
   
   useFrame((state) => {
     if (gridRef.current) {
-      // Subtle movement with scroll
-      gridRef.current.position.z = -20 + scrollProgress * 3;
-      gridRef.current.rotation.y = scrollProgress * Math.PI * 0.05;
-      // Very gentle floating animation
-      gridRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.2) * 0.3;
+      // Very subtle movement with scroll
+      gridRef.current.position.z = -15 + scrollProgress * 1;
+      gridRef.current.rotation.y = scrollProgress * Math.PI * 0.02;
+      // Gentle floating animation
+      gridRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.1) * 0.2;
     }
   });
 
-  // Create grid lines - more subtle
+  // Create subtle grid lines
   const gridLines = [];
-  const gridSize = 15;
-  const divisions = 15;
+  const gridSize = 12;
+  const divisions = 12;
   
   for (let i = 0; i <= divisions; i++) {
     const position = (i / divisions - 0.5) * gridSize;
     // Vertical lines
     gridLines.push(
-      <mesh key={`v${i}`} position={[position, 0, -20]} rotation={[0, 0, 0]}>
-        <boxGeometry args={[0.01, gridSize, 0.01]} />
+      <mesh key={`v${i}`} position={[position, 0, -15]} rotation={[0, 0, 0]}>
+        <boxGeometry args={[0.005, gridSize, 0.005]} />
         <meshStandardMaterial 
-          color="#334155" 
+          color="#475569" 
           transparent 
-          opacity={0.08}
-          emissive="#334155"
-          emissiveIntensity={0.05}
+          opacity={0.04}
+          emissive="#475569"
+          emissiveIntensity={0.02}
         />
       </mesh>
     );
     // Horizontal lines
     gridLines.push(
-      <mesh key={`h${i}`} position={[0, position, -20]} rotation={[0, 0, Math.PI / 2]}>
-        <boxGeometry args={[0.01, gridSize, 0.01]} />
+      <mesh key={`h${i}`} position={[0, position, -15]} rotation={[0, 0, Math.PI / 2]}>
+        <boxGeometry args={[0.005, gridSize, 0.005]} />
         <meshStandardMaterial 
-          color="#334155" 
+          color="#475569" 
           transparent 
-          opacity={0.08}
-          emissive="#334155"
-          emissiveIntensity={0.05}
+          opacity={0.04}
+          emissive="#475569"
+          emissiveIntensity={0.02}
         />
       </mesh>
     );
@@ -64,30 +138,31 @@ const GridBackground = ({ scrollProgress }: { scrollProgress: number }) => {
   );
 };
 
-// Simplified Small Particles Component - much closer to phone
-const SmallParticles = ({ scrollProgress }: { scrollProgress: number }) => {
+// Close Orbiting Particles around the phone
+const OrbitingParticles = ({ scrollProgress }: { scrollProgress: number }) => {
   const groupRef = useRef<Group>(null);
   
   useFrame((state) => {
     if (groupRef.current) {
-      // Very slow rotation around the phone
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.05 + scrollProgress * Math.PI;
-      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.03) * 0.05;
+      // Smooth rotation around the phone
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.3 + scrollProgress * Math.PI;
+      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.1;
     }
   });
 
-  // Only 4 small particles, very close to the phone
-  const particles = Array.from({ length: 4 }, (_, i) => {
-    const angle = (i / 4) * Math.PI * 2;
-    const radius = 1.8; // Much closer to phone
+  // 8 small particles orbiting very close to the phone
+  const particles = Array.from({ length: 8 }, (_, i) => {
+    const angle = (i / 8) * Math.PI * 2;
+    const radius = 1.2; // Very close to phone
+    const height = Math.sin(angle * 2) * 0.5; // Varying height
     return {
       position: [
         Math.cos(angle) * radius,
-        Math.sin(angle * 0.3) * 0.8,
-        Math.sin(angle) * radius * 0.5
+        height,
+        Math.sin(angle) * radius * 0.3
       ] as [number, number, number],
-      color: ['#10b981', '#3b82f6'][i % 2],
-      scale: 0.05,
+      color: ['#10b981', '#3b82f6', '#8b5cf6'][i % 3],
+      scale: 0.03,
     };
   });
 
@@ -95,15 +170,15 @@ const SmallParticles = ({ scrollProgress }: { scrollProgress: number }) => {
     <group ref={groupRef}>
       {particles.map((particle, i) => (
         <mesh key={i} position={particle.position} scale={particle.scale}>
-          <sphereGeometry args={[0.15, 6, 6]} />
+          <sphereGeometry args={[0.2, 8, 8]} />
           <meshStandardMaterial 
             color={particle.color} 
             transparent 
-            opacity={0.4}
-            metalness={0.2}
-            roughness={0.6}
+            opacity={0.6}
+            metalness={0.3}
+            roughness={0.4}
             emissive={particle.color}
-            emissiveIntensity={0.1}
+            emissiveIntensity={0.2}
           />
         </mesh>
       ))}
@@ -111,39 +186,39 @@ const SmallParticles = ({ scrollProgress }: { scrollProgress: number }) => {
   );
 };
 
-// Simplified Flying Elements Component - fewer and smaller
+// Reduced Flying Elements Component
 const FlyingElements = () => {
   const groupRef = useRef<Group>(null);
   
   useFrame((state) => {
     if (groupRef.current) {
       // Very slow rotation
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.01;
-      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.008) * 0.05;
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.005;
+      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.004) * 0.03;
     }
   });
 
-  // Only 6 elements instead of 12, smaller and further away
-  const elements = Array.from({ length: 6 }, (_, i) => ({
+  // Only 4 elements, much smaller and slower
+  const elements = Array.from({ length: 4 }, (_, i) => ({
     position: [
-      (Math.random() - 0.5) * 25,
-      (Math.random() - 0.5) * 18,
-      (Math.random() - 0.5) * 12 - 8
+      (Math.random() - 0.5) * 20,
+      (Math.random() - 0.5) * 12,
+      (Math.random() - 0.5) * 8 - 6
     ] as [number, number, number],
     color: ['#10b981', '#3b82f6'][Math.floor(Math.random() * 2)],
-    scale: Math.random() * 0.15 + 0.05, // Much smaller
-    rotationSpeed: (Math.random() - 0.5) * 0.003, // Much slower
+    scale: Math.random() * 0.1 + 0.03, // Much smaller
+    rotationSpeed: (Math.random() - 0.5) * 0.001, // Much slower
   }));
 
   return (
     <group ref={groupRef}>
       {elements.map((el, i) => (
         <mesh key={i} position={el.position} scale={el.scale}>
-          <boxGeometry args={[0.3, 0.3, 0.3]} />
+          <boxGeometry args={[0.2, 0.2, 0.2]} />
           <meshStandardMaterial 
             color={el.color} 
             transparent 
-            opacity={0.25}
+            opacity={0.2}
             metalness={0.3}
             roughness={0.5}
           />
@@ -182,7 +257,7 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
       <mesh position={[0, 0, 0]} castShadow receiveShadow>
         <boxGeometry args={[1.2, 2.6, 0.15]} />
         <meshStandardMaterial 
-          color="#6b7280" 
+          color="#9ca3af" 
           metalness={0.8} 
           roughness={0.2}
         />
@@ -192,7 +267,7 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
       <mesh position={[0, 0, 0.076]} castShadow>
         <boxGeometry args={[1.15, 2.55, 0.01]} />
         <meshStandardMaterial 
-          color="#374151" 
+          color="#4b5563" 
           metalness={0.9} 
           roughness={0.1}
         />
@@ -222,38 +297,38 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
       {/* Volume buttons */}
       <mesh position={[-0.61, 0.4, 0]} castShadow>
         <boxGeometry args={[0.02, 0.12, 0.03]} />
-        <meshStandardMaterial color="#6b7280" metalness={0.7} roughness={0.3} />
+        <meshStandardMaterial color="#9ca3af" metalness={0.7} roughness={0.3} />
       </mesh>
       
       <mesh position={[-0.61, 0.15, 0]} castShadow>
         <boxGeometry args={[0.02, 0.25, 0.03]} />
-        <meshStandardMaterial color="#6b7280" metalness={0.7} roughness={0.3} />
+        <meshStandardMaterial color="#9ca3af" metalness={0.7} roughness={0.3} />
       </mesh>
       
       {/* Power button */}
       <mesh position={[0.61, 0.4, 0]} castShadow>
         <boxGeometry args={[0.02, 0.15, 0.03]} />
-        <meshStandardMaterial color="#6b7280" metalness={0.7} roughness={0.3} />
+        <meshStandardMaterial color="#9ca3af" metalness={0.7} roughness={0.3} />
       </mesh>
       
       {/* Lightning port */}
       <mesh position={[0, -1.28, 0]} castShadow>
         <boxGeometry args={[0.15, 0.03, 0.08]} />
-        <meshStandardMaterial color="#4b5563" metalness={0.6} roughness={0.4} />
+        <meshStandardMaterial color="#6b7280" metalness={0.6} roughness={0.4} />
       </mesh>
       
       {/* Speaker grilles */}
       {[-0.3, -0.15, 0, 0.15, 0.3].map((x, i) => (
         <mesh key={i} position={[x, -1.28, 0.02]} castShadow>
           <cylinderGeometry args={[0.015, 0.015, 0.06, 8]} />
-          <meshStandardMaterial color="#4b5563" metalness={0.6} roughness={0.4} />
+          <meshStandardMaterial color="#6b7280" metalness={0.6} roughness={0.4} />
         </mesh>
       ))}
       
       {/* Camera lens */}
       <mesh position={[-0.35, 1.05, 0.083]}>
         <cylinderGeometry args={[0.05, 0.05, 0.02, 16]} />
-        <meshStandardMaterial color="#6b7280" metalness={0.8} roughness={0.2} />
+        <meshStandardMaterial color="#9ca3af" metalness={0.8} roughness={0.2} />
       </mesh>
       
       {/* Camera glass */}
@@ -265,24 +340,26 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   );
 };
 
-// 3D Scene with Realistic Phone and Simplified Elements
+// 3D Scene with Realistic Phone and 3D Background
 const Scene3D = ({ scrollProgress }: { scrollProgress: number }) => {
   return (
     <>
-      <ambientLight intensity={0.4} />
+      <ambientLight intensity={0.3} />
       <directionalLight 
-        position={[8, 8, 5]} 
-        intensity={1.2} 
+        position={[10, 10, 5]} 
+        intensity={0.8} 
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
       />
-      <pointLight position={[-8, -8, -5]} intensity={0.4} color="#1e40af" />
-      <pointLight position={[8, -8, 5]} intensity={0.3} color="#059669" />
+      <pointLight position={[-10, -10, -5]} intensity={0.3} color="#1e40af" />
+      <pointLight position={[10, -10, 5]} intensity={0.2} color="#059669" />
+      <pointLight position={[0, 15, -10]} intensity={0.2} color="#8b5cf6" />
       
+      <Background3D scrollProgress={scrollProgress} />
       <GridBackground scrollProgress={scrollProgress} />
       <FlyingElements />
-      <SmallParticles scrollProgress={scrollProgress} />
+      <OrbitingParticles scrollProgress={scrollProgress} />
       <RealisticPhone3D scrollProgress={scrollProgress} />
     </>
   );
@@ -359,18 +436,18 @@ export const HorizontalScroll3D = () => {
   };
 
   return (
-    <div ref={containerRef} className="relative h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900">
-      {/* Fixed 3D Canvas Background with Phone */}
+    <div ref={containerRef} className="relative h-screen overflow-hidden">
+      {/* 3D Canvas Background with proper 3D scene */}
       <div className="absolute inset-0 z-0">
         <Canvas 
           camera={{ position: [0, 0, 8], fov: 60 }}
           gl={{ 
-            alpha: true, 
+            alpha: false, 
             antialias: true
           }}
           shadows
           onCreated={({ gl }) => {
-            gl.setClearColor(0x0f172a, 1); // Dark blue instead of black
+            gl.setClearColor(0x0f172a, 1); // Dark background
             gl.shadowMap.enabled = true;
           }}
         >
