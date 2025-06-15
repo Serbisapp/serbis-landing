@@ -250,6 +250,7 @@ const Index = () => {
                             status="active"
                             delay="0ms"
                             color="emerald"
+                            animationType="slide-left"
                         />
                         <FeatureCard 
                             icon={MessageCircle} 
@@ -258,6 +259,7 @@ const Index = () => {
                             status="active"
                             delay="100ms"
                             color="blue"
+                            animationType="slide-right"
                         />
                         <FeatureCard 
                             icon={DollarSign} 
@@ -266,6 +268,7 @@ const Index = () => {
                             status="active"
                             delay="200ms"
                             color="purple"
+                            animationType="slide-left"
                         />
                         <FeatureCard 
                             icon={Eye} 
@@ -274,6 +277,7 @@ const Index = () => {
                             status="active"
                             delay="300ms"
                             color="emerald"
+                            animationType="slide-right"
                         />
                         <FeatureCard 
                             icon={Camera} 
@@ -282,6 +286,7 @@ const Index = () => {
                             status="active"
                             delay="400ms"
                             color="blue"
+                            animationType="slide-left"
                         />
                         <FeatureCard 
                             icon={Star} 
@@ -290,6 +295,7 @@ const Index = () => {
                             status="active"
                             delay="500ms"
                             color="purple"
+                            animationType="slide-right"
                         />
                         <FeatureCard 
                             icon={Clock} 
@@ -298,6 +304,7 @@ const Index = () => {
                             status="coming"
                             delay="600ms"
                             color="orange"
+                            animationType="slide-left"
                         />
                     </div>
                 </div>
@@ -387,13 +394,14 @@ const StepCard = ({ number, icon: Icon, title, description, delay, color }: {
 };
 
 // Feature Card Component
-const FeatureCard = ({ icon: Icon, title, description, status, delay, color }: { 
+const FeatureCard = ({ icon: Icon, title, description, status, delay, color, animationType }: { 
     icon: React.ElementType, 
     title: string, 
     description: string,
     status: 'active' | 'coming',
     delay: string,
-    color: 'emerald' | 'blue' | 'purple' | 'orange'
+    color: 'emerald' | 'blue' | 'purple' | 'orange',
+    animationType: 'slide-left' | 'slide-right'
 }) => {
     const colorClasses = {
         emerald: 'text-emerald-400 border-emerald-400/20 hover:border-emerald-400/40 hover:bg-emerald-400/5',
@@ -406,8 +414,15 @@ const FeatureCard = ({ icon: Icon, title, description, status, delay, color }: {
         ? <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-400/10 text-emerald-400 border border-emerald-400/20">Activo</span>
         : <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-400/10 text-orange-400 border border-orange-400/20">Próximamente</span>;
 
+    const animationClass = animationType === 'slide-left' 
+        ? 'opacity-0 -translate-x-12 animate-[slide-in-from-left_0.8s_ease-out_forwards]'
+        : 'opacity-0 translate-x-12 animate-[slide-in-from-right_0.8s_ease-out_forwards]';
+
     return (
-        <AnimatedWrapper className={`group cursor-pointer [animation-delay:${delay}]`}>
+        <div 
+            className={`group cursor-pointer ${animationClass}`}
+            style={{ animationDelay: delay }}
+        >
             <div className={`bg-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border ${colorClasses[color]} transition-all duration-500 hover:scale-105 flex items-start gap-6`}>
                 <div className={`p-4 rounded-xl bg-slate-700/50 group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}>
                     <Icon className={`w-8 h-8 ${colorClasses[color].split(' ')[0]}`} />
@@ -420,7 +435,7 @@ const FeatureCard = ({ icon: Icon, title, description, status, delay, color }: {
                     <p className="text-slate-400 text-lg leading-relaxed">{description}</p>
                 </div>
             </div>
-        </AnimatedWrapper>
+        </div>
     );
 };
 
