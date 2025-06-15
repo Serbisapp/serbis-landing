@@ -162,20 +162,14 @@ export const HorizontalScroll3D = () => {
     }
   ];
 
-  // Wait until mobile status is determined to prevent flash of incorrect content
-  if (mobile === undefined) {
-    return <div className="h-screen bg-slate-900" />;
-  }
-
-  // Early return for mobile - NO Canvas rendering at all
-  if (mobile) {
-    console.log('Rendering mobile carousel, currentSection:', currentSection);
-    return <MobileCarousel sections={sections} currentSection={currentSection} setCurrentSection={setCurrentSection} />;
-  }
-
-  // Use useLayoutEffect with GSAP context for robust setup and cleanup
+  // Use useLayoutEffect with GSAP context for robust setup and cleanup.
+  // This hook is now called unconditionally to comply with the Rules of Hooks.
+  // The logic inside is conditional based on the `mobile` state.
   useLayoutEffect(() => {
-    if (!containerRef.current || !scrollContentRef.current) return;
+    // Only run the effect on desktop when refs are available.
+    if (mobile !== false || !containerRef.current || !scrollContentRef.current) {
+      return;
+    }
 
     const ctx = gsap.context(() => {
       const container = containerRef.current!;
@@ -209,7 +203,18 @@ export const HorizontalScroll3D = () => {
     }, containerRef);
 
     return () => ctx.revert(); // Cleanup GSAP animations and ScrollTriggers
-  }, []);
+  }, [mobile]); // Dependency on `mobile` ensures this effect re-evaluates on change.
+
+  // Wait until mobile status is determined to prevent flash of incorrect content
+  if (mobile === undefined) {
+    return <div className="h-screen bg-slate-900" />;
+  }
+
+  // Early return for mobile - NO Canvas rendering at all
+  if (mobile) {
+    console.log('Rendering mobile carousel, currentSection:', currentSection);
+    return <MobileCarousel sections={sections} currentSection={currentSection} setCurrentSection={setCurrentSection} />;
+  }
 
   // Desktop version only
   const desktopCurrentSection = Math.floor(scrollProgress * 2.99);
