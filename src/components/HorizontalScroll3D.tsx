@@ -173,7 +173,6 @@ export const HorizontalScroll3D = () => {
 
   // Calculate current rotation phase
   const currentRotation = Math.floor(scrollProgress * 3);
-  const rotationProgress = (scrollProgress * 3) % 1;
 
   const sections = [
     {
@@ -230,7 +229,11 @@ export const HorizontalScroll3D = () => {
           feature: "🛡️ Máxima Seguridad"
         };
       default:
-        return sections[0];
+        return {
+          title: "Primera Rotación",
+          subtitle: "Descubrí la app que cambiará tu vida",
+          feature: "📱 Interfaz Intuitiva"
+        };
     }
   };
 
