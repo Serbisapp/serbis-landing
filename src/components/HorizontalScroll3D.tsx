@@ -35,7 +35,7 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
     <group ref={groupRef} scale={2.2}>
       {/* Phone body - realistic proportions */}
       <mesh position={[0, 0, 0]} castShadow receiveShadow>
-        <roundedBoxGeometry args={[1.4, 2.8, 0.18]} />
+        <boxGeometry args={[1.4, 2.8, 0.18]} />
         <meshStandardMaterial 
           color="#1a1a1a" 
           metalness={0.8} 
@@ -45,7 +45,7 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
       
       {/* Phone screen bezel */}
       <mesh position={[0, 0, 0.09]} castShadow>
-        <roundedBoxGeometry args={[1.3, 2.7, 0.02]} />
+        <boxGeometry args={[1.3, 2.7, 0.02]} />
         <meshStandardMaterial 
           color="#000000" 
           metalness={0.9} 
@@ -349,12 +349,12 @@ export const HorizontalScroll3D = () => {
           camera={{ position: [0, 0, 8], fov: 60 }}
           gl={{ 
             alpha: true, 
-            antialias: true,
-            shadowMap: { enabled: true, type: 2 }
+            antialias: true
           }}
           shadows
           onCreated={({ gl }) => {
             gl.setClearColor(0x0a0a0f, 1);
+            gl.shadowMap.enabled = true;
           }}
         >
           <Scene3D scrollProgress={scrollProgress} />
