@@ -97,7 +97,14 @@ const Scene3D = ({ scrollProgress }: { scrollProgress: number }) => {
       <Floating3DText text="CALIDAD" position={[-8, -1, 1]} color="#8b5cf6" />
       <Floating3DText text="CONFIANZA" position={[12, 2, 0]} color="#10b981" />
       
-      <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
+      <OrbitControls 
+        enableZoom={false} 
+        enablePan={false} 
+        autoRotate 
+        autoRotateSpeed={0.5}
+        enableDamping
+        dampingFactor={0.05}
+      />
     </>
   );
 };
