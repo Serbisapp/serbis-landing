@@ -146,19 +146,22 @@ export const HorizontalScroll3D = () => {
       title: "Explorá el Home",
       subtitle: "Describí tu necesidad y te conectamos con un profesional verificado en segundos. Simple, rápido y con ratings de tu comunidad.",
       feature: "Conexión en 5 segundos",
-      color: "emerald"
+      color: "emerald",
+      image: "/lovable-uploads/bba53f7f-ee96-480d-ad5e-325e9823282b.png"
     },
     {
       title: "Comunicación Segura y Directa", 
       subtitle: "Coordiná todo por nuestro chat integrado: detalles, imágenes y precios. Comunicación directa, privada y segura.",
       feature: "Chat Integrado y Privado",
-      color: "blue"
+      color: "blue",
+      image: "/lovable-uploads/8d11efbb-db2e-4ceb-9f8e-6bdf05247c33.png"
     },
     {
       title: "Seguí el Estado de tus Pedidos",
       subtitle: "Seguí el progreso de tu servicio en tiempo real con notificaciones instantáneas. Control total, desde tu celular.", 
       feature: "Status en Tiempo Real",
-      color: "purple"
+      color: "purple",
+      image: "/lovable-uploads/98092611-df32-4c24-9a64-4a9a804d80dd.png"
     }
   ];
 

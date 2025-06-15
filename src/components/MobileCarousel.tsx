@@ -9,6 +9,7 @@ interface MobileCarouselProps {
     subtitle: string;
     feature: string;
     color: string;
+    image: string;
   }>;
   currentSection: number;
   setCurrentSection: (index: number) => void;
@@ -92,14 +93,14 @@ export const MobileCarousel = ({ sections, currentSection, setCurrentSection }: 
       >
         <div className="w-full max-w-sm">
           <div className="bg-slate-900/95 backdrop-blur-xl rounded-3xl p-8 border border-slate-700/50 text-center shadow-2xl">
-            {/* Phone Icon Representation */}
+            {/* Screenshot Display */}
             <div className="mb-6 flex justify-center">
-              <div className="relative">
-                <div className="w-16 h-28 bg-slate-700 rounded-xl border-2 border-slate-600 flex items-center justify-center">
-                  <div className="w-12 h-20 bg-slate-800 rounded-lg flex items-center justify-center">
-                    <div className="w-8 h-12 bg-gradient-to-b from-emerald-400 to-emerald-600 rounded opacity-80" />
-                  </div>
-                </div>
+              <div className="relative w-48 h-[24rem] bg-slate-800 rounded-3xl border-4 border-slate-700 p-2 shadow-inner">
+                <img
+                  src={currentSectionData.image}
+                  alt={currentSectionData.title}
+                  className="w-full h-full object-cover rounded-2xl"
+                />
               </div>
             </div>
 
