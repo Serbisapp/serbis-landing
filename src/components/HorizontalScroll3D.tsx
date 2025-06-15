@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
@@ -159,173 +160,6 @@ const Scene3D = ({ scrollProgress }: { scrollProgress: number }) => {
   );
 };
 
-// Mobile Touch Carousel Component
-const MobileCarousel = ({ sections, currentSection, setCurrentSection }: {
-  sections: Array<{
-    title: string;
-    subtitle: string;
-    feature: string;
-    color: string;
-  }>;
-  currentSection: number;
-  setCurrentSection: (index: number) => void;
-}) => {
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  const [webglError, setWebglError] = useState(false);
-
-  const minSwipeDistance = 50;
-
-  const onTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const onTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-
-    if (isLeftSwipe && currentSection < sections.length - 1) {
-      setCurrentSection(currentSection + 1);
-    }
-    if (isRightSwipe && currentSection > 0) {
-      setCurrentSection(currentSection - 1);
-    }
-  };
-
-  const nextSection = () => {
-    if (currentSection < sections.length - 1) {
-      setCurrentSection(currentSection + 1);
-    }
-  };
-
-  const prevSection = () => {
-    if (currentSection > 0) {
-      setCurrentSection(currentSection - 1);
-    }
-  };
-
-  return (
-    <div className="relative h-screen w-full overflow-hidden bg-slate-950">
-      {/* 3D Background - Simplified for mobile with error handling */}
-      {!webglError && (
-        <div className="absolute inset-0 z-0">
-          <Canvas 
-            camera={{ position: [0, 0, 8], fov: 50 }}
-            gl={{ 
-              antialias: false,
-              powerPreference: "low-power",
-              alpha: false,
-              depth: false,
-              stencil: false,
-              preserveDrawingBuffer: false,
-              failIfMajorPerformanceCaveat: true
-            }}
-            onCreated={({ gl }) => {
-              try {
-                gl.setClearColor(0x0f172a, 1);
-                gl.setPixelRatio(1);
-              } catch (error) {
-                console.log('WebGL setup error:', error);
-                setWebglError(true);
-              }
-            }}
-            onError={() => {
-              console.log('Canvas error, falling back to CSS background');
-              setWebglError(true);
-            }}
-            performance={{ min: 0.1 }}
-            frameloop="demand"
-            dpr={1}
-          >
-            <Scene3D scrollProgress={currentSection / (sections.length - 1)} />
-          </Canvas>
-        </div>
-      )}
-
-      {/* Fallback background if WebGL fails */}
-      {webglError && (
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900">
-          <div className="absolute inset-0 bg-[linear-gradient(rgba(15,23,42,0.8)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.8)_1px,transparent_1px)] bg-[size:100px_100px]" />
-        </div>
-      )}
-
-      {/* Mobile Content */}
-      <div 
-        className="absolute inset-0 z-10 flex items-center justify-center p-4"
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-      >
-        <div className="w-full max-w-sm">
-          <div className="bg-slate-900/90 backdrop-blur-lg rounded-2xl p-6 border border-slate-700/50 text-center">
-            <h2 className="text-2xl font-black mb-4 text-white">
-              {sections[currentSection].title}
-            </h2>
-            <p className="text-sm text-slate-200 mb-6">
-              {sections[currentSection].subtitle}
-            </p>
-            
-            <div className={`inline-block bg-gradient-to-r from-${sections[currentSection].color}-500/20 to-${sections[currentSection].color}-400/20 rounded-lg px-4 py-2 backdrop-blur-sm border border-${sections[currentSection].color}-500/30`}>
-              <span className={`text-${sections[currentSection].color}-400 font-semibold text-sm`}>
-                {sections[currentSection].feature}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Buttons */}
-      <Button
-        variant="outline"
-        size="icon"
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-slate-900/80 border-slate-600 hover:bg-slate-800"
-        onClick={prevSection}
-        disabled={currentSection === 0}
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
-
-      <Button
-        variant="outline"
-        size="icon"
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-slate-900/80 border-slate-600 hover:bg-slate-800"
-        onClick={nextSection}
-        disabled={currentSection === sections.length - 1}
-      >
-        <ChevronRight className="h-4 w-4" />
-      </Button>
-
-      {/* Progress Dots */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3 z-30">
-        {sections.map((_, i) => (
-          <button
-            key={i}
-            className={`w-2 h-2 rounded-full transition-all duration-500 ${
-              i === currentSection 
-                ? 'bg-emerald-400 scale-150' 
-                : 'bg-slate-400'
-            }`}
-            onClick={() => setCurrentSection(i)}
-          />
-        ))}
-      </div>
-
-      {/* Swipe Indicator */}
-      <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-white/60 text-sm z-30">
-        <span>Desliza o toca las flechas para navegar</span>
-      </div>
-    </div>
-  );
-};
-
 export const HorizontalScroll3D = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollContentRef = useRef<HTMLDivElement>(null);
@@ -411,7 +245,7 @@ export const HorizontalScroll3D = () => {
     }
   }, [mobile]);
 
-  // Mobile version - simplified without WebGL
+  // Mobile version - use the imported MobileCarousel component
   if (mobile) {
     return <MobileCarousel sections={sections} currentSection={currentSection} setCurrentSection={setCurrentSection} />;
   }
