@@ -1,11 +1,71 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Mesh } from 'three';
+import { Mesh, Group } from 'three';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
+
+// 3D Smartphone Model Component
+const SmartphoneModel = ({ position, scale = 1 }: {
+  position: [number, number, number];
+  scale?: number;
+}) => {
+  const groupRef = useRef<Group>(null);
+  
+  useFrame((state) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.3;
+      groupRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.8) * 0.3;
+    }
+  });
+
+  return (
+    <group ref={groupRef} position={position} scale={scale}>
+      {/* Phone body */}
+      <mesh>
+        <boxGeometry args={[1, 2, 0.1]} />
+        <meshStandardMaterial color="#1a1a1a" />
+      </mesh>
+      
+      {/* Screen */}
+      <mesh position={[0, 0, 0.051]}>
+        <boxGeometry args={[0.85, 1.7, 0.01]} />
+        <meshStandardMaterial color="#0066ff" emissive="#0033aa" emissiveIntensity={0.3} />
+      </mesh>
+      
+      {/* Home button */}
+      <mesh position={[0, -0.9, 0.051]}>
+        <circleGeometry args={[0.08, 16]} />
+        <meshStandardMaterial color="#333333" />
+      </mesh>
+      
+      {/* Camera */}
+      <mesh position={[0.3, 0.8, 0.051]}>
+        <circleGeometry args={[0.05, 16]} />
+        <meshStandardMaterial color="#000000" />
+      </mesh>
+      
+      {/* App icons on screen */}
+      <mesh position={[-0.2, 0.3, 0.052]}>
+        <boxGeometry args={[0.15, 0.15, 0.005]} />
+        <meshStandardMaterial color="#ff6b6b" />
+      </mesh>
+      <mesh position={[0.2, 0.3, 0.052]}>
+        <boxGeometry args={[0.15, 0.15, 0.005]} />
+        <meshStandardMaterial color="#4ecdc4" />
+      </mesh>
+      <mesh position={[-0.2, 0, 0.052]}>
+        <boxGeometry args={[0.15, 0.15, 0.005]} />
+        <meshStandardMaterial color="#45b7d1" />
+      </mesh>
+      <mesh position={[0.2, 0, 0.052]}>
+        <boxGeometry args={[0.15, 0.15, 0.005]} />
+        <meshStandardMaterial color="#f9ca24" />
+      </mesh>
+    </group>
+  );
+};
 
 // Simple Floating 3D Object Component
 const FloatingObject = ({ position, color, type, scale = 1 }: {
@@ -78,6 +138,9 @@ const Scene3D = () => {
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
       <pointLight position={[-10, -10, -10]} color="#8b5cf6" />
+      
+      {/* Central Smartphone Model */}
+      <SmartphoneModel position={[0, 0, -1]} scale={1.5} />
       
       {/* Floating Objects */}
       <FloatingObject position={[-5, 0, 0]} color="#3b82f6" type="sphere" scale={1.2} />
