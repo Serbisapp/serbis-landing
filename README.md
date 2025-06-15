@@ -1,8 +1,39 @@
-# Welcome to your Lovable project
-
-## Project info
+# Serbis - AI-Powered Service Marketplace
 
 **URL**: https://lovable.dev/projects/b67f25eb-adf6-4286-adb1-2910721acf6e
+
+A modern, AI-powered service marketplace connecting clients with verified professionals. Built with React, TypeScript, and Tailwind CSS.
+
+## 🚀 GitHub Pages Deployment
+
+This project is configured for automatic deployment to GitHub Pages. Here's how to set it up:
+
+### Prerequisites
+- Make sure your repository name matches the one specified in the Vite config (`serbis-landing` by default)
+- Enable GitHub Pages in your repository settings
+
+### Automatic Deployment
+1. Push your code to the `main` branch
+2. GitHub Actions will automatically build and deploy your site
+3. Your site will be available at `https://yourusername.github.io/serbis-landing/`
+
+### Manual Deployment
+If you prefer to deploy manually:
+
+```bash
+# Install dependencies
+bun install
+
+# Build for production
+bun run build:gh-pages
+
+# Deploy to GitHub Pages
+bun run deploy
+```
+
+### Configuration
+- **Repository Name**: Update the `base` path in `vite.config.ts` and `App.tsx` if your repository name is different
+- **Custom Domain**: If you have a custom domain, uncomment and update the `public/CNAME` file
 
 ## How can I edit this code?
 
