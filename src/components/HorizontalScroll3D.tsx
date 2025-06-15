@@ -137,6 +137,7 @@ export const HorizontalScroll3D = () => {
   const scrollContentRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [currentSection, setCurrentSection] = useState(0);
+  const [isCleaningUp, setIsCleaningUp] = useState(false);
   const mobile = useIsMobile();
 
   console.log('HorizontalScroll3D rendering, mobile:', mobile);
@@ -168,9 +169,9 @@ export const HorizontalScroll3D = () => {
     return <MobileCarousel sections={sections} currentSection={currentSection} setCurrentSection={setCurrentSection} />;
   }
 
-  // Desktop scroll effect
+  // Desktop scroll effect with proper cleanup coordination
   useEffect(() => {
-    if (!containerRef.current || !scrollContentRef.current) return;
+    if (!containerRef.current || !scrollContentRef.current || isCleaningUp) return;
 
     const container = containerRef.current;
     const scrollContent = scrollContentRef.current;
@@ -183,18 +184,20 @@ export const HorizontalScroll3D = () => {
       const scrollMultiplier = 2;
       const scrubValue = 2;
 
-      gsap.to(scrollContent, {
-        x: -scrollDistance,
-        ease: "none",
-        scrollTrigger: {
-          trigger: container,
-          start: "top top",
-          end: () => `+=${scrollDistance * scrollMultiplier}`,
-          scrub: scrubValue,
-          pin: true,
-          anticipatePin: 1,
-          refreshPriority: -1,
-          onUpdate: (self) => {
+      const scrollTriggerInstance = ScrollTrigger.create({
+        trigger: container,
+        start: "top top",
+        end: () => `+=${scrollDistance * scrollMultiplier}`,
+        scrub: scrubValue,
+        pin: true,
+        anticipatePin: 1,
+        refreshPriority: -1,
+        animation: gsap.to(scrollContent, {
+          x: -scrollDistance,
+          ease: "none",
+        }),
+        onUpdate: (self) => {
+          if (!isCleaningUp) {
             const smoothProgress = gsap.utils.clamp(0, 1, self.progress);
             setScrollProgress(smoothProgress);
           }
@@ -203,28 +206,57 @@ export const HorizontalScroll3D = () => {
 
       let scrollTimeout: NodeJS.Timeout;
       const handleScroll = () => {
+        if (isCleaningUp) return;
+        
         clearTimeout(scrollTimeout);
         document.body.style.pointerEvents = 'none';
         
         scrollTimeout = setTimeout(() => {
-          document.body.style.pointerEvents = 'auto';
+          if (!isCleaningUp) {
+            document.body.style.pointerEvents = 'auto';
+          }
         }, 100);
       };
 
       window.addEventListener('scroll', handleScroll, { passive: true });
       
       return () => {
-        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-        window.removeEventListener('scroll', handleScroll);
+        setIsCleaningUp(true);
+        
+        // Clear timeout first
         clearTimeout(scrollTimeout);
+        
+        // Remove event listener
+        window.removeEventListener('scroll', handleScroll);
+        
+        // Kill ScrollTrigger instance specifically
+        if (scrollTriggerInstance) {
+          scrollTriggerInstance.kill();
+        }
+        
+        // Reset body styles safely
+        requestAnimationFrame(() => {
+          if (document.body) {
+            document.body.style.pointerEvents = 'auto';
+          }
+        });
       };
     } catch (error) {
       console.log('GSAP ScrollTrigger setup error:', error);
     }
+  }, [isCleaningUp]);
+
+  // Reset cleanup flag when component remounts
+  useEffect(() => {
+    setIsCleaningUp(false);
   }, []);
 
   // Desktop version only
   const desktopCurrentSection = Math.floor(scrollProgress * 2.99);
+
+  if (isCleaningUp) {
+    return <div className="h-screen bg-slate-900" />;
+  }
 
   return (
     <div ref={containerRef} className="relative h-screen overflow-hidden">
