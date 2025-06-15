@@ -4,36 +4,50 @@
 
 A modern, AI-powered service marketplace connecting clients with verified professionals. Built with React, TypeScript, and Tailwind CSS.
 
-## 🚀 GitHub Pages Deployment
+## 🚀 Deployment to GitHub Pages
 
-This project is configured for automatic deployment to GitHub Pages. Here's how to set it up:
+### Quick Start
+1. **Update Repository Name**: 
+   - In `vite.config.ts`: Change `REPO_NAME = 'serbis-landing'` to your actual repo name
+   - In `src/App.tsx`: Change `'/serbis-landing'` to `'/your-repo-name'`
 
-### Prerequisites
-- Make sure your repository name matches the one specified in the Vite config (`serbis-landing` by default)
-- Enable GitHub Pages in your repository settings
+2. **Enable GitHub Pages**:
+   - Go to repository Settings → Pages
+   - Set Source to "GitHub Actions"
 
-### Automatic Deployment
-1. Push your code to the `main` branch
-2. GitHub Actions will automatically build and deploy your site
-3. Your site will be available at `https://yourusername.github.io/serbis-landing/`
+3. **Deploy**:
+   ```bash
+   git add .
+   git commit -m "Configure for GitHub Pages"
+   git push origin main
+   ```
 
-### Manual Deployment
-If you prefer to deploy manually:
-
+### Local Testing
 ```bash
 # Install dependencies
-bun install
+npm install
 
-# Build for production
-bun run build:gh-pages
+# Test development build
+npm run dev
+# → Should work at http://localhost:8080/
 
-# Deploy to GitHub Pages
-bun run deploy
+# Test production build (GitHub Pages simulation)
+npm run build:gh-pages
+npm run preview
+# → Should work at http://localhost:4173/your-repo-name/
 ```
 
-### Configuration
-- **Repository Name**: Update the `base` path in `vite.config.ts` and `App.tsx` if your repository name is different
-- **Custom Domain**: If you have a custom domain, uncomment and update the `public/CNAME` file
+### Troubleshooting
+- **Blank page?** Check `GITHUB_PAGES_TROUBLESHOOTING.md` for detailed solutions
+- **404 errors?** Verify your repository name matches the configuration
+- **Build fails?** Check the GitHub Actions tab for error logs
+
+### Manual Deployment (Alternative)
+```bash
+npm run deploy
+```
+
+Your site will be available at: `https://yourusername.github.io/your-repo-name/`
 
 ## How can I edit this code?
 
