@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
@@ -8,91 +9,105 @@ import { useLoader } from '@react-three/fiber';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Mobile detection utility
+const isMobile = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+         window.innerWidth < 768;
+};
+
 // Optimized Camera Controller
 const CameraController = ({ scrollProgress }: { scrollProgress: number }) => {
+  const mobile = isMobile();
+  
   useFrame(({ camera }) => {
     const perspectiveCamera = camera as PerspectiveCamera;
     
-    // Simplified camera movement calculations
-    const targetX = Math.sin(scrollProgress * 9.42) * 5; // Pre-calculated PI * 3
-    const targetY = 2 + Math.sin(scrollProgress * 6.28) * 2; // Pre-calculated PI * 2
-    const targetZ = 8 + scrollProgress * 6;
+    if (mobile) {
+      // Simplified mobile camera movement
+      perspectiveCamera.position.lerp(new Vector3(0, 2, 8 + scrollProgress * 3), 0.05);
+      perspectiveCamera.lookAt(0, 0, 0);
+      const targetFov = 50 + scrollProgress * 20;
+      perspectiveCamera.fov += (targetFov - perspectiveCamera.fov) * 0.05;
+    } else {
+      // Full desktop camera movement
+      const targetX = Math.sin(scrollProgress * 9.42) * 5;
+      const targetY = 2 + Math.sin(scrollProgress * 6.28) * 2;
+      const targetZ = 8 + scrollProgress * 6;
+      perspectiveCamera.position.lerp(new Vector3(targetX, targetY, targetZ), 0.08);
+      perspectiveCamera.lookAt(0, 0, 0);
+      const targetFov = 45 + scrollProgress * 40;
+      perspectiveCamera.fov += (targetFov - perspectiveCamera.fov) * 0.08;
+    }
     
-    // Smooth interpolation
-    perspectiveCamera.position.lerp(new Vector3(targetX, targetY, targetZ), 0.08);
-    perspectiveCamera.lookAt(0, 0, 0);
-    
-    // Simplified FOV changes
-    const targetFov = 45 + scrollProgress * 40;
-    perspectiveCamera.fov += (targetFov - perspectiveCamera.fov) * 0.08;
     perspectiveCamera.updateProjectionMatrix();
   });
   
   return null;
 };
 
-// Optimized Phone Component
+// Ultra-optimized Phone Component for Mobile
 const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   const groupRef = useRef<Group>(null);
+  const mobile = isMobile();
   
-  // Load screen textures for front only
-  const profileTexture = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=800&fit=crop');
-  const dashboardTexture = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=800&fit=crop');
-  const codeTexture = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=800&fit=crop');
+  // Only load textures on desktop
+  const profileTexture = !mobile ? useLoader(TextureLoader, 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=200&h=400&fit=crop') : null;
+  const dashboardTexture = !mobile ? useLoader(TextureLoader, 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=200&h=400&fit=crop') : null;
+  const codeTexture = !mobile ? useLoader(TextureLoader, 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=200&h=400&fit=crop') : null;
   
-  const frontTextures = [profileTexture, dashboardTexture, codeTexture];
+  const frontTextures = mobile ? [] : [profileTexture, dashboardTexture, codeTexture];
   const currentSection = Math.floor(scrollProgress * 2.99);
   
-  // Simplified rotation calculation
-  const rotationY = scrollProgress * 12.56; // Pre-calculated PI * 4
-  const normalizedRotation = ((rotationY % 6.28) + 6.28) % 6.28; // Pre-calculated PI * 2
-  const isViewingBack = normalizedRotation > 1.57 && normalizedRotation < 4.71; // Pre-calculated PI/2 and 3*PI/2
+  const rotationY = scrollProgress * (mobile ? 6.28 : 12.56); // Reduced rotation on mobile
+  const normalizedRotation = ((rotationY % 6.28) + 6.28) % 6.28;
+  const isViewingBack = normalizedRotation > 1.57 && normalizedRotation < 4.71;
 
   useFrame((state) => {
     if (groupRef.current) {
       const time = state.clock.elapsedTime;
       
-      // Optimized rotation with pre-calculated values
-      groupRef.current.rotation.y = rotationY;
-      groupRef.current.rotation.x = Math.sin(time * 0.8) * 0.2;
-      groupRef.current.rotation.z = Math.sin(time * 0.3) * 0.1;
-      
-      // Simplified scale and position
-      const scale = 2.5 + scrollProgress * 1.2;
-      groupRef.current.scale.setScalar(scale);
-      
-      groupRef.current.position.y = Math.sin(time * 0.5) * 0.5;
-      groupRef.current.position.x = Math.cos(scrollProgress * 6.28) * 1.2; // Pre-calculated PI * 2
-      groupRef.current.position.z = Math.sin(scrollProgress * 3.14) * 0.8; // Pre-calculated PI
+      if (mobile) {
+        // Minimal mobile animations
+        groupRef.current.rotation.y = rotationY;
+        groupRef.current.scale.setScalar(2);
+        groupRef.current.position.set(0, 0, 0);
+      } else {
+        // Full desktop animations
+        groupRef.current.rotation.y = rotationY;
+        groupRef.current.rotation.x = Math.sin(time * 0.8) * 0.2;
+        groupRef.current.rotation.z = Math.sin(time * 0.3) * 0.1;
+        const scale = 2.5 + scrollProgress * 1.2;
+        groupRef.current.scale.setScalar(scale);
+        groupRef.current.position.y = Math.sin(time * 0.5) * 0.5;
+        groupRef.current.position.x = Math.cos(scrollProgress * 6.28) * 1.2;
+        groupRef.current.position.z = Math.sin(scrollProgress * 3.14) * 0.8;
+      }
     }
   });
 
   return (
     <group ref={groupRef}>
-      {/* Phone body */}
-      <mesh castShadow receiveShadow>
-        <boxGeometry args={[1.2, 2.6, 0.15]} />
-        <meshStandardMaterial 
-          color="#e5e7eb" 
-          metalness={0.3} 
-          roughness={0.4}
-        />
+      {/* Phone body - simplified geometry for mobile */}
+      <mesh castShadow={!mobile} receiveShadow={!mobile}>
+        <boxGeometry args={mobile ? [1.2, 2.6, 0.1] : [1.2, 2.6, 0.15]} />
+        <meshBasicMaterial color="#e5e7eb" />
       </mesh>
       
       {/* Screen bezel */}
-      <mesh position={[0, 0, 0.076]}>
-        <boxGeometry args={[1.15, 2.55, 0.01]} />
-        <meshStandardMaterial color="#1f2937" />
+      <mesh position={[0, 0, mobile ? 0.051 : 0.076]}>
+        <boxGeometry args={mobile ? [1.15, 2.55, 0.005] : [1.15, 2.55, 0.01]} />
+        <meshBasicMaterial color="#1f2937" />
       </mesh>
       
-      {/* Screen content - only show on front */}
+      {/* Screen content - simplified for mobile */}
       {!isViewingBack && (
-        <mesh position={[0, 0.05, 0.082]}>
+        <mesh position={[0, 0.05, mobile ? 0.053 : 0.082]}>
           <planeGeometry args={[1.1, 2.4]} />
-          <meshStandardMaterial 
-            map={frontTextures[currentSection] || frontTextures[0]}
-            emissive="#ffffff"
-            emissiveIntensity={0.1}
+          <meshBasicMaterial 
+            color={mobile ? "#3b82f6" : undefined}
+            map={!mobile && frontTextures[currentSection] ? frontTextures[currentSection] : undefined}
+            emissive={mobile ? "#000000" : "#ffffff"}
+            emissiveIntensity={mobile ? 0 : 0.1}
           />
         </mesh>
       )}
@@ -100,30 +115,34 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   );
 };
 
-// Simplified Particle System (reduced from 8 to 4 particles)
+// Mobile-optimized Particle System
 const ParticleSystem = ({ scrollProgress }: { scrollProgress: number }) => {
   const groupRef = useRef<Group>(null);
+  const mobile = isMobile();
+  
+  // Skip particles entirely on mobile
+  if (mobile) return null;
   
   useFrame((state) => {
     if (groupRef.current) {
       const time = state.clock.elapsedTime;
-      groupRef.current.rotation.y = time * 0.2 + scrollProgress * 3.14; // Pre-calculated PI
+      groupRef.current.rotation.y = time * 0.1 + scrollProgress * 1.57;
     }
   });
 
-  // Reduced particles for better mobile performance
-  const particles = Array.from({ length: 4 }, (_, i) => {
-    const angle = (i / 4) * 6.28; // Pre-calculated PI * 2
-    const radius = 3 + (i % 2) * 0.5;
+  // Reduced particles for desktop
+  const particles = Array.from({ length: 2 }, (_, i) => {
+    const angle = (i / 2) * 6.28;
+    const radius = 3;
     
     return {
       position: [
         Math.cos(angle) * radius,
-        Math.sin(angle * 0.5) * 1,
+        0,
         Math.sin(angle) * radius * 0.3
       ] as [number, number, number],
       color: i % 2 === 0 ? '#10b981' : '#3b82f6',
-      scale: 0.05 + (i % 3) * 0.02
+      scale: 0.03
     };
   });
 
@@ -131,13 +150,11 @@ const ParticleSystem = ({ scrollProgress }: { scrollProgress: number }) => {
     <group ref={groupRef}>
       {particles.map((particle, i) => (
         <mesh key={i} position={particle.position} scale={particle.scale}>
-          <sphereGeometry args={[0.2, 6, 6]} />
-          <meshStandardMaterial 
+          <sphereGeometry args={[0.2, 4, 4]} />
+          <meshBasicMaterial 
             color={particle.color} 
             transparent 
-            opacity={0.6}
-            emissive={particle.color}
-            emissiveIntensity={0.2}
+            opacity={0.4}
           />
         </mesh>
       ))}
@@ -145,8 +162,16 @@ const ParticleSystem = ({ scrollProgress }: { scrollProgress: number }) => {
   );
 };
 
-// Clean Lighting Setup
+// Mobile-optimized Lighting
 const SceneLighting = () => {
+  const mobile = isMobile();
+  
+  if (mobile) {
+    // Minimal lighting for mobile
+    return <ambientLight intensity={0.8} />;
+  }
+  
+  // Full lighting for desktop
   return (
     <>
       <ambientLight intensity={0.4} />
@@ -154,8 +179,8 @@ const SceneLighting = () => {
         position={[5, 5, 5]} 
         intensity={0.8} 
         castShadow
-        shadow-mapSize-width={512}
-        shadow-mapSize-height={512}
+        shadow-mapSize-width={256}
+        shadow-mapSize-height={256}
       />
       <pointLight 
         position={[-5, 3, -2]} 
@@ -171,39 +196,31 @@ const SceneLighting = () => {
   );
 };
 
-// Simplified Background Grid (reduced complexity)
+// Mobile-optimized Background Grid
 const BackgroundGrid = ({ scrollProgress }: { scrollProgress: number }) => {
   const gridRef = useRef<Group>(null);
+  const mobile = isMobile();
+  
+  // Skip background entirely on mobile
+  if (mobile) return null;
   
   useFrame(() => {
     if (gridRef.current) {
       gridRef.current.position.z = -10 + scrollProgress * 2;
-      gridRef.current.rotation.y = scrollProgress * 0.1;
+      gridRef.current.rotation.y = scrollProgress * 0.05;
     }
   });
 
+  // Minimal grid for desktop
   const gridLines = [];
-  // Reduced grid lines from 11x11 to 7x7 for better performance
-  for (let i = -3; i <= 3; i++) {
-    // Vertical lines
+  for (let i = -2; i <= 2; i++) {
     gridLines.push(
-      <mesh key={`v${i}`} position={[i * 2, 0, -10]}>
-        <boxGeometry args={[0.02, 14, 0.02]} />
-        <meshStandardMaterial 
+      <mesh key={`v${i}`} position={[i * 3, 0, -10]}>
+        <boxGeometry args={[0.01, 10, 0.01]} />
+        <meshBasicMaterial 
           color="#475569" 
           transparent 
-          opacity={0.1}
-        />
-      </mesh>
-    );
-    // Horizontal lines
-    gridLines.push(
-      <mesh key={`h${i}`} position={[0, i * 2, -10]} rotation={[0, 0, 1.57]}>
-        <boxGeometry args={[0.02, 14, 0.02]} />
-        <meshStandardMaterial 
-          color="#475569" 
-          transparent 
-          opacity={0.1}
+          opacity={0.05}
         />
       </mesh>
     );
@@ -233,6 +250,7 @@ export const HorizontalScroll3D = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollContentRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const mobile = isMobile();
 
   useEffect(() => {
     if (!containerRef.current || !scrollContentRef.current) return;
@@ -244,45 +262,53 @@ export const HorizontalScroll3D = () => {
     const viewportWidth = container.offsetWidth;
     const scrollDistance = totalWidth - viewportWidth;
 
-    // Create the main scroll animation with controlled speed
+    // Faster scroll animation for mobile
+    const scrollMultiplier = mobile ? 1.5 : 2;
+    const scrubValue = mobile ? 1 : 2;
+
     gsap.to(scrollContent, {
       x: -scrollDistance,
       ease: "none",
       scrollTrigger: {
         trigger: container,
         start: "top top",
-        end: () => `+=${scrollDistance * 2}`, // Double the scroll distance to make it slower
-        scrub: 2, // Increased scrub value for smoother, slower scrolling
+        end: () => `+=${scrollDistance * scrollMultiplier}`,
+        scrub: scrubValue,
         pin: true,
         anticipatePin: 1,
-        refreshPriority: -1, // Lower priority to prevent conflicts
+        refreshPriority: -1,
         onUpdate: (self) => {
-          // Smooth the progress updates to prevent jerky animations
           const smoothProgress = gsap.utils.clamp(0, 1, self.progress);
           setScrollProgress(smoothProgress);
         }
       }
     });
 
-    // Add scroll momentum dampening for smoother experience
-    let scrollTimeout: NodeJS.Timeout;
-    const handleScroll = () => {
-      clearTimeout(scrollTimeout);
-      document.body.style.pointerEvents = 'none';
-      
-      scrollTimeout = setTimeout(() => {
-        document.body.style.pointerEvents = 'auto';
-      }, 150);
-    };
+    // Simplified scroll handling for mobile
+    if (!mobile) {
+      let scrollTimeout: NodeJS.Timeout;
+      const handleScroll = () => {
+        clearTimeout(scrollTimeout);
+        document.body.style.pointerEvents = 'none';
+        
+        scrollTimeout = setTimeout(() => {
+          document.body.style.pointerEvents = 'auto';
+        }, 100);
+      };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      
+      return () => {
+        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+        window.removeEventListener('scroll', handleScroll);
+        clearTimeout(scrollTimeout);
+      };
+    }
 
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-      window.removeEventListener('scroll', handleScroll);
-      clearTimeout(scrollTimeout);
     };
-  }, []);
+  }, [mobile]);
 
   const sections = [
     {
@@ -309,21 +335,29 @@ export const HorizontalScroll3D = () => {
 
   return (
     <div ref={containerRef} className="relative h-screen overflow-hidden">
-      {/* 3D Canvas Background with mobile optimizations */}
+      {/* 3D Canvas Background with aggressive mobile optimizations */}
       <div className="absolute inset-0 z-0">
         <Canvas 
-          camera={{ position: [0, 0, 8], fov: 60 }}
-          shadows
+          camera={{ position: [0, 0, 8], fov: mobile ? 50 : 60 }}
+          shadows={!mobile}
           gl={{ 
-            antialias: false, // Disabled for mobile performance
-            powerPreference: "high-performance"
+            antialias: false,
+            powerPreference: mobile ? "low-power" : "high-performance",
+            alpha: false,
+            depth: !mobile,
+            stencil: false,
+            preserveDrawingBuffer: false
           }}
           onCreated={({ gl }) => {
             gl.setClearColor(0x0f172a, 1);
-            // Set pixel ratio manually for better mobile performance
-            gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            gl.setPixelRatio(mobile ? 1 : Math.min(window.devicePixelRatio, 2));
+            if (mobile) {
+              gl.shadowMap.enabled = false;
+            }
           }}
-          performance={{ min: 0.5 }} // Allow lower framerates on mobile
+          performance={{ min: mobile ? 0.2 : 0.5 }}
+          frameloop={mobile ? "demand" : "always"}
+          dpr={mobile ? 1 : [1, 2]}
         >
           <Scene3D scrollProgress={scrollProgress} />
         </Canvas>
@@ -334,18 +368,18 @@ export const HorizontalScroll3D = () => {
         {sections.map((section, index) => (
           <div
             key={index}
-            className="flex-shrink-0 w-screen h-full flex items-center justify-end pr-32"
+            className="flex-shrink-0 w-screen h-full flex items-center justify-end pr-8 md:pr-32"
           >
             <div className="text-right max-w-xl">
-              <h2 className="text-4xl md:text-6xl font-black mb-4 text-white">
+              <h2 className="text-3xl md:text-4xl lg:text-6xl font-black mb-4 text-white">
                 {section.title}
               </h2>
-              <p className="text-lg md:text-xl text-slate-200 mb-6">
+              <p className="text-base md:text-lg lg:text-xl text-slate-200 mb-6">
                 {section.subtitle}
               </p>
               
-              <div className={`inline-block bg-gradient-to-r from-${section.color}-500/20 to-${section.color}-400/20 rounded-lg px-6 py-3 backdrop-blur-sm border border-${section.color}-500/30`}>
-                <span className={`text-${section.color}-400 font-semibold text-sm`}>
+              <div className={`inline-block bg-gradient-to-r from-${section.color}-500/20 to-${section.color}-400/20 rounded-lg px-4 md:px-6 py-2 md:py-3 backdrop-blur-sm border border-${section.color}-500/30`}>
+                <span className={`text-${section.color}-400 font-semibold text-xs md:text-sm`}>
                   {section.feature}
                 </span>
               </div>
@@ -368,18 +402,20 @@ export const HorizontalScroll3D = () => {
         ))}
       </div>
       
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-white/60 text-sm z-30">
-        <div className="flex items-center space-x-2">
-          <span>Scroll slowly for best experience</span>
-          <div className="w-1 h-6 bg-white/30 rounded-full overflow-hidden">
-            <div 
-              className="w-full bg-emerald-400 rounded-full transition-all duration-300"
-              style={{ height: `${scrollProgress * 100}%` }}
-            />
+      {/* Scroll Indicator - Hidden on mobile */}
+      {!mobile && (
+        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-white/60 text-sm z-30">
+          <div className="flex items-center space-x-2">
+            <span>Scroll slowly for best experience</span>
+            <div className="w-1 h-6 bg-white/30 rounded-full overflow-hidden">
+              <div 
+                className="w-full bg-emerald-400 rounded-full transition-all duration-300"
+                style={{ height: `${scrollProgress * 100}%` }}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
