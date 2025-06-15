@@ -2,7 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Text, OrbitControls, Sphere, Box, Torus, Cone } from '@react-three/drei';
-import { Mesh, Vector3 } from 'three';
+import { Mesh } from 'three';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -48,31 +48,31 @@ const FloatingObject = ({ position, color, type, scale = 1 }: {
   );
 };
 
-// 3D Text Component
+// Simplified 3D Text Component
 const Floating3DText = ({ text, position, color }: {
   text: string;
   position: [number, number, number];
   color: string;
 }) => {
-  const textRef = useRef<Mesh>(null);
+  const groupRef = useRef<any>(null);
   
   useFrame((state) => {
-    if (textRef.current) {
-      textRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.2;
+    if (groupRef.current) {
+      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.2;
     }
   });
 
   return (
-    <Text
-      ref={textRef}
-      position={position}
-      fontSize={0.8}
-      color={color}
-      anchorX="center"
-      anchorY="middle"
-    >
-      {text}
-    </Text>
+    <group ref={groupRef} position={position}>
+      <Text
+        fontSize={0.8}
+        color={color}
+        anchorX="center"
+        anchorY="middle"
+      >
+        {text}
+      </Text>
+    </group>
   );
 };
 
