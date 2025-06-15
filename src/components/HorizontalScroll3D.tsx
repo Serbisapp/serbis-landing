@@ -1,4 +1,5 @@
 
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
@@ -361,30 +362,33 @@ export const HorizontalScroll3D = () => {
         </Canvas>
       </div>
       
-      {/* Content */}
+      {/* Content - Adjusted to prevent overlap */}
       <div ref={scrollContentRef} className="relative z-10 flex h-full">
         {sections.map((section, index) => (
           <div
             key={index}
-            className="flex-shrink-0 w-screen h-full flex items-center justify-end pr-8 md:pr-32"
+            className="flex-shrink-0 w-screen h-full flex items-center"
           >
-            <div className="text-right max-w-xl">
-              {/* Text with improved readability */}
-              <div className="bg-slate-900/80 backdrop-blur-lg rounded-2xl p-8 border border-slate-700/50">
-                <h2 className="text-3xl md:text-4xl lg:text-6xl font-black mb-4 text-white">
+            {/* Left side for text - positioned to avoid phone overlap */}
+            <div className="w-1/2 pl-8 md:pl-16">
+              <div className="bg-slate-900/80 backdrop-blur-lg rounded-2xl p-6 md:p-8 border border-slate-700/50 max-w-lg">
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-black mb-4 text-white">
                   {section.title}
                 </h2>
-                <p className="text-base md:text-lg lg:text-xl text-slate-200 mb-6">
+                <p className="text-sm md:text-base lg:text-lg text-slate-200 mb-6">
                   {section.subtitle}
                 </p>
                 
-                <div className={`inline-block bg-gradient-to-r from-${section.color}-500/20 to-${section.color}-400/20 rounded-lg px-4 md:px-6 py-2 md:py-3 backdrop-blur-sm border border-${section.color}-500/30`}>
+                <div className={`inline-block bg-gradient-to-r from-${section.color}-500/20 to-${section.color}-400/20 rounded-lg px-3 md:px-4 py-2 backdrop-blur-sm border border-${section.color}-500/30`}>
                   <span className={`text-${section.color}-400 font-semibold text-xs md:text-sm`}>
                     {section.feature}
                   </span>
                 </div>
               </div>
             </div>
+            
+            {/* Right side reserved for 3D phone */}
+            <div className="w-1/2"></div>
           </div>
         ))}
       </div>
@@ -420,3 +424,4 @@ export const HorizontalScroll3D = () => {
     </div>
   );
 };
+

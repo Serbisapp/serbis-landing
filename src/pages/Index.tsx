@@ -333,24 +333,12 @@ const Index = () => {
             </AnimatedWrapper>
             
             {/* Footer - Simplified */}
-            <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 py-16">
-                <div className="container mx-auto px-6">
-                    <div className="text-center space-y-6">
-                        <div className="flex justify-center mb-8">
-                            <img 
-                                src="/lovable-uploads/9a63b71d-a687-4f28-97c2-dfa5cb7bef35.png" 
-                                alt="Serbis Logo" 
-                                className="w-12 h-12 rounded-lg shadow-lg shadow-emerald-500/25"
-                            />
-                        </div>
-                        <p className="text-slate-500">Fase Piloto</p>
-                        <div className="pt-8 border-t border-slate-800">
-                            <p className="text-slate-500">© 2025 Serbis. Zona Norte AMBA, Argentina</p>
-                            <a href="mailto:hello@serbis.tech" className="text-emerald-400 hover:text-emerald-300 transition-colors text-lg font-medium mt-2 inline-block">
-                                hello@serbis.tech
-                            </a>
-                        </div>
-                    </div>
+            <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 py-12">
+                <div className="container mx-auto px-6 text-center">
+                    <p className="text-slate-500 mb-6">© 2025 Serbis. Zona Norte AMBA, Argentina</p>
+                    <a href="mailto:hello@serbis.tech" className="text-emerald-400 hover:text-emerald-300 transition-colors text-lg font-medium">
+                        hello@serbis.tech
+                    </a>
                 </div>
             </footer>
         </div>
