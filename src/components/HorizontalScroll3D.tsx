@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
@@ -106,8 +105,6 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
           <meshBasicMaterial 
             color={mobile ? "#3b82f6" : undefined}
             map={!mobile && frontTextures[currentSection] ? frontTextures[currentSection] : undefined}
-            emissive={mobile ? "#000000" : "#ffffff"}
-            emissiveIntensity={mobile ? 0 : 0.1}
           />
         </mesh>
       )}
