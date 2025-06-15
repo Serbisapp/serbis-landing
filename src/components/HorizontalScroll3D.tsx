@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
@@ -309,21 +308,21 @@ export const HorizontalScroll3D = () => {
 
   const sections = [
     {
-      title: "Conectá con Profesionales",
-      subtitle: "Miles de expertos verificados esperándote",
-      feature: "Perfiles Completamente Verificados",
+      title: "Explorá el Home",
+      subtitle: "Describí el servicio que necesitás y te conectamos con un profesional verificado en tu zona en menos de 5 segundos. Navegá de forma intuitiva, mirá ratings de tu comunidad y accedé a tus pedidos.",
+      feature: "Conexión en 5 segundos",
       color: "emerald"
     },
     {
-      title: "IA que Entiende", 
-      subtitle: "Algoritmos inteligentes para matches perfectos",
-      feature: "Matching Inteligente Avanzado",
+      title: "Comunicación Segura y Directa", 
+      subtitle: "Coordiná todos los detalles, compartí imágenes y negociá el precio directamente con los profesionales a través de nuestro chat integrado. Tu comunicación es privada y segura.",
+      feature: "Chat Integrado y Privado",
       color: "blue"
     },
     {
-      title: "Pagos Seguros",
-      subtitle: "Transacciones protegidas y garantizadas", 
-      feature: "Sistema de Pagos Protegido",
+      title: "Seguí el Estado de tus Pedidos",
+      subtitle: "Mantenete informado en tiempo real sobre el progreso de tus servicios. Recibí notificaciones instantáneas y visualizá claramente cada etapa del proceso hasta la finalización.", 
+      feature: "Status en Tiempo Real",
       color: "purple"
     }
   ];
