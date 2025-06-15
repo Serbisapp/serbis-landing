@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
@@ -28,13 +29,13 @@ const CameraController = ({ scrollProgress }: { scrollProgress: number }) => {
       const targetFov = 50 + scrollProgress * 20;
       perspectiveCamera.fov += (targetFov - perspectiveCamera.fov) * 0.05;
     } else {
-      // Full desktop camera movement
-      const targetX = Math.sin(scrollProgress * 9.42) * 5;
-      const targetY = 2 + Math.sin(scrollProgress * 6.28) * 2;
-      const targetZ = 8 + scrollProgress * 6;
+      // Smoother, predictable desktop camera movement
+      const targetX = 3 - scrollProgress * 6; // Moves from x=3 to x=-3
+      const targetY = 2; // Stable Y
+      const targetZ = 8 + scrollProgress * 4; // Moves closer
       perspectiveCamera.position.lerp(new Vector3(targetX, targetY, targetZ), 0.08);
       perspectiveCamera.lookAt(0, 0, 0);
-      const targetFov = 45 + scrollProgress * 40;
+      const targetFov = 45 + scrollProgress * 30;
       perspectiveCamera.fov += (targetFov - perspectiveCamera.fov) * 0.08;
     }
     
@@ -71,15 +72,14 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
         groupRef.current.scale.setScalar(2);
         groupRef.current.position.set(0, 0, 0);
       } else {
-        // Full desktop animations
+        // Simplified, predictable desktop animations
         groupRef.current.rotation.y = rotationY;
-        groupRef.current.rotation.x = Math.sin(time * 0.8) * 0.2;
-        groupRef.current.rotation.z = Math.sin(time * 0.3) * 0.1;
+        groupRef.current.rotation.x = Math.sin(time * 0.4) * 0.1; // Slower, calmer rotation
+        groupRef.current.rotation.z = Math.sin(time * 0.2) * 0.05;
         const scale = 2.5 + scrollProgress * 1.2;
         groupRef.current.scale.setScalar(scale);
-        groupRef.current.position.y = Math.sin(time * 0.5) * 0.5;
-        groupRef.current.position.x = Math.cos(scrollProgress * 6.28) * 1.2;
-        groupRef.current.position.z = Math.sin(scrollProgress * 3.14) * 0.8;
+        // Phone stays at origin, camera does the movement
+        groupRef.current.position.set(0, 0, 0);
       }
     }
   });
@@ -363,44 +363,46 @@ export const HorizontalScroll3D = () => {
       {/* Content - Layout dynamically synced with the 3D animation */}
       <div ref={scrollContentRef} className="relative z-10 flex h-full">
         {sections.map((section, index) => {
-          // The middle section's text will be on the right to avoid the 3D model
-          const isTextOnRight = index === 1;
+          let alignmentClass = "justify-center";
+          let textAlignClass = "text-center";
+          let opacity = 1.0;
+
+          if (index === 0) {
+            alignmentClass = "justify-end";
+            textAlignClass = "text-right";
+          } else if (index === 2) {
+            alignmentClass = "justify-start";
+            textAlignClass = "text-left";
+          } else { // index === 1
+            // Fade out when phone is in the center.
+            // Opacity is 0 when scrollProgress is in [0.45, 0.55]
+            // and fades to 1 at 0.35 and 0.65.
+            const distance = Math.abs(scrollProgress - 0.5);
+            opacity = gsap.utils.clamp(0, 1, (distance - 0.05) / 0.1);
+          }
           
           return (
             <div
               key={index}
-              className={`flex-shrink-0 w-screen h-full flex items-center ${
-                isTextOnRight ? "flex-row-reverse" : ""
-              }`}
+              className={`flex-shrink-0 w-screen h-full flex items-center p-8 md:p-16 ${alignmentClass}`}
             >
-              {/* Text content half */}
               <div
-                className={`w-1/2 ${
-                  isTextOnRight ? "pr-8 md:pr-16" : "pl-8 md:pl-16"
-                }`}
+                className={`bg-slate-900/80 backdrop-blur-lg rounded-2xl p-6 md:p-8 border border-slate-700/50 max-w-lg transition-opacity duration-200 ease-in-out ${textAlignClass}`}
+                style={{ opacity }}
               >
-                <div
-                  className={`bg-slate-900/80 backdrop-blur-lg rounded-2xl p-6 md:p-8 border border-slate-700/50 max-w-lg ${
-                    isTextOnRight ? "ml-auto text-right" : "text-left"
-                  }`}
-                >
-                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-black mb-4 text-white">
-                    {section.title}
-                  </h2>
-                  <p className="text-sm md:text-base lg:text-lg text-slate-200 mb-6">
-                    {section.subtitle}
-                  </p>
-                  
-                  <div className={`inline-block bg-gradient-to-r from-${section.color}-500/20 to-${section.color}-400/20 rounded-lg px-3 md:px-4 py-2 backdrop-blur-sm border border-${section.color}-500/30`}>
-                    <span className={`text-${section.color}-400 font-semibold text-xs md:text-sm`}>
-                      {section.feature}
-                    </span>
-                  </div>
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-black mb-4 text-white">
+                  {section.title}
+                </h2>
+                <p className="text-sm md:text-base lg:text-lg text-slate-200 mb-6">
+                  {section.subtitle}
+                </p>
+                
+                <div className={`inline-block bg-gradient-to-r from-${section.color}-500/20 to-${section.color}-400/20 rounded-lg px-3 md:px-4 py-2 backdrop-blur-sm border border-${section.color}-500/30`}>
+                  <span className={`text-${section.color}-400 font-semibold text-xs md:text-sm`}>
+                    {section.feature}
+                  </span>
                 </div>
               </div>
-              
-              {/* The other half is reserved for the 3D model */}
-              <div className="w-1/2"></div>
             </div>
           );
         })}
