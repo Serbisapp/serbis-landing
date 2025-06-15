@@ -5,12 +5,12 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  // Change this to your actual GitHub repository name
+  // Since you're using a custom domain (serbis.app), set base to root
   const REPO_NAME = 'serbis-landing';
   
   return {
-    // Set the base path for GitHub Pages (replace 'serbis-landing' with your actual repository name)
-    base: mode === 'production' ? `/${REPO_NAME}/` : '/',
+    // For custom domain, use root path instead of /repo-name/
+    base: mode === 'production' ? '/' : '/',
     server: {
       host: "::",
       port: 8080,

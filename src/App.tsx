@@ -8,8 +8,8 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Get the base path for GitHub Pages - change 'serbis-landing' to your actual repository name
-const basename = import.meta.env.PROD ? '/serbis-landing' : '';
+// For custom domain (serbis.app), use root path
+const basename = '';
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
