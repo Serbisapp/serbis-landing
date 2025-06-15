@@ -9,55 +9,70 @@ import { useLoader } from '@react-three/fiber';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Simplified Camera Controller
+// More Dramatic Camera Controller
 const CameraController = ({ scrollProgress }: { scrollProgress: number }) => {
   useFrame(({ camera }) => {
     const perspectiveCamera = camera as PerspectiveCamera;
     
-    // Smooth camera movement based on scroll
-    const targetX = Math.sin(scrollProgress * Math.PI * 2) * 2;
-    const targetY = 1 + Math.sin(scrollProgress * Math.PI) * 0.5;
-    const targetZ = 6 + scrollProgress * 2;
+    // Much more dramatic camera movement based on scroll
+    const targetX = Math.sin(scrollProgress * Math.PI * 3) * 5; // Increased range and frequency
+    const targetY = 2 + Math.sin(scrollProgress * Math.PI * 2) * 2; // More vertical movement
+    const targetZ = 8 + scrollProgress * 6; // More depth movement
     
     // Smooth interpolation
-    perspectiveCamera.position.lerp(new Vector3(targetX, targetY, targetZ), 0.05);
+    perspectiveCamera.position.lerp(new Vector3(targetX, targetY, targetZ), 0.08);
     perspectiveCamera.lookAt(0, 0, 0);
     
-    // Dynamic FOV
-    const targetFov = 50 + scrollProgress * 20;
-    perspectiveCamera.fov += (targetFov - perspectiveCamera.fov) * 0.05;
+    // More dramatic FOV changes
+    const targetFov = 45 + scrollProgress * 40;
+    perspectiveCamera.fov += (targetFov - perspectiveCamera.fov) * 0.08;
     perspectiveCamera.updateProjectionMatrix();
   });
   
   return null;
 };
 
-// Streamlined Phone Component
+// Enhanced Phone Component with Back/Front Detection
 const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   const groupRef = useRef<Group>(null);
   
-  // Load screen textures
+  // Load screen textures for front
   const profileTexture = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=800&fit=crop');
   const dashboardTexture = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400&h=800&fit=crop');
   const codeTexture = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=800&fit=crop');
   
-  const textures = [profileTexture, dashboardTexture, codeTexture];
+  // Load textures for back view
+  const backTexture1 = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=800&fit=crop');
+  const backTexture2 = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=800&fit=crop');
+  const backTexture3 = useLoader(TextureLoader, 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&h=800&fit=crop');
+  
+  const frontTextures = [profileTexture, dashboardTexture, codeTexture];
+  const backTextures = [backTexture1, backTexture2, backTexture3];
   const currentSection = Math.floor(scrollProgress * 2.99);
   
+  // Calculate if we're viewing the front or back based on rotation
+  const rotationY = scrollProgress * Math.PI * 4;
+  const normalizedRotation = ((rotationY % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+  const isViewingBack = normalizedRotation > Math.PI / 2 && normalizedRotation < (3 * Math.PI) / 2;
+  
+  const currentTextures = isViewingBack ? backTextures : frontTextures;
+
   useFrame((state) => {
     if (groupRef.current) {
       const time = state.clock.elapsedTime;
       
-      // Smooth rotation
-      groupRef.current.rotation.y = scrollProgress * Math.PI * 4;
-      groupRef.current.rotation.x = Math.sin(time * 0.5) * 0.1;
+      // Enhanced rotation
+      groupRef.current.rotation.y = rotationY;
+      groupRef.current.rotation.x = Math.sin(time * 0.8) * 0.2; // More dramatic tilt
+      groupRef.current.rotation.z = Math.sin(time * 0.3) * 0.1; // Add some roll
       
-      // Scale and position
-      const scale = 2 + scrollProgress * 0.5;
+      // More dramatic scale and position changes
+      const scale = 2.5 + scrollProgress * 1.2;
       groupRef.current.scale.setScalar(scale);
       
-      groupRef.current.position.y = Math.sin(time * 0.3) * 0.2;
-      groupRef.current.position.x = Math.cos(scrollProgress * Math.PI) * 0.5;
+      groupRef.current.position.y = Math.sin(time * 0.5) * 0.5;
+      groupRef.current.position.x = Math.cos(scrollProgress * Math.PI * 2) * 1.2;
+      groupRef.current.position.z = Math.sin(scrollProgress * Math.PI) * 0.8;
     }
   });
 
@@ -79,21 +94,41 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
         <meshStandardMaterial color="#1f2937" />
       </mesh>
       
-      {/* Screen content */}
+      {/* Screen content - changes based on viewing angle */}
       <mesh position={[0, 0.05, 0.082]}>
         <planeGeometry args={[1.1, 2.4]} />
         <meshStandardMaterial 
-          map={textures[currentSection] || textures[0]}
+          map={currentTextures[currentSection] || currentTextures[0]}
           emissive="#ffffff"
-          emissiveIntensity={0.1}
+          emissiveIntensity={isViewingBack ? 0.05 : 0.1}
         />
       </mesh>
+      
+      {/* Back screen content (when viewing from behind) */}
+      {isViewingBack && (
+        <mesh position={[0, 0.05, -0.082]} rotation={[0, Math.PI, 0]}>
+          <planeGeometry args={[1.1, 2.4]} />
+          <meshStandardMaterial 
+            map={currentTextures[currentSection] || currentTextures[0]}
+            emissive="#ffffff"
+            emissiveIntensity={0.08}
+          />
+        </mesh>
+      )}
       
       {/* Camera notch */}
       <mesh position={[0, 1.25, 0.083]}>
         <boxGeometry args={[0.25, 0.08, 0.02]} />
         <meshStandardMaterial color="#000000" />
       </mesh>
+      
+      {/* Back camera (visible when viewing from behind) */}
+      {isViewingBack && (
+        <mesh position={[0.3, 1.1, -0.083]}>
+          <cylinderGeometry args={[0.08, 0.08, 0.02, 16]} />
+          <meshStandardMaterial color="#1f2937" />
+        </mesh>
+      )}
     </group>
   );
 };
