@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Group } from 'three';
@@ -6,6 +7,62 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextureLoader } from 'three';
 
 gsap.registerPlugin(ScrollTrigger);
+
+// Grid Background Component
+const GridBackground = ({ scrollProgress }: { scrollProgress: number }) => {
+  const gridRef = useRef<Group>(null);
+  
+  useFrame((state) => {
+    if (gridRef.current) {
+      // Subtle movement with scroll
+      gridRef.current.position.z = -15 + scrollProgress * 5;
+      gridRef.current.rotation.y = scrollProgress * Math.PI * 0.1;
+      // Gentle floating animation
+      gridRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.5;
+    }
+  });
+
+  // Create grid lines
+  const gridLines = [];
+  const gridSize = 20;
+  const divisions = 20;
+  
+  for (let i = 0; i <= divisions; i++) {
+    const position = (i / divisions - 0.5) * gridSize;
+    // Vertical lines
+    gridLines.push(
+      <mesh key={`v${i}`} position={[position, 0, -15]} rotation={[0, 0, 0]}>
+        <boxGeometry args={[0.02, gridSize, 0.02]} />
+        <meshStandardMaterial 
+          color="#1f2937" 
+          transparent 
+          opacity={0.15}
+          emissive="#1f2937"
+          emissiveIntensity={0.1}
+        />
+      </mesh>
+    );
+    // Horizontal lines
+    gridLines.push(
+      <mesh key={`h${i}`} position={[0, position, -15]} rotation={[0, 0, Math.PI / 2]}>
+        <boxGeometry args={[0.02, gridSize, 0.02]} />
+        <meshStandardMaterial 
+          color="#1f2937" 
+          transparent 
+          opacity={0.15}
+          emissive="#1f2937"
+          emissiveIntensity={0.1}
+        />
+      </mesh>
+    );
+  }
+
+  return (
+    <group ref={gridRef}>
+      {gridLines}
+    </group>
+  );
+};
 
 // Orbiting Particles Component - positioned around the phone
 const OrbitingParticles = ({ scrollProgress }: { scrollProgress: number }) => {
@@ -213,7 +270,7 @@ const RealisticPhone3D = ({ scrollProgress }: { scrollProgress: number }) => {
   );
 };
 
-// 3D Scene with Realistic Phone, Flying Elements, and Orbiting Particles
+// 3D Scene with Realistic Phone, Flying Elements, Orbiting Particles, and Grid Background
 const Scene3D = ({ scrollProgress }: { scrollProgress: number }) => {
   return (
     <>
@@ -235,6 +292,7 @@ const Scene3D = ({ scrollProgress }: { scrollProgress: number }) => {
         castShadow 
       />
       
+      <GridBackground scrollProgress={scrollProgress} />
       <FlyingElements />
       <OrbitingParticles scrollProgress={scrollProgress} />
       <RealisticPhone3D scrollProgress={scrollProgress} />
@@ -340,16 +398,19 @@ export const HorizontalScroll3D = () => {
             className="flex-shrink-0 w-screen h-full flex items-center justify-end relative pr-32"
           >
             {/* Content positioned to the right, away from phone */}
-            <div className="text-right relative z-20 max-w-xl">
-              <h2 className="text-4xl md:text-6xl font-black mb-4 text-white">
+            <div className="text-right relative z-20 max-w-xl transform transition-all duration-700 ease-out hover:scale-105">
+              <h2 className="text-4xl md:text-6xl font-black mb-4 text-white animate-fade-in-up" 
+                  style={{ animationDelay: `${index * 0.2}s` }}>
                 {section.title}
               </h2>
-              <p className="text-lg md:text-xl text-slate-200 mb-6">
+              <p className="text-lg md:text-xl text-slate-200 mb-6 animate-fade-in-up" 
+                 style={{ animationDelay: `${index * 0.2 + 0.1}s` }}>
                 {section.subtitle}
               </p>
               
-              {/* Clean feature highlight */}
-              <div className={`inline-block bg-gradient-to-r ${getColorClasses(section.color)}/20 rounded-lg px-6 py-3 backdrop-blur-sm border border-${section.color}-500/30`}>
+              {/* Clean feature highlight with enhanced animation */}
+              <div className={`inline-block bg-gradient-to-r ${getColorClasses(section.color)}/20 rounded-lg px-6 py-3 backdrop-blur-sm border border-${section.color}-500/30 animate-fade-in-up hover:bg-gradient-to-r hover:${getColorClasses(section.color)}/30 transition-all duration-300 hover:shadow-lg hover:shadow-${section.color}-500/20`}
+                   style={{ animationDelay: `${index * 0.2 + 0.2}s` }}>
                 <span className={`text-${section.color}-400 font-semibold tracking-wider text-sm`}>
                   {section.feature}
                 </span>
@@ -359,16 +420,28 @@ export const HorizontalScroll3D = () => {
         ))}
       </div>
       
-      {/* Simple Progress Indicator */}
+      {/* Enhanced Progress Indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3 z-30">
         {sections.map((_, i) => (
           <div
             key={i}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              i === currentRotation ? 'bg-emerald-400 scale-150' : 'bg-slate-400'
+            className={`w-2 h-2 rounded-full transition-all duration-500 ease-out ${
+              i === currentRotation 
+                ? 'bg-emerald-400 scale-150 shadow-lg shadow-emerald-400/50' 
+                : 'bg-slate-400 hover:bg-slate-300 hover:scale-110'
             }`}
           />
         ))}
+      </div>
+      
+      {/* Subtle animated background overlay */}
+      <div className="absolute inset-0 pointer-events-none z-5 opacity-10">
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full animate-float" 
+             style={{ animationDelay: '0s', animationDuration: '6s' }}></div>
+        <div className="absolute top-3/4 right-1/4 w-24 h-24 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-float" 
+             style={{ animationDelay: '2s', animationDuration: '8s' }}></div>
+        <div className="absolute top-1/2 left-1/6 w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full animate-float" 
+             style={{ animationDelay: '4s', animationDuration: '7s' }}></div>
       </div>
     </div>
   );
