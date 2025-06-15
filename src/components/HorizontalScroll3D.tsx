@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
@@ -245,24 +244,47 @@ export const HorizontalScroll3D = () => {
     const viewportWidth = container.offsetWidth;
     const scrollDistance = totalWidth - viewportWidth;
 
+    // Create the main scroll animation with controlled speed
     gsap.to(scrollContent, {
       x: -scrollDistance,
       ease: "none",
       scrollTrigger: {
         trigger: container,
         start: "top top",
-        end: () => `+=${scrollDistance}`,
-        scrub: 1,
+        end: () => `+=${scrollDistance * 2}`, // Double the scroll distance to make it slower
+        scrub: 2, // Increased scrub value for smoother, slower scrolling
         pin: true,
         anticipatePin: 1,
+        refreshPriority: -1, // Lower priority to prevent conflicts
         onUpdate: (self) => {
-          setScrollProgress(self.progress);
+          // Smooth the progress updates to prevent jerky animations
+          const smoothProgress = gsap.utils.clamp(0, 1, self.progress);
+          setScrollProgress(smoothProgress);
+        },
+        // Add scroll resistance for mobile
+        onRefresh: () => {
+          ScrollTrigger.refresh();
         }
       }
     });
 
+    // Add scroll momentum dampening for smoother experience
+    let scrollTimeout: NodeJS.Timeout;
+    const handleScroll = () => {
+      clearTimeout(scrollTimeout);
+      document.body.style.pointerEvents = 'none';
+      
+      scrollTimeout = setTimeout(() => {
+        document.body.style.pointerEvents = 'auto';
+      }, 150);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(scrollTimeout);
     };
   }, []);
 
@@ -298,11 +320,12 @@ export const HorizontalScroll3D = () => {
           shadows
           gl={{ 
             antialias: false, // Disabled for mobile performance
-            powerPreference: "high-performance",
-            pixelRatio: Math.min(window.devicePixelRatio, 2) // Limit pixel ratio for mobile
+            powerPreference: "high-performance"
           }}
           onCreated={({ gl }) => {
             gl.setClearColor(0x0f172a, 1);
+            // Set pixel ratio manually for better mobile performance
+            gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
           }}
           performance={{ min: 0.5 }} // Allow lower framerates on mobile
         >
@@ -347,6 +370,19 @@ export const HorizontalScroll3D = () => {
             }`}
           />
         ))}
+      </div>
+      
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-white/60 text-sm z-30">
+        <div className="flex items-center space-x-2">
+          <span>Scroll slowly for best experience</span>
+          <div className="w-1 h-6 bg-white/30 rounded-full overflow-hidden">
+            <div 
+              className="w-full bg-emerald-400 rounded-full transition-all duration-300"
+              style={{ height: `${scrollProgress * 100}%` }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
