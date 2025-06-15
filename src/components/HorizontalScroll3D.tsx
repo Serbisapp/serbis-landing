@@ -245,8 +245,9 @@ export const HorizontalScroll3D = () => {
     }
   }, [mobile]);
 
-  // Mobile version - use the imported MobileCarousel component
+  // Mobile version - return the mobile carousel directly without any Canvas
   if (mobile) {
+    console.log('Rendering mobile carousel, currentSection:', currentSection);
     return <MobileCarousel sections={sections} currentSection={currentSection} setCurrentSection={setCurrentSection} />;
   }
 
