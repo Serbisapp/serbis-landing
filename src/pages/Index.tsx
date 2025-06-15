@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -111,7 +112,7 @@ const Index = () => {
                     <AnimatedWrapper>
                         <div className="inline-flex items-center gap-3 bg-slate-800/30 border border-orange-400/20 rounded-full px-8 py-4 mb-16 backdrop-blur-sm">
                             <Zap className="w-4 h-4 text-orange-400" />
-                            <span className="text-sm font-medium text-slate-300">Fase Piloto • Zona Norte AMBA</span>
+                            <span className="text-sm font-medium text-slate-300">Fase Piloto • Buenos Aires</span>
                         </div>
                     </AnimatedWrapper>
                     
@@ -335,9 +336,9 @@ const Index = () => {
             {/* Footer - Simplified */}
             <footer className="bg-slate-900 border-t border-slate-800 text-slate-400 py-12">
                 <div className="container mx-auto px-6 text-center">
-                    <p className="text-slate-500 mb-6">© 2025 Serbis. Zona Norte AMBA, Argentina</p>
-                    <a href="mailto:hello@serbis.tech" className="text-emerald-400 hover:text-emerald-300 transition-colors text-lg font-medium">
-                        hello@serbis.tech
+                    <p className="text-slate-500 mb-6">© 2025 Serbis. Buenos Aires, Argentina</p>
+                    <a href="mailto:inaki.iturriaga@serbis.app" className="text-emerald-400 hover:text-emerald-300 transition-colors text-lg font-medium">
+                        inaki.iturriaga@serbis.app
                     </a>
                 </div>
             </footer>
