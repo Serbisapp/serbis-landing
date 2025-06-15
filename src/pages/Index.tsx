@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -324,17 +323,9 @@ const Index = () => {
                             Únete al futuro de los servicios locales. Descargá la app y resolvé tu problema en 5 segundos.
                         </p>
                         
-                        <div className="flex flex-col sm:flex-row items-center gap-6 justify-center mb-16">
+                        <div className="flex flex-col sm:flex-row items-center gap-6 justify-center">
                             <Button size="lg" className="rounded-xl px-12 py-6 text-lg font-semibold bg-gradient-to-r from-emerald-500 to-blue-500 text-slate-950 hover:shadow-2xl hover:shadow-emerald-500/25 transition-all duration-500 hover:scale-105 border-0">
                                 Descargar App
-                            </Button>
-                        </div>
-
-                        <div className="text-center">
-                            <p className="text-slate-500 mb-6">¿Consultas sobre el piloto?</p>
-                            <Button size="lg" variant="outline" className="rounded-xl px-8 py-4 text-lg font-medium border border-slate-600 text-slate-300 hover:border-emerald-400 hover:text-emerald-400 hover:bg-emerald-400/5 transition-all duration-300">
-                                <Phone className="w-5 h-5 mr-2" />
-                                Contactanos
                             </Button>
                         </div>
                     </div>

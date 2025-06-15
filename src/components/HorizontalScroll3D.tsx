@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Group, Vector3, PerspectiveCamera } from 'three';
@@ -87,16 +86,16 @@ const Phone3D = ({ scrollProgress }: { scrollProgress: number }) => {
 
   return (
     <group ref={groupRef}>
-      {/* Phone body - simplified geometry for mobile */}
+      {/* Phone body - changed to darker grey */}
       <mesh castShadow={!mobile} receiveShadow={!mobile}>
         <boxGeometry args={mobile ? [1.2, 2.6, 0.1] : [1.2, 2.6, 0.15]} />
-        <meshBasicMaterial color="#e5e7eb" />
+        <meshBasicMaterial color="#374151" />
       </mesh>
       
       {/* Screen bezel */}
       <mesh position={[0, 0, mobile ? 0.051 : 0.076]}>
         <boxGeometry args={mobile ? [1.15, 2.55, 0.005] : [1.15, 2.55, 0.01]} />
-        <meshBasicMaterial color="#1f2937" />
+        <meshBasicMaterial color="#111827" />
       </mesh>
       
       {/* Screen content - simplified for mobile */}
