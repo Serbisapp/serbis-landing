@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +15,8 @@ import {
   Phone,
   Zap,
   Camera,
+  DollarSign,
+  Eye,
 } from "lucide-react";
 import { AnimatedWrapper } from '@/components/AnimatedWrapper';
 import { HorizontalScroll3D } from '@/components/HorizontalScroll3D';
@@ -92,9 +93,6 @@ const Index = () => {
                         <a href="#funcionalidades" className="px-6 py-3 text-sm font-medium text-slate-300 hover:text-emerald-400 rounded-xl transition-all duration-300 hover:bg-slate-800/50">
                             Funcionalidades
                         </a>
-                        <Button variant="outline" className="ml-4 rounded-xl px-6 py-3 border border-emerald-400/30 text-emerald-400 hover:bg-emerald-400/10 hover:border-emerald-400 transition-all duration-300">
-                            Soy Profesional
-                        </Button>
                     </div>
 
                     <div className="md:hidden">
@@ -117,51 +115,53 @@ const Index = () => {
                     
                     <AnimatedWrapper>
                         <h1 className="font-bold text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-slate-100 tracking-tight max-w-7xl mx-auto leading-none mb-8">
-                            Conectamos
+                            Tu Problema
                             <span className="block bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                                Localmente
+                                5 Segundos
+                            </span>
+                            <span className="block text-slate-100">
+                                Tu Solución
                             </span>
                         </h1>
                     </AnimatedWrapper>
                     
                     <AnimatedWrapper className="[animation-delay:200ms]">
                         <p className="mt-8 text-xl md:text-2xl text-slate-400 max-w-4xl mx-auto leading-relaxed font-light">
-                           Una plataforma móvil que conecta usuarios con profesionales locales usando <span className="text-emerald-400 font-medium">IA</span> y <span className="text-blue-400 font-medium">geolocalización</span>.
-                           <br />Actualmente en fase piloto en zona norte del AMBA.
+                           Olvidate de listas eternas y búsquedas sin fin. <span className="text-emerald-400 font-semibold">Escribí tu problema</span> y nuestra <span className="text-blue-400 font-semibold">IA te conecta en 5 segundos</span> con el profesional perfecto en tu zona.
+                           <br />Todo integrado: chat, negociación de precios y seguimiento en vivo.
                         </p>
                     </AnimatedWrapper>
                     
                     <AnimatedWrapper className="mt-16 [animation-delay:400ms]">
                         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                            <Button size="lg" className="group relative overflow-hidden rounded-xl text-lg font-semibold px-10 py-6 bg-gradient-to-r from-emerald-500 to-blue-500 text-slate-950 hover:shadow-2xl hover:shadow-emerald-500/25 transition-all duration-500 hover:scale-105 border-0">
+                            <Button size="lg" className="group relative overflow-hidden rounded-xl text-lg font-semibold px-12 py-6 bg-gradient-to-r from-emerald-500 to-blue-500 text-slate-950 hover:shadow-2xl hover:shadow-emerald-500/25 transition-all duration-500 hover:scale-105 border-0">
                                 <span className="relative z-10 flex items-center gap-3">
-                                    Probar la App 
+                                    Probar Ahora 
                                     <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
                                 </span>
-                            </Button>
-                            
-                            <Button variant="outline" size="lg" className="rounded-xl text-lg font-medium px-10 py-6 border border-slate-600 text-slate-300 hover:border-emerald-400 hover:text-emerald-400 hover:bg-emerald-400/5 transition-all duration-300">
-                                Registrarme como Profesional
                             </Button>
                         </div>
                     </AnimatedWrapper>
 
                     <AnimatedWrapper className="mt-24 [animation-delay:600ms]">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
                             <div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 hover:border-emerald-400/30 transition-all duration-500 hover:bg-slate-800/50">
-                                <Zap className="w-8 h-8 text-emerald-400 mb-4" />
-                                <div className="text-lg font-semibold text-slate-200 mb-2">Match con IA</div>
-                                <div className="text-slate-400 text-sm">Conectamos automáticamente según proximidad y habilidades</div>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <Zap className="w-8 h-8 text-emerald-400" />
+                                    <span className="text-2xl font-bold text-emerald-400">5s</span>
+                                </div>
+                                <div className="text-lg font-semibold text-slate-200 mb-2">Conexión Instantánea</div>
+                                <div className="text-slate-400 text-sm">IA + geolocalización para matches perfectos al instante</div>
                             </div>
                             <div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 hover:border-blue-400/30 transition-all duration-500 hover:bg-slate-800/50">
                                 <MessageCircle className="w-8 h-8 text-blue-400 mb-4" />
-                                <div className="text-lg font-semibold text-slate-200 mb-2">Chat Integrado</div>
-                                <div className="text-slate-400 text-sm">Comunicación directa con fotos y videos</div>
+                                <div className="text-lg font-semibold text-slate-200 mb-2">Todo Integrado</div>
+                                <div className="text-slate-400 text-sm">Chat, fotos, videos, negociación de precios en un solo lugar</div>
                             </div>
                             <div className="bg-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50 hover:border-purple-400/30 transition-all duration-500 hover:bg-slate-800/50">
-                                <MapPin className="w-8 h-8 text-purple-400 mb-4" />
-                                <div className="text-lg font-semibold text-slate-200 mb-2">Geolocalizado</div>
-                                <div className="text-slate-400 text-sm">Profesionales en tu zona específica</div>
+                                <Eye className="w-8 h-8 text-purple-400 mb-4" />
+                                <div className="text-lg font-semibold text-slate-200 mb-2">Status en Vivo</div>
+                                <div className="text-slate-400 text-sm">Seguí el progreso del trabajo en tiempo real</div>
                             </div>
                         </div>
                     </AnimatedWrapper>
@@ -176,33 +176,33 @@ const Index = () => {
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
                         <h2 className="font-bold text-5xl md:text-7xl mb-6 text-slate-100">
-                            Cómo Funciona <span className="bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">Ahora</span>
+                            Así de <span className="bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">Simple</span>
                         </h2>
-                        <p className="text-xl text-slate-400 font-light max-w-3xl mx-auto">El proceso actual en nuestra fase piloto.</p>
+                        <p className="text-xl text-slate-400 font-light max-w-3xl mx-auto">Sin complicaciones, sin pérdida de tiempo. Directo al grano.</p>
                     </div>
                     
                     <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                         <StepCard 
                             number="01" 
                             icon={MessageCircle}
-                            title="Publicás tu necesidad" 
-                            description="Describís qué necesitás desde la app. Nuestro algoritmo identifica automáticamente el tipo de trabajo y busca profesionales en tu zona."
+                            title="Escribí tu problema" 
+                            description="Una línea, una foto. Nuestra IA entiende exactamente qué necesitás y encuentra al profesional perfecto en tu zona."
                             delay="0ms"
                             color="emerald"
                         />
                         <StepCard 
                             number="02" 
                             icon={Zap}
-                            title="Te conectamos" 
-                            description="La IA encuentra profesionales según proximidad y habilidades. Podés chatear directamente con ellos, ver fotos de trabajos anteriores."
+                            title="Conectás en 5 segundos" 
+                            description="Match instantáneo con el profesional ideal. Chateás directo, ves su portfolio y negociás el precio sin intermediarios."
                             delay="200ms"
                             color="blue"
                         />
                         <StepCard 
                             number="03" 
-                            icon={Users}
-                            title="Coordinás directo" 
-                            description="Acordás precio, horario y detalles por chat. El pago lo manejás directamente con el profesional. Proximamente: pagos integrados."
+                            icon={Eye}
+                            title="Seguís todo en vivo" 
+                            description="Status del trabajo en tiempo real, chat integrado y pagás directo al profesional. Todo controlado desde la app."
                             delay="400ms"
                             color="purple"
                         />
@@ -215,60 +215,68 @@ const Index = () => {
                 <div className="container mx-auto px-6">
                     <div className="text-center mb-20">
                         <h2 className="font-bold text-5xl md:text-7xl mb-6 text-slate-100">
-                            Funcionalidades <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Actuales</span>
+                            Todo en <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Una App</span>
                         </h2>
                         <p className="text-xl text-slate-400 max-w-3xl mx-auto font-light">
-                            Lo que ya funciona en Serbis y lo que está en desarrollo.
+                            No más apps separadas, no más pérdida de tiempo. Serbis es tu centro de comando completo.
                         </p>
                     </div>
                     
                     <div className="max-w-4xl mx-auto space-y-8">
                         <FeatureCard 
                             icon={Zap} 
-                            title="Match inteligente con IA" 
-                            description="Algoritmo que conecta automáticamente tareas con profesionales según ubicación, habilidades y disponibilidad."
+                            title="Match con IA en 5 segundos" 
+                            description="Algoritmo inteligente que conecta automáticamente tu problema con el profesional perfecto según ubicación, experiencia y disponibilidad."
                             status="active"
                             delay="0ms"
                             color="emerald"
                         />
                         <FeatureCard 
                             icon={MessageCircle} 
-                            title="Chat con fotos y videos" 
-                            description="Sistema de mensajería integrado que permite compartir imágenes, videos y detalles del trabajo en tiempo real."
+                            title="Chat completo integrado" 
+                            description="Mensajería con fotos, videos, documentos. Comunicación directa sin salir de la app para coordinar cada detalle."
                             status="active"
                             delay="100ms"
                             color="blue"
                         />
                         <FeatureCard 
-                            icon={Camera} 
-                            title="Portfolio visual" 
-                            description="Los profesionales pueden subir fotos y videos de trabajos anteriores para mostrar su experiencia."
+                            icon={DollarSign} 
+                            title="Negociación de precios" 
+                            description="Hablá el precio directo con el profesional. Transparencia total sin comisiones ocultas ni intermediarios."
                             status="active"
                             delay="200ms"
                             color="purple"
                         />
                         <FeatureCard 
-                            icon={MapPin} 
-                            title="Geolocalización precisa" 
-                            description="Cada profesional define su zona de trabajo y recibe tareas solo en su área de cobertura."
+                            icon={Eye} 
+                            title="Status en tiempo real" 
+                            description="Seguí el progreso del trabajo minuto a minuto. Sabés exactamente qué está pasando sin necesidad de llamar."
                             status="active"
                             delay="300ms"
                             color="emerald"
                         />
                         <FeatureCard 
-                            icon={Clock} 
-                            title="Pagos integrados" 
-                            description="Próximamente: procesamiento seguro de pagos dentro de la plataforma con Mercado Pago."
-                            status="coming"
+                            icon={Camera} 
+                            title="Portfolio visual completo" 
+                            description="Cada profesional muestra trabajos anteriores con fotos y videos reales. Ves exactamente qué esperar."
+                            status="active"
                             delay="400ms"
-                            color="orange"
+                            color="blue"
                         />
                         <FeatureCard 
                             icon={Star} 
                             title="Sistema de calificaciones" 
-                            description="Próximamente: reseñas y calificaciones de usuarios para generar confianza en la comunidad."
-                            status="coming"
+                            description="Reseñas y calificaciones reales de usuarios. Confianza total en cada profesional que contactás."
+                            status="active"
                             delay="500ms"
+                            color="purple"
+                        />
+                        <FeatureCard 
+                            icon={Clock} 
+                            title="Pagos integrados" 
+                            description="Próximamente: procesamiento seguro de pagos dentro de la plataforma. Una experiencia completamente integrada."
+                            status="coming"
+                            delay="600ms"
                             color="orange"
                         />
                     </div>
@@ -283,15 +291,12 @@ const Index = () => {
                             Probá <span className="bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">Serbis</span>
                         </h2>
                         <p className="text-xl text-slate-400 max-w-3xl mx-auto mb-12 font-light">
-                            Estamos en fase piloto en zona norte del AMBA. Descargá la app y conectá con profesionales locales.
+                            Únete al futuro de los servicios locales. Descargá la app y resolvé tu problema en 5 segundos.
                         </p>
                         
                         <div className="flex flex-col sm:flex-row items-center gap-6 justify-center mb-16">
                             <Button size="lg" className="rounded-xl px-12 py-6 text-lg font-semibold bg-gradient-to-r from-emerald-500 to-blue-500 text-slate-950 hover:shadow-2xl hover:shadow-emerald-500/25 transition-all duration-500 hover:scale-105 border-0">
                                 Descargar App
-                            </Button>
-                            <Button size="lg" variant="outline" className="rounded-xl px-12 py-6 text-lg font-medium border border-slate-600 text-slate-300 hover:border-emerald-400 hover:text-emerald-400 hover:bg-emerald-400/5 transition-all duration-300">
-                                Registrarme como Profesional
                             </Button>
                         </div>
 
@@ -316,7 +321,7 @@ const Index = () => {
                             </div>
                         </div>
                         <h3 className="text-2xl font-bold text-slate-200 mb-4">Serbis</h3>
-                        <p className="text-slate-500">Conectando profesionales locales • Fase Piloto</p>
+                        <p className="text-slate-500">El futuro de los servicios locales • Fase Piloto</p>
                         <div className="pt-8 border-t border-slate-800">
                             <p className="text-slate-500">© 2025 Serbis. Zona Norte AMBA, Argentina</p>
                             <a href="mailto:hello@serbis.tech" className="text-emerald-400 hover:text-emerald-300 transition-colors text-lg font-medium mt-2 inline-block">
