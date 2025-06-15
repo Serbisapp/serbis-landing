@@ -360,35 +360,37 @@ export const HorizontalScroll3D = () => {
         </Canvas>
       </div>
       
-      {/* Content - Layout dynamically synced with the 3D animation */}
-      <div ref={scrollContentRef} className="relative z-10 flex h-full">
+      {/* This invisible div drives the scroll animation's progress. */}
+      <div ref={scrollContentRef} className="absolute h-full">
+        <div style={{ width: `${sections.length * 100}vw`, height: '1px' }} />
+      </div>
+      
+      {/* Content - Absolutely positioned and fades in/out */}
+      <div className="absolute inset-0 z-10 pointer-events-none">
         {sections.map((section, index) => {
-          let alignmentClass = "justify-center";
-          let textAlignClass = "text-center";
-          let opacity = 1.0;
+          const sectionMiddle = (index + 0.5) / sections.length;
+          const distance = Math.abs(scrollProgress - sectionMiddle);
+          const halfSection = 0.5 / sections.length;
+          const opacity = gsap.utils.clamp(0, 1, (halfSection - distance) / (halfSection * 0.5));
 
-          if (index === 0) {
-            alignmentClass = "justify-end";
-            textAlignClass = "text-right";
-          } else if (index === 2) {
-            alignmentClass = "justify-start";
-            textAlignClass = "text-left";
-          } else { // index === 1
-            // Fade out when phone is in the center.
-            // Opacity is 0 when scrollProgress is in [0.45, 0.55]
-            // and fades to 1 at 0.35 and 0.65.
-            const distance = Math.abs(scrollProgress - 0.5);
-            opacity = gsap.utils.clamp(0, 1, (distance - 0.05) / 0.1);
+          let positionClasses: string;
+          
+          if (index === 2) {
+            // Section 2 on the left, as the phone model moves to the right
+            positionClasses = 'absolute inset-y-0 left-0 w-1/2 flex justify-center items-center';
+          } else {
+            // Section 0 and 1 on the right, as phone is on left or center
+            positionClasses = 'absolute inset-y-0 right-0 w-1/2 flex justify-center items-center';
           }
           
           return (
             <div
               key={index}
-              className={`flex-shrink-0 w-screen h-full flex items-center p-8 md:p-16 ${alignmentClass}`}
+              className={`${positionClasses} p-8 md:p-16`}
+              style={{ opacity, pointerEvents: opacity > 0 ? 'auto' : 'none' }}
             >
               <div
-                className={`bg-slate-900/80 backdrop-blur-lg rounded-2xl p-6 md:p-8 border border-slate-700/50 max-w-lg transition-opacity duration-200 ease-in-out ${textAlignClass}`}
-                style={{ opacity }}
+                className="bg-slate-900/80 backdrop-blur-lg rounded-2xl p-6 md:p-8 border border-slate-700/50 max-w-lg text-left"
               >
                 <h2 className="text-2xl md:text-3xl lg:text-4xl font-black mb-4 text-white">
                   {section.title}
