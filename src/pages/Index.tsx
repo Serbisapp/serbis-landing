@@ -119,15 +119,12 @@ const Index = () => {
                     </AnimatedWrapper>
                     
                     <AnimatedWrapper>
-                        <div className="font-bold text-slate-100 tracking-tight max-w-7xl mx-auto leading-none mb-8 space-y-4">
-                            <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl">
-                                Tu Problema
-                            </div>
-                            <div className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent font-black">
-                                5 Segundos
-                            </div>
-                            <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl">
-                                Tu Solución
+                        <div className="font-bold text-slate-100 tracking-tight max-w-6xl mx-auto leading-tight mb-8">
+                            <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
+                                Conectamos problemas domésticos con profesionales en{' '}
+                                <span className="bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent font-black">
+                                    5 segundos
+                                </span>
                             </div>
                         </div>
                     </AnimatedWrapper>
