@@ -138,12 +138,14 @@ const Index = () => {
                     
                     <AnimatedWrapper className="mt-16 [animation-delay:400ms]">
                         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                            <Button size="lg" className="group relative overflow-hidden rounded-xl text-lg font-semibold px-12 py-6 bg-gradient-to-r from-emerald-500 to-blue-500 text-slate-950 hover:shadow-2xl hover:shadow-emerald-500/25 transition-all duration-500 hover:scale-105 border-0">
-                                <span className="relative z-10 flex items-center gap-3">
-                                    Probar Ahora 
-                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
-                                </span>
-                            </Button>
+                            <a href="https://web.serbis.app" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+                                <Button size="lg" className="w-full sm:w-auto group relative overflow-hidden rounded-xl text-lg font-semibold px-12 py-6 bg-gradient-to-r from-emerald-500 to-blue-500 text-slate-950 hover:shadow-2xl hover:shadow-emerald-500/25 transition-all duration-500 hover:scale-105 border-0">
+                                    <span className="relative z-10 flex items-center gap-3">
+                                        Probar Ahora 
+                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
+                                    </span>
+                                </Button>
+                            </a>
                         </div>
                     </AnimatedWrapper>
 
