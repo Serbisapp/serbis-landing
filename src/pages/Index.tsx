@@ -118,12 +118,7 @@ const Index = () => {
             {/* Hero Section */}
             <header className="relative pt-32 pb-20 text-center min-h-screen flex items-center justify-center">
                 <div className="container mx-auto px-6 relative z-10">
-                    <AnimatedWrapper>
-                        <div className="inline-flex items-center gap-3 bg-slate-800/30 border border-orange-400/20 rounded-full px-8 py-4 mb-16 backdrop-blur-sm">
-                            <Zap className="w-4 h-4 text-orange-400" />
-                            <span className="text-sm font-medium text-slate-300">Encuentra cualquier servicio • Buenos Aires</span>
-                        </div>
-                    </AnimatedWrapper>
+
                     
                     <AnimatedWrapper>
                         <div className="font-bold text-slate-100 tracking-tight max-w-6xl mx-auto leading-tight mb-8">
