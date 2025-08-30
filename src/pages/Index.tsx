@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Apple,
   Menu,
@@ -17,6 +18,7 @@ import {
   Camera,
   DollarSign,
   Eye,
+  Search,
 } from "lucide-react";
 import { AnimatedWrapper } from '@/components/AnimatedWrapper';
 // Lazy load HorizontalScroll3D for better initial page load performance
@@ -27,6 +29,7 @@ const HorizontalScroll3D = React.lazy(() =>
 const Index = () => {
     const [scrolled, setScrolled] = useState(false);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         const handleScroll = () => {
@@ -44,6 +47,10 @@ const Index = () => {
         window.addEventListener('mousemove', handleMouseMove);
         return () => window.removeEventListener('mousemove', handleMouseMove);
     }, []);
+
+    const handleSearch = () => {
+        window.open('https://web.serbis.app', '_blank');
+    };
 
     const navClass = scrolled 
         ? 'bg-slate-950/90 backdrop-blur-xl border-b border-slate-800/50' 
@@ -114,16 +121,17 @@ const Index = () => {
                     <AnimatedWrapper>
                         <div className="inline-flex items-center gap-3 bg-slate-800/30 border border-orange-400/20 rounded-full px-8 py-4 mb-16 backdrop-blur-sm">
                             <Zap className="w-4 h-4 text-orange-400" />
-                            <span className="text-sm font-medium text-slate-300">Fase Piloto • Buenos Aires</span>
+                            <span className="text-sm font-medium text-slate-300">Encuentra cualquier servicio • Buenos Aires</span>
                         </div>
                     </AnimatedWrapper>
                     
                     <AnimatedWrapper>
                         <div className="font-bold text-slate-100 tracking-tight max-w-6xl mx-auto leading-tight mb-8">
                             <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
-                                Conectamos problemas domésticos con profesionales en{' '}
+                                ¿Qué servicio necesitás?{' '}
+                                <br />
                                 <span className="bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent font-black">
-                                    5 segundos
+                                    Escribí y encontramos todo
                                 </span>
                             </div>
                         </div>
@@ -131,21 +139,51 @@ const Index = () => {
                     
                     <AnimatedWrapper className="[animation-delay:200ms]">
                         <p className="mt-8 text-xl md:text-2xl text-slate-400 max-w-4xl mx-auto leading-relaxed font-light">
-                           Olvidate de listas eternas y búsquedas sin fin. <span className="text-emerald-400 font-semibold">Escribí tu problema</span> y <span className="text-blue-400 font-semibold">te conectamos en 5 segundos</span> con el profesional perfecto en tu zona.
-                           <br />Todo integrado: chat, negociación de precios y seguimiento en vivo.
+                           <span className="text-emerald-400 font-semibold">Plomería, electricidad, limpieza, jardinería</span> y cualquier servicio que imagines. 
+                           <br />Escribí lo que necesitás y <span className="text-blue-400 font-semibold">te conectamos en 5 segundos</span> con el profesional perfecto.
                         </p>
                     </AnimatedWrapper>
                     
                     <AnimatedWrapper className="mt-16 [animation-delay:400ms]">
-                        <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                            <a href="https://web.serbis.app" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                                <Button size="lg" className="w-full sm:w-auto group relative overflow-hidden rounded-xl text-lg font-semibold px-12 py-6 bg-gradient-to-r from-emerald-500 to-blue-500 text-slate-950 hover:shadow-2xl hover:shadow-emerald-500/25 transition-all duration-500 hover:scale-105 border-0">
-                                    <span className="relative z-10 flex items-center gap-3">
-                                        Probar Ahora 
+                        <div className="max-w-3xl mx-auto">
+                            <div className="flex flex-col sm:flex-row gap-4 bg-slate-800/40 backdrop-blur-sm rounded-2xl p-4 border border-slate-700/50">
+                                <div className="relative flex-1">
+                                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                                    <Input
+                                        type="text"
+                                        placeholder="Ej: Necesito un plomero para arreglar una canilla..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="w-full pl-12 pr-4 py-6 text-lg bg-slate-900/50 border-slate-600/50 text-slate-100 placeholder-slate-400 rounded-xl focus:border-emerald-400/50 focus:ring-emerald-400/25 focus:ring-2 focus:ring-offset-0"
+                                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                    />
+                                </div>
+                                <Button 
+                                    size="lg" 
+                                    onClick={handleSearch}
+                                    className="group relative overflow-hidden rounded-xl text-lg font-semibold px-8 py-6 bg-gradient-to-r from-emerald-500 to-blue-500 text-slate-950 hover:shadow-2xl hover:shadow-emerald-500/25 transition-all duration-500 hover:scale-105 border-0 sm:w-auto w-full"
+                                >
+                                    <span className="relative z-10 flex items-center justify-center gap-3">
+                                        Encontrar 
                                         <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
                                     </span>
                                 </Button>
-                            </a>
+                            </div>
+                        </div>
+                        
+                        <div className="mt-8 flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
+                            {['Plomería', 'Electricidad', 'Limpieza', 'Jardinería', 'Pintura', 'Cerrajería'].map((service) => (
+                                <button
+                                    key={service}
+                                    onClick={() => {
+                                        setSearchQuery(`Necesito servicio de ${service.toLowerCase()}`);
+                                        setTimeout(handleSearch, 100);
+                                    }}
+                                    className="px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600/50 hover:border-emerald-400/50 rounded-full text-slate-300 hover:text-emerald-400 transition-all duration-300 text-sm font-medium"
+                                >
+                                    {service}
+                                </button>
+                            ))}
                         </div>
                     </AnimatedWrapper>
 
@@ -155,35 +193,38 @@ const Index = () => {
                                 <div className="flex flex-col items-center text-center space-y-6">
                                     <div className="relative">
                                         <div className="w-16 h-16 bg-gradient-to-br from-emerald-400/20 to-emerald-600/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 border border-emerald-400/30">
-                                            <Zap className="w-8 h-8 text-emerald-400" />
+                                            <Search className="w-8 h-8 text-emerald-400" />
                                         </div>
-                                        <div className="absolute -top-2 -right-2 bg-emerald-500 text-slate-950 text-sm font-bold px-2 py-1 rounded-full">5s</div>
+                                        <div className="absolute -top-2 -right-2 bg-emerald-500 text-slate-950 text-sm font-bold px-2 py-1 rounded-full">∞</div>
                                     </div>
                                     <div>
-                                        <div className="text-xl font-bold text-slate-100 mb-3">Conexión Instantánea</div>
-                                        <div className="text-slate-400 leading-relaxed">Geolocalización inteligente para matches perfectos al instante</div>
+                                        <div className="text-xl font-bold text-slate-100 mb-3">Cualquier Servicio</div>
+                                        <div className="text-slate-400 leading-relaxed">Sin límites de categorías. Si sabés hacerlo, alguien lo necesita</div>
                                     </div>
                                 </div>
                             </div>
                             <div className="bg-slate-800/30 backdrop-blur-sm rounded-3xl p-10 border border-slate-700/50 hover:border-blue-400/40 transition-all duration-500 hover:bg-slate-800/50 hover:scale-105 group">
                                 <div className="flex flex-col items-center text-center space-y-6">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-blue-400/20 to-blue-600/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 border border-blue-400/30">
-                                        <MessageCircle className="w-8 h-8 text-blue-400" />
+                                    <div className="relative">
+                                        <div className="w-16 h-16 bg-gradient-to-br from-blue-400/20 to-blue-600/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 border border-blue-400/30">
+                                            <Zap className="w-8 h-8 text-blue-400" />
+                                        </div>
+                                        <div className="absolute -top-2 -right-2 bg-blue-500 text-slate-950 text-sm font-bold px-2 py-1 rounded-full">5s</div>
                                     </div>
                                     <div>
-                                        <div className="text-xl font-bold text-slate-100 mb-3">Todo Integrado</div>
-                                        <div className="text-slate-400 leading-relaxed">Chat, fotos, videos, negociación de precios en un solo lugar</div>
+                                        <div className="text-xl font-bold text-slate-100 mb-3">Conexión Instantánea</div>
+                                        <div className="text-slate-400 leading-relaxed">Algoritmo inteligente para matches perfectos al instante</div>
                                     </div>
                                 </div>
                             </div>
                             <div className="bg-slate-800/30 backdrop-blur-sm rounded-3xl p-10 border border-slate-700/50 hover:border-purple-400/40 transition-all duration-500 hover:bg-slate-800/50 hover:scale-105 group">
                                 <div className="flex flex-col items-center text-center space-y-6">
                                     <div className="w-16 h-16 bg-gradient-to-br from-purple-400/20 to-purple-600/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 border border-purple-400/30">
-                                        <Eye className="w-8 h-8 text-purple-400" />
+                                        <MessageCircle className="w-8 h-8 text-purple-400" />
                                     </div>
                                     <div>
-                                        <div className="text-xl font-bold text-slate-100 mb-3">Status en Vivo</div>
-                                        <div className="text-slate-400 leading-relaxed">Seguí el progreso del trabajo en tiempo real</div>
+                                        <div className="text-xl font-bold text-slate-100 mb-3">Todo Integrado</div>
+                                        <div className="text-slate-400 leading-relaxed">Chat, fotos, videos, negociación en un solo lugar</div>
                                     </div>
                                 </div>
                             </div>
@@ -191,6 +232,106 @@ const Index = () => {
                     </AnimatedWrapper>
                 </div>
             </header>
+
+            {/* Worker Signup Section */}
+            <AnimatedWrapper tag="section" className="py-20 bg-gradient-to-br from-slate-900 to-slate-950 relative border-y border-slate-800/50">
+                <div className="container mx-auto px-6">
+                    <div className="max-w-6xl mx-auto">
+                        <div className="grid lg:grid-cols-2 gap-12 items-center">
+                            <div className="text-left">
+                                <h2 className="font-bold text-4xl md:text-5xl text-slate-100 mb-6">
+                                    ¿Sabés hacer <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">algo útil</span>?
+                                </h2>
+                                <p className="text-xl text-slate-400 mb-8 leading-relaxed font-light">
+                                    No buscamos títulos ni categorías rígidas. <span className="text-blue-400 font-semibold">Si sabés hacer algo que otros necesitan</span>, 
+                                    conectate con tu comunidad de forma directa, rápida y confiable.
+                                </p>
+                                
+                                <div className="space-y-4 mb-8">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                                        <span className="text-slate-300">Trabajá para tu comunidad local</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                                        <span className="text-slate-300">Conexión instantánea con clientes</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                                        <span className="text-slate-300">Sin comisiones ocultas</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                                        <span className="text-slate-300">Construí tu reputación con reviews reales</span>
+                                    </div>
+                                </div>
+                                
+                                <a href="https://web.serbis.app" target="_blank" rel="noopener noreferrer">
+                                    <Button size="lg" className="group relative overflow-hidden rounded-xl text-lg font-semibold px-10 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:shadow-2xl hover:shadow-blue-500/25 transition-all duration-500 hover:scale-105 border-0">
+                                        <span className="relative z-10 flex items-center gap-3">
+                                            Quiero Trabajar en Serbis
+                                            <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
+                                        </span>
+                                    </Button>
+                                </a>
+                            </div>
+                            
+                            <div className="relative">
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-6">
+                                        <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 hover:border-blue-400/40 transition-all duration-300">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-emerald-400/20 to-emerald-600/20 rounded-xl flex items-center justify-center">
+                                                    <Users className="w-6 h-6 text-emerald-400" />
+                                                </div>
+                                                <div>
+                                                    <div className="text-lg font-semibold text-slate-100">Comunidad</div>
+                                                    <div className="text-sm text-slate-400">Trabajá local</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 hover:border-purple-400/40 transition-all duration-300">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-purple-400/20 to-purple-600/20 rounded-xl flex items-center justify-center">
+                                                    <Shield className="w-6 h-6 text-purple-400" />
+                                                </div>
+                                                <div>
+                                                    <div className="text-lg font-semibold text-slate-100">Confianza</div>
+                                                    <div className="text-sm text-slate-400">Reviews reales</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-6 pt-8">
+                                        <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 hover:border-blue-400/40 transition-all duration-300">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-blue-400/20 to-blue-600/20 rounded-xl flex items-center justify-center">
+                                                    <Zap className="w-6 h-6 text-blue-400" />
+                                                </div>
+                                                <div>
+                                                    <div className="text-lg font-semibold text-slate-100">Velocidad</div>
+                                                    <div className="text-sm text-slate-400">Matches al instante</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 hover:border-emerald-400/40 transition-all duration-300">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-orange-400/20 to-orange-600/20 rounded-xl flex items-center justify-center">
+                                                    <DollarSign className="w-6 h-6 text-orange-400" />
+                                                </div>
+                                                <div>
+                                                    <div className="text-lg font-semibold text-slate-100">Transparencia</div>
+                                                    <div className="text-sm text-slate-400">Sin comisiones</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </AnimatedWrapper>
 
             {/* 3D Horizontal Scroll Section */}
             <React.Suspense fallback={<div className="h-screen bg-slate-950 flex items-center justify-center"><p className='text-white'>Cargando experiencia 3D...</p></div>}>
@@ -210,9 +351,9 @@ const Index = () => {
                     <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                         <StepCard 
                             number="01" 
-                            icon={MessageCircle}
-                            title="Escribí tu problema" 
-                            description="Una línea, una foto. Entendemos exactamente qué necesitás y encontramos al profesional perfecto en tu zona."
+                            icon={Search}
+                            title="Escribí lo que necesitás" 
+                            description="Desde 'arreglar una canilla' hasta 'limpiar toda la casa'. Escribí en lenguaje natural y nuestro sistema encuentra al profesional perfecto."
                             delay="0ms"
                             color="emerald"
                         />
@@ -220,7 +361,7 @@ const Index = () => {
                             number="02" 
                             icon={Zap}
                             title="Te conectamos en 5 segundos" 
-                            description="Match instantáneo con el profesional ideal. Chateás directo, ves su portfolio y negociás el precio sin intermediarios."
+                            description="Match instantáneo con el profesional ideal en tu zona. Chateás directo, ves su portfolio y negociás el precio sin intermediarios."
                             delay="200ms"
                             color="blue"
                         />
@@ -250,54 +391,54 @@ const Index = () => {
                     
                     <div className="max-w-4xl mx-auto space-y-8">
                         <FeatureCard 
-                            icon={Zap} 
-                            title="Te conectamos en 5 segundos" 
-                            description="Algoritmo inteligente que conecta automáticamente tu problema con el profesional perfecto según ubicación, experiencia y disponibilidad."
+                            icon={Search} 
+                            title="Búsqueda inteligente universal" 
+                            description="Escribí en lenguaje natural cualquier servicio que necesites. Nuestro algoritmo entiende desde 'se me rompió la canilla' hasta 'necesito pintar mi casa'."
                             status="active"
                             delay="0ms"
                             color="emerald"
                             animationType="slide-left"
                         />
                         <FeatureCard 
-                            icon={MessageCircle} 
-                            title="Chat completo integrado" 
-                            description="Mensajería con fotos, videos, documentos. Comunicación directa sin salir de la app para coordinar cada detalle."
+                            icon={Zap} 
+                            title="Te conectamos en 5 segundos" 
+                            description="Algoritmo inteligente que conecta automáticamente tu búsqueda con el profesional perfecto según ubicación, experiencia y disponibilidad."
                             status="active"
                             delay="100ms"
                             color="blue"
                             animationType="slide-right"
                         />
                         <FeatureCard 
-                            icon={DollarSign} 
-                            title="Negociación de precios" 
-                            description="Hablá el precio directo con el profesional. Transparencia total sin comisiones ocultas ni intermediarios."
+                            icon={MessageCircle} 
+                            title="Chat completo integrado" 
+                            description="Mensajería con fotos, videos, documentos. Comunicación directa sin salir de la app para coordinar cada detalle."
                             status="active"
                             delay="200ms"
                             color="purple"
                             animationType="slide-left"
                         />
                         <FeatureCard 
-                            icon={Eye} 
-                            title="Status en tiempo real" 
-                            description="Seguí el progreso del trabajo minuto a minuto. Sabés exactamente qué está pasando sin necesidad de llamar."
+                            icon={DollarSign} 
+                            title="Negociación de precios" 
+                            description="Hablá el precio directo con el profesional. Transparencia total sin comisiones ocultas ni intermediarios."
                             status="active"
                             delay="300ms"
                             color="emerald"
                             animationType="slide-right"
                         />
                         <FeatureCard 
-                            icon={Camera} 
-                            title="Portfolio visual completo" 
-                            description="Cada profesional muestra trabajos anteriores con fotos y videos reales. Ves exactamente qué esperar."
+                            icon={Eye} 
+                            title="Status en tiempo real" 
+                            description="Seguí el progreso del trabajo minuto a minuto. Sabés exactamente qué está pasando sin necesidad de llamar."
                             status="active"
                             delay="400ms"
                             color="blue"
                             animationType="slide-left"
                         />
                         <FeatureCard 
-                            icon={Star} 
-                            title="Sistema de calificaciones" 
-                            description="Reseñas y calificaciones reales de usuarios. Confianza total en cada profesional que contactás."
+                            icon={Camera} 
+                            title="Portfolio visual completo" 
+                            description="Cada profesional muestra trabajos anteriores con fotos y videos reales. Ves exactamente qué esperar."
                             status="active"
                             delay="500ms"
                             color="purple"
@@ -321,16 +462,18 @@ const Index = () => {
                 <div className="container mx-auto px-6">
                     <div className="max-w-4xl mx-auto">
                         <h2 className="font-bold text-5xl md:text-7xl text-slate-100 mb-6">
-                            Probá <span className="bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">Serbis</span>
+                            Encontrá <span className="bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">Cualquier Servicio</span>
                         </h2>
                         <p className="text-xl text-slate-400 max-w-3xl mx-auto mb-12 font-light">
-                            Descargá la app y resolvé tu problema en 5 segundos.
+                            Escribí lo que necesitás y encontramos al profesional perfecto en 5 segundos.
                         </p>
                         
                         <div className="flex flex-col sm:flex-row items-center gap-6 justify-center">
-                            <Button size="lg" className="rounded-xl px-12 py-6 text-lg font-semibold bg-gradient-to-r from-emerald-500 to-blue-500 text-slate-950 hover:shadow-2xl hover:shadow-emerald-500/25 transition-all duration-500 hover:scale-105 border-0">
-                                Descargar App
-                            </Button>
+                            <a href="https://web.serbis.app" target="_blank" rel="noopener noreferrer">
+                                <Button size="lg" className="rounded-xl px-12 py-6 text-lg font-semibold bg-gradient-to-r from-emerald-500 to-blue-500 text-slate-950 hover:shadow-2xl hover:shadow-emerald-500/25 transition-all duration-500 hover:scale-105 border-0">
+                                    Empezar Ahora
+                                </Button>
+                            </a>
                         </div>
                     </div>
                 </div>
