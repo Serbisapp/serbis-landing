@@ -127,4 +127,13 @@
   .animate-slide-up-fade {
     animation: slide-up-fade 0.8s ease-out forwards;
   }
+
+  .safe-area-padding {
+    padding-top: constant(safe-area-inset-top);
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-left: constant(safe-area-inset-left);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: constant(safe-area-inset-right);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
 }

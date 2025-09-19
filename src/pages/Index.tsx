@@ -68,17 +68,19 @@ const Index = () => {
   return (
     <div className="bg-white text-gray-900 min-h-screen">
       {/* Navigation */}
-      <nav className={`fixed w-full top-0 z-50 transition-all duration-500 ${
-        scrolled 
-          ? 'bg-white/80 backdrop-blur-2xl border-b border-gray-100' 
-          : 'bg-transparent'
-      }`}>
+      <nav
+        className={`safe-area-padding fixed w-full top-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? 'bg-white backdrop-blur-2xl border-b border-gray-100'
+            : 'bg-white backdrop-blur-2xl border-b border-transparent md:bg-transparent md:backdrop-blur-0'
+        }`}
+      >
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
-            <div className="flex items-center -ml-20">
-              <img 
-                src="/favicon.ico" 
-                alt="Serbis" 
+            <div className="flex items-center md:-ml-20">
+              <img
+                src="/favicon.ico"
+                alt="Serbis"
                 className="w-10 h-10"
               />
             </div>
