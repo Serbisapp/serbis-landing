@@ -68,19 +68,17 @@ const Index = () => {
   return (
     <div className="bg-white text-gray-900 min-h-screen">
       {/* Navigation */}
-      <nav
-        className={`safe-area-padding fixed w-full top-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? 'bg-white/80 backdrop-blur-2xl border-b border-gray-100'
-            : 'bg-white/80 backdrop-blur-2xl border-b border-transparent md:bg-transparent md:backdrop-blur-0'
-        }`}
-      >
+      <nav className={`fixed w-full top-0 z-50 transition-all duration-500 ${
+        scrolled 
+          ? 'bg-white/80 backdrop-blur-2xl border-b border-gray-100' 
+          : 'bg-transparent'
+      }`}>
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center py-5">
-            <div className="flex items-center md:-ml-20">
-              <img
-                src="/favicon.ico"
-                alt="Serbis"
+          <div className="flex justify-between items-center h-20">
+            <div className="flex items-center -ml-20">
+              <img 
+                src="/favicon.ico" 
+                alt="Serbis" 
                 className="w-10 h-10"
               />
             </div>
@@ -94,7 +92,7 @@ const Index = () => {
                 Cómo Funciona
               </a>
               <a href="#for-workers" className="text-gray-600 hover:text-gray-900 font-medium transition-colors text-sm">
-                Para Trabajadores
+                Para Proveedores
               </a>
               <Button 
                 onClick={() => window.open('https://web.serbis.app', '_blank')}
@@ -123,7 +121,7 @@ const Index = () => {
                 Cómo Funciona
               </a>
               <a href="#for-workers" className="block text-gray-600 hover:text-gray-900 font-medium py-2">
-                Para Trabajadores
+                Para Proveedores
               </a>
               <Button 
                 onClick={() => window.open('https://web.serbis.app', '_blank')}
@@ -412,7 +410,7 @@ const Index = () => {
                 onClick={() => window.open('https://web.serbis.app', '_blank')}
                 className="bg-black hover:bg-gray-800 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 group"
               >
-                Quiero Trabajar en Serbis
+                Quiero Proveer en Serbis
                 <ChevronRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </div>
