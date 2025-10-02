@@ -485,10 +485,10 @@ const Index = () => {
               <div className="text-gray-600 space-y-1">
                 <p className="font-medium">Buenos Aires, Argentina</p>
                 <a 
-                  href="mailto:inaki.iturriaga@serbis.app" 
+                  href="mailto:help@serbis.app" 
                   className="text-black hover:text-gray-700 transition-colors font-medium"
                 >
-                  inaki.iturriaga@serbis.app
+                  help@serbis.app
                 </a>
               </div>
             </div>
