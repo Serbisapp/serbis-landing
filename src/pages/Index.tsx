@@ -66,6 +66,19 @@ const Index = () => {
   ];
 
   return (
+    {/* Google Analytics - load after interactive */}
+    <Script
+      src="https://www.googletagmanager.com/gtag/js?id=G-YWGHHB01T7"
+      strategy="afterInteractive"
+    />
+    <Script id="gtag-init" strategy="afterInteractive">
+      {`
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-YWGHHB01T7', { page_path: window.location.pathname });
+      `}
+    </Script>
     <div className="bg-white text-gray-900 min-h-screen">
       {/* Navigation */}
       <nav className={`fixed w-full top-0 z-50 transition-all duration-500 ${
