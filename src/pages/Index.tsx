@@ -43,6 +43,26 @@ const Index = () => {
     return () => clearInterval(interval);
   }, []);
 
+   useEffect(() => {
+      const script1 = document.createElement('script');
+      script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-YWGHHB01T7';
+      script1.async = true;
+      document.head.appendChild(script1);
+  
+      const script2 = document.createElement('script');
+      script2.innerHTML = `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-YWGHHB01T7', { page_path: window.location.pathname });
+      `;
+      document.head.appendChild(script2);
+    }, []);
+
+  return (
+    <div className="bg-white text-gray-900 min-h-screen">
+
+  
   const handleSearch = () => {
     window.open('https://web.serbis.app', '_blank');
   };
@@ -66,19 +86,6 @@ const Index = () => {
   ];
 
   return (
-    {/* Google Analytics - load after interactive */}
-    <Script
-      src="https://www.googletagmanager.com/gtag/js?id=G-YWGHHB01T7"
-      strategy="afterInteractive"
-    />
-    <Script id="gtag-init" strategy="afterInteractive">
-      {`
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-YWGHHB01T7', { page_path: window.location.pathname });
-      `}
-    </Script>
     <div className="bg-white text-gray-900 min-h-screen">
       {/* Navigation */}
       <nav className={`fixed w-full top-0 z-50 transition-all duration-500 ${
