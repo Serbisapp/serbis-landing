@@ -16,7 +16,6 @@ import {
   Award,
   Eye,
   Sparkles,
-  Clock,
   CheckCircle2,
   ChevronRight
 } from "lucide-react";
@@ -38,31 +37,28 @@ const Index = () => {
   // Auto-rotate screenshots
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentScreenshot((prev) => (prev + 1) % 3); // Changed from 4 to 3
+      setCurrentScreenshot((prev) => (prev + 1) % 3);
     }, 5000);
     return () => clearInterval(interval);
   }, []);
 
-   useEffect(() => {
-      const script1 = document.createElement('script');
-      script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-YWGHHB01T7';
-      script1.async = true;
-      document.head.appendChild(script1);
-  
-      const script2 = document.createElement('script');
-      script2.innerHTML = `
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-YWGHHB01T7', { page_path: window.location.pathname });
-      `;
-      document.head.appendChild(script2);
-    }, []);
+  // Load Google Analytics
+  useEffect(() => {
+    const script1 = document.createElement('script');
+    script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-YWGHHB01T7';
+    script1.async = true;
+    document.head.appendChild(script1);
 
-  return (
-    <div className="bg-white text-gray-900 min-h-screen">
+    const script2 = document.createElement('script');
+    script2.innerHTML = `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-YWGHHB01T7', { page_path: window.location.pathname });
+    `;
+    document.head.appendChild(script2);
+  }, []);
 
-  
   const handleSearch = () => {
     window.open('https://web.serbis.app', '_blank');
   };
@@ -289,8 +285,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
-
 
       {/* Features Section */}
       <section id="features" className="py-24 px-6 lg:px-8">
