@@ -66,6 +66,9 @@
   }
   html {
     background-color: #ffffff;
+    /* Ensure white background for iOS Safari status bar */
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100%;
   }
   body {
     @apply bg-background text-foreground;
@@ -73,6 +76,17 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    background-color: #ffffff;
+    /* Ensure full white background on mobile browsers */
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+  
+  /* Ensure proper viewport handling for iOS Safari */
+  #root {
+    background-color: #ffffff;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
   }
 }
 
