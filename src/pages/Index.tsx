@@ -82,7 +82,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="bg-white text-gray-900 min-h-screen">
+    <div className="bg-white text-gray-900 min-h-screen" style={{ backgroundColor: '#ffffff' }}>
       {/* Navigation */}
       <nav className={`fixed w-full top-0 z-50 transition-all duration-500 ${
         scrolled 
@@ -91,7 +91,8 @@ const Index = () => {
       }`}>
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
-            <div className="flex items-center -ml-20">
+            {/* Logo - Always visible */}
+            <div className="flex items-center">
               <img 
                 src="/favicon.ico" 
                 alt="Serbis" 
@@ -118,13 +119,24 @@ const Index = () => {
               </Button>
             </div>
 
-            {/* Mobile Menu Button */}
-            <button 
-              className="md:hidden p-2 hover:bg-gray-100 rounded-xl transition-colors"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            {/* Mobile Navigation - Logo, Ingresar button, and Menu button */}
+            <div className="md:hidden flex items-center space-x-3">
+              {/* Ingresar Button */}
+              <Button 
+                onClick={() => window.open('https://web.serbis.app', '_blank')}
+                className="bg-black hover:bg-gray-800 text-white px-4 py-2 h-9 rounded-full font-medium transition-all duration-300 text-sm"
+              >
+                Ingresar
+              </Button>
+              
+              {/* Mobile Menu Button */}
+              <button 
+                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
 
           {/* Mobile Menu */}
