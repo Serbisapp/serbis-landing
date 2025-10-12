@@ -181,7 +181,7 @@ const Index = () => {
                 al instante
               </h1>
               <p className="text-xl text-gray-600 mb-4 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Conectamos personas con profesionales verificados en segundos. Sin categorias, solo habilidades.
+                Conectamos personas con proveedores confiables de tu zona, verificados y calificados por otros vecinos. Sin categorias, solo habilidades.
               </p>
               {/* Search Bar */}
               <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-3 mb-4 max-w-2xl mx-auto lg:mx-0">
@@ -202,7 +202,7 @@ const Index = () => {
                     onClick={handleSearch}
                     className="bg-black hover:bg-gray-800 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 group"
                   >
-                    Buscar
+                    Encontrar ayuda ahora
                     <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </div>
