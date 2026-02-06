@@ -1,30 +1,65 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import React, { useCallback } from 'react';
+import { LandingPage } from './components/LandingPage';
+import type { Shift } from './types';
 
-const queryClient = new QueryClient();
+const CONTACT_EMAIL = 'admin@serbis.app';
 
-// For custom domain (serbis.app), use root path
-const basename = '';
+function openContactEmail(subject: string, body?: string) {
+  const params = new URLSearchParams({ subject });
+  if (body) {
+    params.set('body', body);
+  }
+  window.location.href = `mailto:${CONTACT_EMAIL}?${params.toString()}`;
+}
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter basename={basename}>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function scrollToCta() {
+  const cta = document.getElementById('cta');
+  if (!cta) return;
+  cta.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
-export default App;
+export default function App() {
+  const handleOpenWizard = useCallback(() => {
+    scrollToCta();
+  }, []);
+
+  const handleWizardData = useCallback((data: Partial<Shift>) => {
+    const description = data.description?.trim() || 'Consulta desde landing page';
+    openContactEmail('Serbis - Nueva solicitud', `Necesidad:\n${description}`);
+  }, []);
+
+  const handleGoToSignup = useCallback(() => {
+    openContactEmail('Serbis - Quiero registrarme');
+  }, []);
+
+  const handleGoToAuth = useCallback(() => {
+    openContactEmail('Serbis - Necesito acceso');
+  }, []);
+
+  const handleGoToWorkerSignup = useCallback(() => {
+    openContactEmail('Serbis - Soy trabajador y quiero sumarme');
+  }, []);
+
+  const handleSignup = useCallback(async (email: string, _password: string, data: any) => {
+    const description = typeof data?.description === 'string' ? data.description : 'Sin descripcion';
+    openContactEmail(
+      'Serbis - Lead desde landing',
+      `Email: ${email || 'No informado'}\n\nDescripcion:\n${description}`
+    );
+  }, []);
+
+  return (
+    <LandingPage
+      onGoToAuth={handleGoToAuth}
+      onGoToSignup={handleGoToSignup}
+      onGoToWorkerSignup={handleGoToWorkerSignup}
+      onOpenWizard={handleOpenWizard}
+      onWizardData={handleWizardData}
+      onOpenManagement={handleGoToAuth}
+      onOpenPublicManagement={handleGoToAuth}
+      onOpenSerbisAdmin={handleGoToAuth}
+      onSignup={handleSignup}
+      busy={false}
+    />
+  );
+}

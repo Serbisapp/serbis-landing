@@ -1,11 +1,16 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './styles/app.css';
+import './styles/effects.css';
+import App from './App';
 
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  throw new Error('Could not find root element to mount to');
+}
 
-// Maintain a consistent white background even during overscroll bounce
-const pageBgColor = '#ffffff';
-document.documentElement.style.backgroundColor = pageBgColor;
-document.body.style.backgroundColor = pageBgColor;
-
-createRoot(document.getElementById("root")!).render(<App />);
+ReactDOM.createRoot(rootElement).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
