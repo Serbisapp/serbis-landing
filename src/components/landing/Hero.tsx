@@ -54,7 +54,7 @@ export function Hero({ onOpenWizard, onGoToAuth, onSignup, busy = false, onWizar
               <div>
                 <div className="md:hidden">
                   <Button onClick={onOpenWizard} size="lg" className="text-lg md:text-xl px-8 md:px-10 py-4 md:py-6 h-auto">
-                    Iniciar Solicitud <ArrowRight className="ml-2" size={20} />
+                    Iniciar Contratación <ArrowRight className="ml-2" size={20} />
                   </Button>
                 </div>
               </div>

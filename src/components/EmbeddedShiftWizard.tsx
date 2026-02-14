@@ -21,7 +21,7 @@ export function EmbeddedShiftWizard({ onComplete }: EmbeddedShiftWizardProps) {
             date: 'A coordinar',
             time: '09:00',
             durationHours: 4,
-            hourlyRate: 5000,
+            hourlyRate: 8500,
             quantity: 1,
         });
     };
@@ -54,7 +54,7 @@ export function EmbeddedShiftWizard({ onComplete }: EmbeddedShiftWizardProps) {
                     <textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        placeholder="Ej: Necesito 2 personas para descarga de camión el martes por la mañana..."
+                        placeholder="Ej: Carga y descarga."
                         className="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 h-32 resize-none focus:ring-2 focus:ring-accent/20 focus:border-accent text-gray-900 placeholder:text-gray-400 text-sm leading-relaxed transition-all"
                     />
                 </div>
@@ -68,7 +68,7 @@ export function EmbeddedShiftWizard({ onComplete }: EmbeddedShiftWizardProps) {
                 </button>
 
                 <p className="text-center text-xs text-gray-400">
-                    100% Gratuito para comenzar. Sin tarjetas de crédito.
+
                 </p>
 
             </div>

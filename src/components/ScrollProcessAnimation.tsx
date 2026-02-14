@@ -29,7 +29,7 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
     () => [
       {
         key: 'wizard',
-        label: '1. Solicitud',
+        label: '1. Contratación',
         title: 'Describí lo que necesitás.',
         description: 'Defina los requerimientos del puesto.',
         icon: Plus,
@@ -324,12 +324,12 @@ function PanelTop({ title, right }: { title: string; right?: React.ReactNode }) 
 function WizardScreen({ reduceMotion }: { reduceMotion: boolean }) {
   return (
     <div>
-      <PanelTop title="1. Solicitud" right={<DotProgress total={5} active={0} />} />
+      <PanelTop title="1. Contratación" right={<DotProgress total={5} active={0} />} />
 
       <div className="mt-4 bg-surface-50/50 rounded-xl p-4 border border-black/5">
         <textarea
           rows={4}
-          placeholder="Ej: 6 operarios para carga y descarga mañana 8:00 en Villa Soldati…"
+          placeholder="Ej: Carga y descarga…"
           className="w-full resize-none rounded-lg border border-black/10 bg-white px-3 py-3 font-sans text-sm text-black placeholder:text-black/30 focus:outline-none focus:ring-2 focus:ring-accent/20 transition-all"
         />
         <div className="mt-4 h-11 rounded-lg bg-primary text-white font-medium flex items-center justify-center gap-2 shadow-sm hover:bg-black/90 transition-colors cursor-pointer">

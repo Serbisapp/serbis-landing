@@ -44,7 +44,7 @@ export function Footer({ onGoToWorkerSignup, onOpenPublicManagement, onOpenSerbi
               <h4 className="text-accent font-bold uppercase tracking-widest mb-6 text-sm">Contacto</h4>
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
-                  <a href="mailto:admin@serbis.app" className="hover:text-accent transition-colors">admin@serbis.app</a>
+                  <a href="mailto:contacto@serbis.com" className="hover:text-accent transition-colors">contacto@serbis.com</a>
                 </li>
                 <li className="flex items-start gap-3">
                   <a href="tel:+5491100000000" className="hover:text-accent transition-colors">+54 9 11 0000-0000</a>

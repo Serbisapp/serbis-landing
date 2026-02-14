@@ -2,50 +2,44 @@ import React, { useCallback } from 'react';
 import { LandingPage } from './components/LandingPage';
 import type { Shift } from './types';
 
-const CONTACT_EMAIL = 'admin@serbis.app';
+const APP_ORIGIN = 'https://app.serbis.app';
 
-function openContactEmail(subject: string, body?: string) {
-  const params = new URLSearchParams({ subject });
-  if (body) {
-    params.set('body', body);
+function goToApp(pathname: string, query?: Record<string, string>) {
+  const url = new URL(pathname, APP_ORIGIN);
+  if (query) {
+    for (const [k, v] of Object.entries(query)) {
+      if (v) url.searchParams.set(k, v);
+    }
   }
-  window.location.href = `mailto:${CONTACT_EMAIL}?${params.toString()}`;
-}
-
-function scrollToCta() {
-  const cta = document.getElementById('cta');
-  if (!cta) return;
-  cta.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  window.location.href = url.toString();
 }
 
 export default function App() {
   const handleOpenWizard = useCallback(() => {
-    scrollToCta();
+    // Start the request flow in the main app.
+    goToApp('/', { start: 'wizard' });
   }, []);
 
   const handleWizardData = useCallback((data: Partial<Shift>) => {
-    const description = data.description?.trim() || 'Consulta desde landing page';
-    openContactEmail('Serbis - Nueva solicitud', `Necesidad:\n${description}`);
+    const description = data.description?.trim() || '';
+    goToApp('/', { start: 'wizard', desc: description });
   }, []);
 
   const handleGoToSignup = useCallback(() => {
-    openContactEmail('Serbis - Quiero registrarme');
+    goToApp('/signup');
   }, []);
 
   const handleGoToAuth = useCallback(() => {
-    openContactEmail('Serbis - Necesito acceso');
+    goToApp('/auth');
   }, []);
 
   const handleGoToWorkerSignup = useCallback(() => {
-    openContactEmail('Serbis - Soy trabajador y quiero sumarme');
+    goToApp('/worker-signup');
   }, []);
 
   const handleSignup = useCallback(async (email: string, _password: string, data: any) => {
-    const description = typeof data?.description === 'string' ? data.description : 'Sin descripcion';
-    openContactEmail(
-      'Serbis - Lead desde landing',
-      `Email: ${email || 'No informado'}\n\nDescripcion:\n${description}`
-    );
+    // Keep signup in the main app (Cognito auth lives there).
+    goToApp('/signup');
   }, []);
 
   return (
@@ -55,9 +49,9 @@ export default function App() {
       onGoToWorkerSignup={handleGoToWorkerSignup}
       onOpenWizard={handleOpenWizard}
       onWizardData={handleWizardData}
-      onOpenManagement={handleGoToAuth}
-      onOpenPublicManagement={handleGoToAuth}
-      onOpenSerbisAdmin={handleGoToAuth}
+      onOpenManagement={() => goToApp('/management')}
+      onOpenPublicManagement={() => goToApp('/management/public')}
+      onOpenSerbisAdmin={() => goToApp('/admin')}
       onSignup={handleSignup}
       busy={false}
     />
