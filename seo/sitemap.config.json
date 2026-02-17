@@ -1,0 +1,18 @@
+{
+  "siteUrl": "https://serbis.app",
+  "sitemapPath": "public/sitemap.xml",
+  "robotsPath": "public/robots.txt",
+  "allow": [
+    "/"
+  ],
+  "disallow": [],
+  "routes": [
+    {
+      "path": "/",
+      "indexable": true,
+      "changefreq": "weekly",
+      "priority": 1.0
+    }
+  ],
+  "content": []
+}

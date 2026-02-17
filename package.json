@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "generate:seo": "node scripts/generate-seo-assets.mjs",
+    "build": "npm run generate:seo && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -15,7 +16,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "recharts": "2.10.3",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "web-vitals": "^4.2.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",

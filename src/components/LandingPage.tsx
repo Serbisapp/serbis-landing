@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Navbar } from './landing/Navbar';
-import { Hero } from './landing/Hero';
-import { Footer } from './landing/Footer';
-import { ScrollProcessAnimation } from './ScrollProcessAnimation';
-import { ESGImpactSection } from './landing/ESGImpactSection';
-import { Section } from './landing/Section';
-import { Button } from './landing/Button';
+import { Navbar } from '../components/landing/Navbar';
+import { Hero } from '../components/landing/Hero';
+import { Footer } from '../components/landing/Footer';
+import { ScrollProcessAnimation } from '../components/ScrollProcessAnimation';
+import { ESGImpactSection } from '../components/landing/ESGImpactSection';
+import { Faq } from '../components/landing/Faq';
+import { Section } from '../components/landing/Section';
+import { Button } from '../components/landing/Button';
 import { ArrowRight } from 'lucide-react';
 
 import type { Shift } from '../types';
@@ -60,6 +61,10 @@ export function LandingPage({ onGoToAuth, onGoToSignup, onGoToWorkerSignup, onOp
 
         <div id="impact">
           <ESGImpactSection />
+        </div>
+
+        <div id="faq">
+          <Faq />
         </div>
 
         {/* CTA Section */}

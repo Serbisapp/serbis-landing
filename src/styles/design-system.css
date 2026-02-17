@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+@theme {
+  --color-accent: #2563eb;
+  --color-accent-foreground: #ffffff;
+
+  --color-primary: #0f172a;
+  --color-primary-foreground: #ffffff;
+
+  --color-surface-50: #f8fafc;
+  --color-surface-100: #f1f5f9;
+  --color-surface-200: #e2e8f0;
+  --color-surface-300: #cbd5e1;
+  --color-surface-500: #64748b;
+  --color-surface-900: #0f172a;
+
+  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+
+  --shadow-card: 0 10px 30px -16px rgba(15, 23, 42, 0.25);
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  --animate-marquee: marquee 25s linear infinite;
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+}
+
+:root {
+  color-scheme: light;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply bg-surface-50 text-black antialiased selection:bg-accent selection:text-white;
+    font-family: var(--font-body);
+    overscroll-behavior-x: none;
+    background-image:
+      radial-gradient(at 0% 0%, rgba(148, 163, 184, 0.12) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(56, 189, 248, 0.12) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.12) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(30, 58, 138, 0.12) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-xl;
+  }
+
+  .sbs-page {
+    @apply min-h-screen bg-surface-50 text-surface-900;
+  }
+
+  .sbs-card {
+    @apply rounded-2xl border border-surface-200 bg-white shadow-sm;
+  }
+
+  .sbs-card-pad {
+    @apply rounded-2xl border border-surface-200 bg-white p-5 shadow-sm;
+  }
+
+  .sbs-muted {
+    @apply text-sm text-surface-500;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}

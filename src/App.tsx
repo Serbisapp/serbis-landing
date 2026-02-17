@@ -1,45 +1,56 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { LandingPage } from './components/LandingPage';
 import type { Shift } from './types';
+import { applyLandingSeo } from './utils/seo';
 
-const APP_ORIGIN = 'https://app.serbis.app';
+const CONTACT_EMAIL = 'contacto@serbis.com';
 
-function goToApp(pathname: string, query?: Record<string, string>) {
-  const url = new URL(pathname, APP_ORIGIN);
-  if (query) {
-    for (const [k, v] of Object.entries(query)) {
-      if (v) url.searchParams.set(k, v);
-    }
+function openContactEmail(subject: string, body?: string) {
+  const params = new URLSearchParams({ subject });
+  if (body) {
+    params.set('body', body);
   }
-  window.location.href = url.toString();
+  window.location.href = `mailto:${CONTACT_EMAIL}?${params.toString()}`;
+}
+
+function scrollToCta() {
+  const cta = document.getElementById('cta');
+  if (!cta) return;
+  cta.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 export default function App() {
+  useEffect(() => {
+    applyLandingSeo();
+  }, []);
+
   const handleOpenWizard = useCallback(() => {
-    // Start the request flow in the main app.
-    goToApp('/', { start: 'wizard' });
+    scrollToCta();
   }, []);
 
   const handleWizardData = useCallback((data: Partial<Shift>) => {
-    const description = data.description?.trim() || '';
-    goToApp('/', { start: 'wizard', desc: description });
+    const description = data.description?.trim() || 'Consulta desde landing page';
+    openContactEmail('Serbis - Nueva contratación', `Necesidad:\n${description}`);
   }, []);
 
   const handleGoToSignup = useCallback(() => {
-    goToApp('/signup');
+    openContactEmail('Serbis - Quiero registrarme');
   }, []);
 
   const handleGoToAuth = useCallback(() => {
-    goToApp('/auth');
+    openContactEmail('Serbis - Necesito acceso');
   }, []);
 
   const handleGoToWorkerSignup = useCallback(() => {
-    goToApp('/worker-signup');
+    openContactEmail('Serbis - Soy trabajador y quiero sumarme');
   }, []);
 
   const handleSignup = useCallback(async (email: string, _password: string, data: any) => {
-    // Keep signup in the main app (Cognito auth lives there).
-    goToApp('/signup');
+    const description = typeof data?.description === 'string' ? data.description : 'Sin descripcion';
+    openContactEmail(
+      'Serbis - Lead desde landing',
+      `Email: ${email || 'No informado'}\n\nDescripcion:\n${description}`
+    );
   }, []);
 
   return (
@@ -49,9 +60,9 @@ export default function App() {
       onGoToWorkerSignup={handleGoToWorkerSignup}
       onOpenWizard={handleOpenWizard}
       onWizardData={handleWizardData}
-      onOpenManagement={() => goToApp('/management')}
-      onOpenPublicManagement={() => goToApp('/management/public')}
-      onOpenSerbisAdmin={() => goToApp('/admin')}
+      onOpenManagement={handleGoToAuth}
+      onOpenPublicManagement={handleGoToAuth}
+      onOpenSerbisAdmin={handleGoToAuth}
       onSignup={handleSignup}
       busy={false}
     />

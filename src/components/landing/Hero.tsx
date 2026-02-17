@@ -42,13 +42,13 @@ export function Hero({ onOpenWizard, onGoToAuth, onSignup, busy = false, onWizar
               </div>
 
               <h1 className="text-4xl md:text-7xl font-display font-semibold tracking-tight leading-[1.1] text-black mb-4 md:mb-6">
-                Personal <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-black to-gray-500">Operativo.</span> <br />
-                Calificado. <span className="text-accent">Inmediato.</span>
+                Personal eventual <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-black to-gray-500">rápido y verificado</span> <br />
+                con <span className="text-accent">cumplimiento.</span>
               </h1>
 
               <p className="text-lg md:text-2xl text-black/60 max-w-2xl leading-relaxed mb-6 md:mb-10 pl-1">
-                La solución ágil para contratación de personal eventual. Conectamos su operación con talento verificado de fundaciones aliadas, garantizando cumplimiento y eficiencia.
+                Conectamos su operación con personal operativo calificado, validado por fundaciones aliadas, con cumplimiento desde el día uno.
               </p>
 
               <div>

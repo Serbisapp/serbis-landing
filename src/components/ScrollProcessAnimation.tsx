@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useSpring } from 'framer-motion';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useReducedMotion } from 'framer-motion';
 import { ArrowRight, Check, CheckCircle2, CreditCard, MessageCircle, Plus, Search, Send, Sparkles, Users } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -22,6 +22,8 @@ type Step = {
 
 export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const pinnedLayerRef = useRef<HTMLDivElement>(null);
+  const panelOffsetRef = useRef(0);
   const reduceMotion = useReducedMotion();
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -71,18 +73,62 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
     [onOpenWizard, reduceMotion]
   );
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  });
+  useEffect(() => {
+    let rafId = 0;
+    let scheduled = false;
 
+    const updateFromScroll = () => {
+      scheduled = false;
+      const container = containerRef.current;
+      if (!container) return;
 
+      const viewportHeight = Math.max(window.innerHeight || 0, 1);
+      const stickyTopPx = 80;
+      const panelHeight = Math.max(viewportHeight - stickyTopPx, 1);
+      const pinRange = container.offsetHeight - panelHeight;
+      if (pinRange <= 0) {
+        setActiveIndex(0);
+        if (panelOffsetRef.current !== 0) {
+          panelOffsetRef.current = 0;
+          if (pinnedLayerRef.current) {
+            pinnedLayerRef.current.style.transform = 'translate3d(0, 0px, 0)';
+          }
+        }
+        return;
+      }
 
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    const scaled = v * (steps.length - 1);
-    const next = Math.max(0, Math.min(steps.length - 1, Math.round(scaled)));
-    setActiveIndex((prev) => (prev === next ? prev : next));
-  });
+      const rect = container.getBoundingClientRect();
+      const scrolledWithinContainer = Math.max(0, Math.min(pinRange, stickyTopPx - rect.top));
+      if (Math.abs(panelOffsetRef.current - scrolledWithinContainer) >= 0.5) {
+        panelOffsetRef.current = scrolledWithinContainer;
+        if (pinnedLayerRef.current) {
+          pinnedLayerRef.current.style.transform = `translate3d(0, ${Math.round(scrolledWithinContainer)}px, 0)`;
+        }
+      }
+      const progress = scrolledWithinContainer / pinRange;
+      const scaled = progress * (steps.length - 1);
+      const next = Math.max(0, Math.min(steps.length - 1, Math.round(scaled)));
+      setActiveIndex((prev) => (prev === next ? prev : next));
+    };
+
+    const scheduleUpdate = () => {
+      if (scheduled) return;
+      scheduled = true;
+      rafId = window.requestAnimationFrame(updateFromScroll);
+    };
+
+    updateFromScroll();
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+
+    return () => {
+      window.removeEventListener('scroll', scheduleUpdate);
+      window.removeEventListener('resize', scheduleUpdate);
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+      }
+    };
+  }, [steps.length]);
 
   const jumpToStep = useCallback(
     (index: number) => {
@@ -91,12 +137,14 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
 
       const rect = container.getBoundingClientRect();
       const start = window.scrollY + rect.top;
-      const viewport = window.innerHeight;
-      const scrollRange = container.offsetHeight - viewport;
-      if (scrollRange <= 0) return;
+      const viewport = Math.max(window.innerHeight || 0, 1);
+      const stickyTopPx = 80;
+      const panelHeight = Math.max(viewport - stickyTopPx, 1);
+      const pinRange = container.offsetHeight - panelHeight;
+      if (pinRange <= 0) return;
 
       const progress = steps.length <= 1 ? 0 : index / (steps.length - 1);
-      const target = start + progress * scrollRange;
+      const target = start - stickyTopPx + progress * pinRange;
 
       window.scrollTo({ top: target, behavior: reduceMotion ? 'auto' : 'smooth' });
     },
@@ -108,7 +156,11 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
   return (
     <section className="relative bg-white border-b-2 border-black z-30">
       <div ref={containerRef} className="relative" style={{ height: `${storyHeightVh}vh`, position: 'relative' }}>
-        <div className="sticky top-20 h-[calc(100vh-5rem)] flex flex-col justify-center">
+        <div
+          ref={pinnedLayerRef}
+          className="absolute inset-x-0 top-0 transform-gpu will-change-transform"
+        >
+          <div className="h-[calc(100vh-5rem)] flex flex-col justify-center">
           {/* Background */}
           <div className="absolute inset-0" aria-hidden>
             <div
@@ -122,8 +174,8 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
             <div className="absolute inset-0 bg-white/85" />
           </div>
 
-          <div className="mx-auto max-w-[1400px] px-6 md:px-12 h-full flex items-start md:items-center justify-center pt-12 md:pt-24">
-            <div className="w-full grid lg:grid-cols-2 gap-10 lg:gap-16 lg:items-center lg:min-h-0">
+          <div className="mx-auto max-w-[1400px] px-6 md:px-12 h-full w-full flex items-center justify-center py-8 md:py-12">
+            <div className="w-full grid lg:grid-cols-2 gap-10 lg:gap-16 lg:items-center">
               {/* Narrative */}
               <div className="relative">
                 <h2 className="mt-6 md:mt-8 hidden lg:block text-4xl md:text-5xl font-display font-semibold tracking-tight leading-[1.1]">
@@ -138,18 +190,10 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
 
                 {/* Mobile: compact active step */}
                 <div className="mt-8 lg:hidden">
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
-                      key={steps[activeIndex]?.key + '-m-title'}
-                      initial={reduceMotion ? false : { y: 20 }}
-                      animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-                      exit={reduceMotion ? { opacity: 1 } : { y: -20 }}
-                      transition={{ duration: reduceMotion ? 0 : 0.4, ease: [0.16, 1, 0.3, 1] }}
-                    >
-                      <div className="text-2xl font-display font-bold uppercase tracking-tight">{steps[activeIndex]?.title}</div>
-                      <div className="mt-2 font-mono text-sm text-black/80">{steps[activeIndex]?.description}</div>
-                    </motion.div>
-                  </AnimatePresence>
+                  <div>
+                    <div className="text-2xl font-display font-bold uppercase tracking-tight">{steps[activeIndex]?.title}</div>
+                    <div className="mt-2 font-mono text-sm text-black/80">{steps[activeIndex]?.description}</div>
+                  </div>
 
                   <div className="mt-5 flex items-center justify-between">
                     <Button size="sm" variant="outline" onClick={() => jumpToStep(Math.max(0, activeIndex - 1))} disabled={activeIndex === 0}>
@@ -170,64 +214,47 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
 
                 {/* Desktop: single active step (User request: only one step shown at a time) */}
                 <div className="hidden lg:block mt-10 pb-24">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeIndex}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 10 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
-                      className="bg-white rounded-2xl border border-black/5 shadow-sm p-8 max-w-md relative"
-                    >
-                      <div className="flex items-center gap-4 mb-6">
-                        <div className="w-12 h-12 rounded-lg bg-primary text-white flex items-center justify-center shadow-sm">
-                          {React.createElement(steps[activeIndex].icon, { size: 24 })}
-                        </div>
-                        <div className="font-mono text-xs font-bold uppercase tracking-widest text-black/40">
-                          Paso {activeIndex + 1}/{steps.length}
-                        </div>
+                  <div className="bg-white rounded-2xl border border-black/5 shadow-sm p-8 max-w-md relative">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-12 h-12 rounded-lg bg-primary text-white flex items-center justify-center shadow-sm">
+                        {React.createElement(steps[activeIndex].icon, { size: 24 })}
                       </div>
-
-                      <h3 className="text-3xl font-display font-bold text-black mb-4">
-                        {steps[activeIndex].label}
-                      </h3>
-                      <p className="text-lg text-black/60 leading-relaxed font-sans">
-                        {steps[activeIndex].description}
-                      </p>
-
-                      {/* Step Progress Dots */}
-                      <div className="mt-8 flex gap-2">
-                        {steps.map((_, i) => (
-                          <div
-                            key={i}
-                            className={cn(
-                              "h-1.5 rounded-full transition-all duration-300",
-                              i === activeIndex ? "w-8 bg-accent" : "w-2 bg-black/10"
-                            )}
-                          />
-                        ))}
+                      <div className="font-mono text-xs font-bold uppercase tracking-widest text-black/40">
+                        Paso {activeIndex + 1}/{steps.length}
                       </div>
-                    </motion.div>
-                  </AnimatePresence>
+                    </div>
+
+                    <h3 className="text-3xl font-display font-bold text-black mb-4">
+                      {steps[activeIndex].label}
+                    </h3>
+                    <p className="text-lg text-black/60 leading-relaxed font-sans">
+                      {steps[activeIndex].description}
+                    </p>
+
+                    {/* Step Progress Dots */}
+                    <div className="mt-8 flex gap-2">
+                      {steps.map((_, i) => (
+                        <div
+                          key={i}
+                          className={cn(
+                            "h-1.5 rounded-full transition-all duration-300",
+                            i === activeIndex ? "w-8 bg-accent" : "w-2 bg-black/10"
+                          )}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {/* Desktop: content panel — centered in column */}
               <div className="hidden lg:flex lg:items-center lg:justify-center lg:self-center">
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.div
-                    key={steps[activeIndex]?.key + '-panel'}
-                    className="w-full max-w-lg"
-                    initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-                    animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-                    exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                  >
-                    <StepPanel>{steps[activeIndex]?.screen}</StepPanel>
-                  </motion.div>
-                </AnimatePresence>
+                <div className="w-full max-w-lg">
+                  <StepPanel>{steps[activeIndex]?.screen}</StepPanel>
+                </div>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>
