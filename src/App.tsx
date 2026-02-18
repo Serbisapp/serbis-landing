@@ -3,14 +3,11 @@ import { LandingPage } from './components/LandingPage';
 import type { Shift } from './types';
 import { applyLandingSeo } from './utils/seo';
 
-const CONTACT_EMAIL = 'contacto@serbis.com';
+const APP_BASE_URL = (import.meta.env.VITE_APP_BASE_URL || 'https://app.serbis.app').replace(/\/+$/, '');
 
-function openContactEmail(subject: string, body?: string) {
-  const params = new URLSearchParams({ subject });
-  if (body) {
-    params.set('body', body);
-  }
-  window.location.href = `mailto:${CONTACT_EMAIL}?${params.toString()}`;
+function goToApp(path: string) {
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  window.location.href = `${APP_BASE_URL}${normalizedPath}`;
 }
 
 function scrollToCta() {
@@ -29,28 +26,29 @@ export default function App() {
   }, []);
 
   const handleWizardData = useCallback((data: Partial<Shift>) => {
-    const description = data.description?.trim() || 'Consulta desde landing page';
-    openContactEmail('Serbis - Nueva contratación', `Necesidad:\n${description}`);
+    const description = data.description?.trim();
+    if (description) {
+      const params = new URLSearchParams({ lead: description });
+      goToApp(`/signup?${params.toString()}`);
+      return;
+    }
+    goToApp('/signup');
   }, []);
 
   const handleGoToSignup = useCallback(() => {
-    openContactEmail('Serbis - Quiero registrarme');
+    goToApp('/signup');
   }, []);
 
   const handleGoToAuth = useCallback(() => {
-    openContactEmail('Serbis - Necesito acceso');
+    goToApp('/auth');
   }, []);
 
   const handleGoToWorkerSignup = useCallback(() => {
-    openContactEmail('Serbis - Soy trabajador y quiero sumarme');
+    goToApp('/worker-signup');
   }, []);
 
-  const handleSignup = useCallback(async (email: string, _password: string, data: any) => {
-    const description = typeof data?.description === 'string' ? data.description : 'Sin descripcion';
-    openContactEmail(
-      'Serbis - Lead desde landing',
-      `Email: ${email || 'No informado'}\n\nDescripcion:\n${description}`
-    );
+  const handleSignup = useCallback(async (_email: string, _password: string, _data: any) => {
+    goToApp('/signup');
   }, []);
 
   return (
@@ -60,9 +58,9 @@ export default function App() {
       onGoToWorkerSignup={handleGoToWorkerSignup}
       onOpenWizard={handleOpenWizard}
       onWizardData={handleWizardData}
-      onOpenManagement={handleGoToAuth}
-      onOpenPublicManagement={handleGoToAuth}
-      onOpenSerbisAdmin={handleGoToAuth}
+      onOpenManagement={() => goToApp('/management')}
+      onOpenPublicManagement={() => goToApp('/management/public')}
+      onOpenSerbisAdmin={() => goToApp('/admin')}
       onSignup={handleSignup}
       busy={false}
     />
