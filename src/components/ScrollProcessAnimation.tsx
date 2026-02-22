@@ -108,8 +108,8 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
         } else {
           const base = Math.floor(rawStep);
           const local = rawStep - base;
-          const assistStrength = 0.82;
-          const assistPower = 2.35;
+          const assistStrength = 0.52;
+          const assistPower = 1.85;
           const directedLocal =
             scrollDirectionRef.current > 0
               ? 1 - Math.pow(1 - local, assistPower)
@@ -206,7 +206,7 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
     </>
   );
 
-  const storyHeightVh = Math.max(320, steps.length * 70);
+  const storyHeightVh = Math.max(360, steps.length * 84);
 
   return (
     <section className="relative bg-white border-b-2 border-black z-30">
