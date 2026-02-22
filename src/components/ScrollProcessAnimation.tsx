@@ -24,6 +24,8 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
   const containerRef = useRef<HTMLDivElement>(null);
   const pinnedLayerRef = useRef<HTMLDivElement>(null);
   const renderedStepRef = useRef(0);
+  const lastRawStepRef = useRef(0);
+  const scrollDirectionRef = useRef<1 | -1 | 0>(0);
   const reduceMotion = useReducedMotion();
   const [scrollStep, setScrollStep] = useState(0);
 
@@ -94,7 +96,29 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
         pinnedLayer.style.transform = `translate3d(0, ${traveled.toFixed(3)}px, 0)`;
 
         const rawStep = pinRange <= 0 || maxStep === 0 ? 0 : (traveled / pinRange) * maxStep;
-        const nextStep = reduceMotion ? Math.round(rawStep) : rawStep;
+        const delta = rawStep - lastRawStepRef.current;
+        if (Math.abs(delta) > 0.001) {
+          scrollDirectionRef.current = delta > 0 ? 1 : -1;
+        }
+        lastRawStepRef.current = rawStep;
+
+        let nextStep = rawStep;
+        if (reduceMotion) {
+          nextStep = Math.round(rawStep);
+        } else {
+          const base = Math.floor(rawStep);
+          const local = rawStep - base;
+          const assistStrength = 0.82;
+          const assistPower = 2.35;
+          const directedLocal =
+            scrollDirectionRef.current > 0
+              ? 1 - Math.pow(1 - local, assistPower)
+              : scrollDirectionRef.current < 0
+                ? Math.pow(local, assistPower)
+                : local;
+          const assistedLocal = local * (1 - assistStrength) + directedLocal * assistStrength;
+          nextStep = base + assistedLocal;
+        }
 
         if (Math.abs(renderedStepRef.current - nextStep) >= 0.001) {
           renderedStepRef.current = nextStep;
@@ -182,7 +206,7 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
     </>
   );
 
-  const storyHeightVh = Math.max(420, steps.length * 95);
+  const storyHeightVh = Math.max(320, steps.length * 70);
 
   return (
     <section className="relative bg-white border-b-2 border-black z-30">
