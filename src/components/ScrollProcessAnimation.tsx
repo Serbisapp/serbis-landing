@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useReducedMotion } from 'framer-motion';
 import { ArrowRight, Check, CheckCircle2, CreditCard, MessageCircle, Plus, Search, Send, Sparkles, Users } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -22,11 +22,11 @@ type Step = {
 
 export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const pinnedLayerRef = useRef<HTMLDivElement>(null);
-  const panelOffsetRef = useRef(0);
   const reduceMotion = useReducedMotion();
-  const [activeIndex, setActiveIndex] = useState(0);
-  const activeIndexRef = useRef(0);
+  const targetStepRef = useRef(0);
+  const smoothStepRef = useRef(0);
+  const renderedStepRef = useRef(0);
+  const [smoothStep, setSmoothStep] = useState(0);
 
   const steps: Step[] = useMemo(
     () => [
@@ -74,77 +74,39 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
     [onOpenWizard, reduceMotion]
   );
 
-  const updateActiveIndex = useCallback(
-    (next: number) => {
-      const clamped = Math.max(0, Math.min(steps.length - 1, next));
-      if (activeIndexRef.current === clamped) return;
-      activeIndexRef.current = clamped;
-      setActiveIndex(clamped);
-    },
-    [steps.length]
-  );
+  const maxStep = Math.max(steps.length - 1, 0);
 
   useEffect(() => {
-    activeIndexRef.current = activeIndex;
-  }, [activeIndex]);
-
-  useEffect(() => {
-    let rafId = 0;
-    let scheduled = false;
-
-    const updateFromScroll = () => {
-      scheduled = false;
+    const updateTargetFromScroll = () => {
       const container = containerRef.current;
-      if (!container) return;
-
-      const viewportHeight = Math.max(window.innerHeight || 0, 1);
-      const stickyTopPx = 80;
-      const panelHeight = Math.max(viewportHeight - stickyTopPx, 1);
-      const pinRange = container.offsetHeight - panelHeight;
-      if (pinRange <= 0) {
-        activeIndexRef.current = 0;
-        setActiveIndex(0);
-        if (panelOffsetRef.current !== 0) {
-          panelOffsetRef.current = 0;
-          if (pinnedLayerRef.current) {
-            pinnedLayerRef.current.style.transform = 'translate3d(0, 0px, 0)';
-          }
-        }
+      if (!container || maxStep === 0) {
+        targetStepRef.current = 0;
         return;
       }
 
+      const viewportHeight = Math.max(window.innerHeight || 0, 1);
+      const stickyTopPx = 80;
+      const stickyHeight = Math.max(viewportHeight - stickyTopPx, 1);
+      const pinRange = Math.max(container.offsetHeight - stickyHeight, 1);
       const rect = container.getBoundingClientRect();
-      const scrolledWithinContainer = Math.max(0, Math.min(pinRange, stickyTopPx - rect.top));
-      if (Math.abs(panelOffsetRef.current - scrolledWithinContainer) >= 0.1) {
-        panelOffsetRef.current = scrolledWithinContainer;
-        if (pinnedLayerRef.current) {
-          pinnedLayerRef.current.style.transform = `translate3d(0, ${scrolledWithinContainer.toFixed(3)}px, 0)`;
-        }
-      }
-
-      const progress = scrolledWithinContainer / pinRange;
-      const stepSize = 1 / steps.length;
-      const boundaryBuffer = Math.min(0.04, stepSize * 0.2);
-      const rawIndex = Math.min(steps.length - 1, Math.floor(progress * steps.length));
-      const previous = activeIndexRef.current;
-      let next = rawIndex;
-
-      if (next > previous && progress < (previous + 1) * stepSize + boundaryBuffer) {
-        next = previous;
-      } else if (next < previous && progress > previous * stepSize - boundaryBuffer) {
-        next = previous;
-      }
-
-      updateActiveIndex(next);
+      const traveled = Math.max(0, Math.min(pinRange, stickyTopPx - rect.top));
+      const normalizedProgress = traveled / pinRange;
+      targetStepRef.current = normalizedProgress * maxStep;
     };
+
+    let rafId = 0;
+    let scheduled = false;
 
     const scheduleUpdate = () => {
       if (scheduled) return;
       scheduled = true;
-      rafId = window.requestAnimationFrame(updateFromScroll);
+      rafId = window.requestAnimationFrame(() => {
+        scheduled = false;
+        updateTargetFromScroll();
+      });
     };
 
-    updateFromScroll();
+    updateTargetFromScroll();
     window.addEventListener('scroll', scheduleUpdate, { passive: true });
     window.addEventListener('resize', scheduleUpdate);
 
@@ -155,7 +117,39 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
         window.cancelAnimationFrame(rafId);
       }
     };
-  }, [steps.length, updateActiveIndex]);
+  }, [maxStep]);
+
+  useEffect(() => {
+    let rafId = 0;
+
+    const tick = () => {
+      const target = targetStepRef.current;
+      const current = smoothStepRef.current;
+      const next = reduceMotion ? target : current + (target - current) * 0.18;
+      const snapped = Math.abs(target - next) < 0.0005 ? target : next;
+      const clamped = Math.max(0, Math.min(maxStep, snapped));
+      smoothStepRef.current = clamped;
+
+      if (Math.abs(renderedStepRef.current - clamped) >= 0.001) {
+        renderedStepRef.current = clamped;
+        setSmoothStep(clamped);
+      }
+
+      rafId = window.requestAnimationFrame(tick);
+    };
+
+    tick();
+    return () => {
+      window.cancelAnimationFrame(rafId);
+    };
+  }, [maxStep, reduceMotion]);
+
+  useEffect(() => {
+    if (maxStep !== 0 || smoothStep === 0) return;
+    smoothStepRef.current = 0;
+    renderedStepRef.current = 0;
+    setSmoothStep(0);
+  }, [maxStep, smoothStep]);
 
   const jumpToStep = useCallback(
     (index: number) => {
@@ -166,29 +160,77 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
       const start = window.scrollY + rect.top;
       const viewport = Math.max(window.innerHeight || 0, 1);
       const stickyTopPx = 80;
-      const panelHeight = Math.max(viewport - stickyTopPx, 1);
-      const pinRange = container.offsetHeight - panelHeight;
-      if (pinRange <= 0) return;
+      const stickyHeight = Math.max(viewport - stickyTopPx, 1);
+      const pinRange = Math.max(container.offsetHeight - stickyHeight, 1);
+      const targetIndex = Math.max(0, Math.min(maxStep, index));
+      const progress = maxStep === 0 ? 0 : targetIndex / maxStep;
+      const targetY = start - stickyTopPx + progress * pinRange;
 
-      const progress = steps.length <= 1 ? 0 : (index + 0.5) / steps.length;
-      const target = start - stickyTopPx + progress * pinRange;
+      targetStepRef.current = targetIndex;
+      if (reduceMotion) {
+        smoothStepRef.current = targetIndex;
+        renderedStepRef.current = targetIndex;
+        setSmoothStep(targetIndex);
+      }
 
-      updateActiveIndex(index);
-      window.scrollTo({ top: target, behavior: reduceMotion ? 'auto' : 'smooth' });
+      window.scrollTo({ top: targetY, behavior: reduceMotion ? 'auto' : 'smooth' });
     },
-    [reduceMotion, steps.length, updateActiveIndex]
+    [maxStep, reduceMotion]
   );
 
-  const storyHeightVh = Math.max(400, steps.length * 90);
+  const clampedStep = Math.max(0, Math.min(maxStep, smoothStep));
+  const fromIndex = Math.floor(clampedStep);
+  const toIndex = Math.min(maxStep, fromIndex + 1);
+  const mix = toIndex === fromIndex ? 0 : clampedStep - fromIndex;
+  const activeIndex = Math.max(0, Math.min(maxStep, Math.round(clampedStep)));
+  const fromStep = steps[fromIndex] ?? steps[0];
+  const toStep = steps[toIndex] ?? fromStep;
+
+  if (!fromStep || !toStep) {
+    return null;
+  }
+
+  const layerStyle = (opacity: number, offsetX: number, offsetY: number): React.CSSProperties => ({
+    opacity,
+    transform: reduceMotion ? 'translate3d(0, 0, 0)' : `translate3d(${offsetX}px, ${offsetY}px, 0)`,
+    transition: 'none',
+    willChange: 'opacity, transform',
+  });
+
+  const renderDesktopStep = (step: Step, index: number) => (
+    <>
+      <div className="flex items-center gap-4 mb-6">
+        <div className="w-12 h-12 rounded-lg bg-primary text-white flex items-center justify-center shadow-sm">
+          {React.createElement(step.icon, { size: 24 })}
+        </div>
+        <div className="font-mono text-xs font-bold uppercase tracking-widest text-black/40">
+          Paso {index + 1}/{steps.length}
+        </div>
+      </div>
+
+      <h3 className="text-3xl font-display font-bold text-black mb-4">{step.label}</h3>
+      <p className="text-lg text-black/60 leading-relaxed font-sans">{step.description}</p>
+
+      <div className="mt-8 flex gap-2">
+        {steps.map((_, i) => (
+          <div
+            key={`${step.key}-dot-${i}`}
+            className={cn(
+              'h-1.5 rounded-full transition-all duration-200',
+              i === index ? 'w-8 bg-accent' : 'w-2 bg-black/10'
+            )}
+          />
+        ))}
+      </div>
+    </>
+  );
+
+  const storyHeightVh = Math.max(420, steps.length * 95);
 
   return (
     <section className="relative bg-white border-b-2 border-black z-30">
       <div ref={containerRef} className="relative" style={{ height: `${storyHeightVh}vh`, position: 'relative' }}>
-        <div
-          ref={pinnedLayerRef}
-          className="absolute inset-x-0 top-0 transform-gpu will-change-transform"
-        >
-          <div className="h-[calc(100vh-5rem)] flex flex-col justify-center">
+        <div className="sticky top-20 h-[calc(100vh-5rem)] flex flex-col justify-center">
           {/* Background */}
           <div className="absolute inset-0" aria-hidden>
             <div
@@ -218,18 +260,18 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
 
                 {/* Mobile: compact active step */}
                 <div className="mt-8 lg:hidden">
-                  <AnimatePresence mode="sync" initial={false}>
-                    <motion.div
-                      key={steps[activeIndex]?.key + '-m-title'}
-                      initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
-                      transition={{ duration: reduceMotion ? 0 : 0.16, ease: 'easeOut' }}
-                    >
-                      <div className="text-2xl font-display font-bold uppercase tracking-tight">{steps[activeIndex]?.title}</div>
-                      <div className="mt-2 font-mono text-sm text-black/80">{steps[activeIndex]?.description}</div>
-                    </motion.div>
-                  </AnimatePresence>
+                  <div className="relative min-h-[84px]">
+                    <div style={layerStyle(1 - mix, 0, -6 * mix)}>
+                      <div className="text-2xl font-display font-bold uppercase tracking-tight">{fromStep.title}</div>
+                      <div className="mt-2 font-mono text-sm text-black/80">{fromStep.description}</div>
+                    </div>
+                    {toIndex !== fromIndex && (
+                      <div className="absolute inset-0 pointer-events-none" style={layerStyle(mix, 0, 6 * (1 - mix))}>
+                        <div className="text-2xl font-display font-bold uppercase tracking-tight">{toStep.title}</div>
+                        <div className="mt-2 font-mono text-sm text-black/80">{toStep.description}</div>
+                      </div>
+                    )}
+                  </div>
 
                   <div className="mt-5 flex items-center justify-between">
                     <Button size="sm" variant="outline" onClick={() => jumpToStep(Math.max(0, activeIndex - 1))} disabled={activeIndex === 0}>
@@ -238,84 +280,56 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
                     <div className="font-mono text-xs font-bold uppercase tracking-widest text-black/70">
                       {activeIndex + 1}/{steps.length}
                     </div>
-                    <Button size="sm" onClick={() => jumpToStep(Math.min(steps.length - 1, activeIndex + 1))} disabled={activeIndex === steps.length - 1}>
+                    <Button size="sm" onClick={() => jumpToStep(Math.min(maxStep, activeIndex + 1))} disabled={activeIndex === maxStep}>
                       Siguiente
                     </Button>
                   </div>
 
-                  <div className="mt-6">
-                    <StepPanel>{steps[activeIndex]?.screen}</StepPanel>
+                  <div className="mt-6 relative min-h-[340px]">
+                    <div style={layerStyle(1 - mix, 0, -8 * mix)}>
+                      <StepPanel>{fromStep.screen}</StepPanel>
+                    </div>
+                    {toIndex !== fromIndex && (
+                      <div className="absolute inset-0 pointer-events-none" style={layerStyle(mix, 0, 8 * (1 - mix))}>
+                        <StepPanel>{toStep.screen}</StepPanel>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {/* Desktop: single active step (User request: only one step shown at a time) */}
+                {/* Desktop: single active step */}
                 <div className="hidden lg:block mt-10 pb-24">
-                  <AnimatePresence mode="sync" initial={false}>
-                    <motion.div
-                      key={steps[activeIndex]?.key + '-d-step'}
-                      initial={reduceMotion ? false : { opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={reduceMotion ? { opacity: 1 } : { opacity: 0, x: 10 }}
-                      transition={{ duration: reduceMotion ? 0 : 0.16, ease: 'easeOut' }}
-                      className="bg-white rounded-2xl border border-black/5 shadow-sm p-8 max-w-md min-h-[260px] relative"
-                    >
-                      <div className="flex items-center gap-4 mb-6">
-                        <div className="w-12 h-12 rounded-lg bg-primary text-white flex items-center justify-center shadow-sm">
-                          {React.createElement(steps[activeIndex].icon, { size: 24 })}
-                        </div>
-                        <div className="font-mono text-xs font-bold uppercase tracking-widest text-black/40">
-                          Paso {activeIndex + 1}/{steps.length}
-                        </div>
+                  <div className="bg-white rounded-2xl border border-black/5 shadow-sm p-8 max-w-md min-h-[260px] relative overflow-hidden">
+                    <div style={layerStyle(1 - mix, -12 * mix, 0)}>{renderDesktopStep(fromStep, fromIndex)}</div>
+                    {toIndex !== fromIndex && (
+                      <div className="absolute inset-0 p-8 pointer-events-none" style={layerStyle(mix, 12 * (1 - mix), 0)}>
+                        {renderDesktopStep(toStep, toIndex)}
                       </div>
-
-                      <h3 className="text-3xl font-display font-bold text-black mb-4">
-                        {steps[activeIndex].label}
-                      </h3>
-                      <p className="text-lg text-black/60 leading-relaxed font-sans">
-                        {steps[activeIndex].description}
-                      </p>
-
-                      {/* Step Progress Dots */}
-                      <div className="mt-8 flex gap-2">
-                        {steps.map((_, i) => (
-                          <div
-                            key={i}
-                            className={cn(
-                              'h-1.5 rounded-full transition-all duration-300',
-                              i === activeIndex ? 'w-8 bg-accent' : 'w-2 bg-black/10'
-                            )}
-                          />
-                        ))}
-                      </div>
-                    </motion.div>
-                  </AnimatePresence>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              {/* Desktop: content panel — centered in column */}
+              {/* Desktop: content panel */}
               <div className="hidden lg:flex lg:items-center lg:justify-center lg:self-center">
-                <AnimatePresence mode="sync" initial={false}>
-                  <motion.div
-                    key={steps[activeIndex]?.key + '-panel'}
-                    className="w-full max-w-lg min-h-[340px]"
-                    initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -10 }}
-                    transition={{ duration: reduceMotion ? 0 : 0.16, ease: 'easeOut' }}
-                  >
-                    <StepPanel>{steps[activeIndex]?.screen}</StepPanel>
-                  </motion.div>
-                </AnimatePresence>
+                <div className="w-full max-w-lg min-h-[340px] relative">
+                  <div style={layerStyle(1 - mix, 0, -10 * mix)}>
+                    <StepPanel>{fromStep.screen}</StepPanel>
+                  </div>
+                  {toIndex !== fromIndex && (
+                    <div className="absolute inset-0 pointer-events-none" style={layerStyle(mix, 0, 10 * (1 - mix))}>
+                      <StepPanel>{toStep.screen}</StepPanel>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
           </div>
         </div>
       </div>
     </section>
   );
 }
-
 function StepPanel({ children }: { children: React.ReactNode }) {
   return (
     <div className="glass-panel rounded-2xl overflow-hidden">
