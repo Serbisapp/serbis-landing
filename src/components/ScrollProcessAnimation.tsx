@@ -22,11 +22,10 @@ type Step = {
 
 export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const reduceMotion = useReducedMotion();
-  const targetStepRef = useRef(0);
-  const smoothStepRef = useRef(0);
+  const pinnedLayerRef = useRef<HTMLDivElement>(null);
   const renderedStepRef = useRef(0);
-  const [smoothStep, setSmoothStep] = useState(0);
+  const reduceMotion = useReducedMotion();
+  const [scrollStep, setScrollStep] = useState(0);
 
   const steps: Step[] = useMemo(
     () => [
@@ -77,108 +76,66 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
   const maxStep = Math.max(steps.length - 1, 0);
 
   useEffect(() => {
-    const updateTargetFromScroll = () => {
-      const container = containerRef.current;
-      if (!container || maxStep === 0) {
-        targetStepRef.current = 0;
-        return;
-      }
-
-      const viewportHeight = Math.max(window.innerHeight || 0, 1);
-      const stickyTopPx = 80;
-      const stickyHeight = Math.max(viewportHeight - stickyTopPx, 1);
-      const pinRange = Math.max(container.offsetHeight - stickyHeight, 1);
-      const rect = container.getBoundingClientRect();
-      const traveled = Math.max(0, Math.min(pinRange, stickyTopPx - rect.top));
-      const normalizedProgress = traveled / pinRange;
-      targetStepRef.current = normalizedProgress * maxStep;
-    };
-
-    let rafId = 0;
-    let scheduled = false;
-
-    const scheduleUpdate = () => {
-      if (scheduled) return;
-      scheduled = true;
-      rafId = window.requestAnimationFrame(() => {
-        scheduled = false;
-        updateTargetFromScroll();
-      });
-    };
-
-    updateTargetFromScroll();
-    window.addEventListener('scroll', scheduleUpdate, { passive: true });
-    window.addEventListener('resize', scheduleUpdate);
-
-    return () => {
-      window.removeEventListener('scroll', scheduleUpdate);
-      window.removeEventListener('resize', scheduleUpdate);
-      if (rafId) {
-        window.cancelAnimationFrame(rafId);
-      }
-    };
-  }, [maxStep]);
-
-  useEffect(() => {
     let rafId = 0;
 
     const tick = () => {
-      const target = targetStepRef.current;
-      const current = smoothStepRef.current;
-      const next = reduceMotion ? target : current + (target - current) * 0.18;
-      const snapped = Math.abs(target - next) < 0.0005 ? target : next;
-      const clamped = Math.max(0, Math.min(maxStep, snapped));
-      smoothStepRef.current = clamped;
+      const container = containerRef.current;
+      const pinnedLayer = pinnedLayerRef.current;
 
-      if (Math.abs(renderedStepRef.current - clamped) >= 0.001) {
-        renderedStepRef.current = clamped;
-        setSmoothStep(clamped);
+      if (container && pinnedLayer) {
+        const viewportHeight = Math.max(window.innerHeight || 0, 1);
+        const stickyTopPx = 80;
+        const panelHeight = Math.max(viewportHeight - stickyTopPx, 1);
+        const pinRange = Math.max(container.offsetHeight - panelHeight, 0);
+        const rect = container.getBoundingClientRect();
+        const traveled = pinRange <= 0 ? 0 : Math.max(0, Math.min(pinRange, stickyTopPx - rect.top));
+
+        // Keep the pinned layer locked to the viewport while inside the section.
+        pinnedLayer.style.transform = `translate3d(0, ${traveled.toFixed(3)}px, 0)`;
+
+        const rawStep = pinRange <= 0 || maxStep === 0 ? 0 : (traveled / pinRange) * maxStep;
+        const nextStep = reduceMotion ? Math.round(rawStep) : rawStep;
+
+        if (Math.abs(renderedStepRef.current - nextStep) >= 0.001) {
+          renderedStepRef.current = nextStep;
+          setScrollStep(nextStep);
+        }
       }
 
       rafId = window.requestAnimationFrame(tick);
     };
 
     tick();
+
     return () => {
       window.cancelAnimationFrame(rafId);
     };
   }, [maxStep, reduceMotion]);
-
-  useEffect(() => {
-    if (maxStep !== 0 || smoothStep === 0) return;
-    smoothStepRef.current = 0;
-    renderedStepRef.current = 0;
-    setSmoothStep(0);
-  }, [maxStep, smoothStep]);
 
   const jumpToStep = useCallback(
     (index: number) => {
       const container = containerRef.current;
       if (!container) return;
 
+      const clampedIndex = Math.max(0, Math.min(maxStep, index));
       const rect = container.getBoundingClientRect();
       const start = window.scrollY + rect.top;
       const viewport = Math.max(window.innerHeight || 0, 1);
       const stickyTopPx = 80;
-      const stickyHeight = Math.max(viewport - stickyTopPx, 1);
-      const pinRange = Math.max(container.offsetHeight - stickyHeight, 1);
-      const targetIndex = Math.max(0, Math.min(maxStep, index));
-      const progress = maxStep === 0 ? 0 : targetIndex / maxStep;
+      const panelHeight = Math.max(viewport - stickyTopPx, 1);
+      const pinRange = Math.max(container.offsetHeight - panelHeight, 0);
+      const progress = maxStep === 0 ? 0 : clampedIndex / maxStep;
       const targetY = start - stickyTopPx + progress * pinRange;
 
-      targetStepRef.current = targetIndex;
-      if (reduceMotion) {
-        smoothStepRef.current = targetIndex;
-        renderedStepRef.current = targetIndex;
-        setSmoothStep(targetIndex);
-      }
+      renderedStepRef.current = clampedIndex;
+      setScrollStep(clampedIndex);
 
       window.scrollTo({ top: targetY, behavior: reduceMotion ? 'auto' : 'smooth' });
     },
     [maxStep, reduceMotion]
   );
 
-  const clampedStep = Math.max(0, Math.min(maxStep, smoothStep));
+  const clampedStep = Math.max(0, Math.min(maxStep, scrollStep));
   const fromIndex = Math.floor(clampedStep);
   const toIndex = Math.min(maxStep, fromIndex + 1);
   const mix = toIndex === fromIndex ? 0 : clampedStep - fromIndex;
@@ -230,97 +187,99 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
   return (
     <section className="relative bg-white border-b-2 border-black z-30">
       <div ref={containerRef} className="relative" style={{ height: `${storyHeightVh}vh`, position: 'relative' }}>
-        <div className="sticky top-20 h-[calc(100vh-5rem)] flex flex-col justify-center">
-          {/* Background */}
-          <div className="absolute inset-0" aria-hidden>
-            <div
-              className="absolute inset-0 opacity-[0.025]"
-              style={{
-                backgroundImage:
-                  'linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)',
-                backgroundSize: '48px 48px',
-              }}
-            />
-            <div className="absolute inset-0 bg-white/85" />
-          </div>
+        <div ref={pinnedLayerRef} className="absolute inset-x-0 top-0 transform-gpu will-change-transform">
+          <div className="h-[calc(100vh-5rem)] flex flex-col justify-center">
+            {/* Background */}
+            <div className="absolute inset-0" aria-hidden>
+              <div
+                className="absolute inset-0 opacity-[0.025]"
+                style={{
+                  backgroundImage:
+                    'linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)',
+                  backgroundSize: '48px 48px',
+                }}
+              />
+              <div className="absolute inset-0 bg-white/85" />
+            </div>
 
-          <div className="mx-auto max-w-[1400px] px-6 md:px-12 h-full w-full flex items-center justify-center py-8 md:py-12">
-            <div className="w-full grid lg:grid-cols-2 gap-10 lg:gap-16 lg:items-center">
-              {/* Narrative */}
-              <div className="relative">
-                <h2 className="mt-6 md:mt-8 hidden lg:block text-4xl md:text-5xl font-display font-semibold tracking-tight leading-[1.1]">
-                  Gestión simplificada,
-                  <br />
-                  <span className="text-accent">paso a paso.</span>
-                </h2>
+            <div className="mx-auto max-w-[1400px] px-6 md:px-12 h-full w-full flex items-center justify-center py-8 md:py-12">
+              <div className="w-full grid lg:grid-cols-2 gap-10 lg:gap-16 lg:items-center">
+                {/* Narrative */}
+                <div className="relative">
+                  <h2 className="mt-6 md:mt-8 hidden lg:block text-4xl md:text-5xl font-display font-semibold tracking-tight leading-[1.1]">
+                    Gestión simplificada,
+                    <br />
+                    <span className="text-accent">paso a paso.</span>
+                  </h2>
 
-                <p className="mt-4 hidden lg:block font-mono text-base md:text-lg text-black/70 max-w-lg">
-                  Una plataforma diseñada para optimizar sus tiempos de contratación.
-                </p>
+                  <p className="mt-4 hidden lg:block font-mono text-base md:text-lg text-black/70 max-w-lg">
+                    Una plataforma diseñada para optimizar sus tiempos de contratación.
+                  </p>
 
-                {/* Mobile: compact active step */}
-                <div className="mt-8 lg:hidden">
-                  <div className="relative min-h-[84px]">
-                    <div style={layerStyle(1 - mix, 0, -6 * mix)}>
-                      <div className="text-2xl font-display font-bold uppercase tracking-tight">{fromStep.title}</div>
-                      <div className="mt-2 font-mono text-sm text-black/80">{fromStep.description}</div>
-                    </div>
-                    {toIndex !== fromIndex && (
-                      <div className="absolute inset-0 pointer-events-none" style={layerStyle(mix, 0, 6 * (1 - mix))}>
-                        <div className="text-2xl font-display font-bold uppercase tracking-tight">{toStep.title}</div>
-                        <div className="mt-2 font-mono text-sm text-black/80">{toStep.description}</div>
+                  {/* Mobile: compact active step */}
+                  <div className="mt-8 lg:hidden">
+                    <div className="relative min-h-[84px]">
+                      <div style={layerStyle(1 - mix, 0, -6 * mix)}>
+                        <div className="text-2xl font-display font-bold uppercase tracking-tight">{fromStep.title}</div>
+                        <div className="mt-2 font-mono text-sm text-black/80">{fromStep.description}</div>
                       </div>
-                    )}
-                  </div>
-
-                  <div className="mt-5 flex items-center justify-between">
-                    <Button size="sm" variant="outline" onClick={() => jumpToStep(Math.max(0, activeIndex - 1))} disabled={activeIndex === 0}>
-                      Anterior
-                    </Button>
-                    <div className="font-mono text-xs font-bold uppercase tracking-widest text-black/70">
-                      {activeIndex + 1}/{steps.length}
+                      {toIndex !== fromIndex && (
+                        <div className="absolute inset-0 pointer-events-none" style={layerStyle(mix, 0, 6 * (1 - mix))}>
+                          <div className="text-2xl font-display font-bold uppercase tracking-tight">{toStep.title}</div>
+                          <div className="mt-2 font-mono text-sm text-black/80">{toStep.description}</div>
+                        </div>
+                      )}
                     </div>
-                    <Button size="sm" onClick={() => jumpToStep(Math.min(maxStep, activeIndex + 1))} disabled={activeIndex === maxStep}>
-                      Siguiente
-                    </Button>
+
+                    <div className="mt-5 flex items-center justify-between">
+                      <Button size="sm" variant="outline" onClick={() => jumpToStep(Math.max(0, activeIndex - 1))} disabled={activeIndex === 0}>
+                        Anterior
+                      </Button>
+                      <div className="font-mono text-xs font-bold uppercase tracking-widest text-black/70">
+                        {activeIndex + 1}/{steps.length}
+                      </div>
+                      <Button size="sm" onClick={() => jumpToStep(Math.min(maxStep, activeIndex + 1))} disabled={activeIndex === maxStep}>
+                        Siguiente
+                      </Button>
+                    </div>
+
+                    <div className="mt-6 relative min-h-[340px]">
+                      <div style={layerStyle(1 - mix, 0, -8 * mix)}>
+                        <StepPanel>{fromStep.screen}</StepPanel>
+                      </div>
+                      {toIndex !== fromIndex && (
+                        <div className="absolute inset-0 pointer-events-none" style={layerStyle(mix, 0, 8 * (1 - mix))}>
+                          <StepPanel>{toStep.screen}</StepPanel>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="mt-6 relative min-h-[340px]">
-                    <div style={layerStyle(1 - mix, 0, -8 * mix)}>
+                  {/* Desktop: single active step */}
+                  <div className="hidden lg:block mt-10 pb-24">
+                    <div className="bg-white rounded-2xl border border-black/5 shadow-sm p-8 max-w-md min-h-[260px] relative overflow-hidden">
+                      <div style={layerStyle(1 - mix, -12 * mix, 0)}>{renderDesktopStep(fromStep, fromIndex)}</div>
+                      {toIndex !== fromIndex && (
+                        <div className="absolute inset-0 p-8 pointer-events-none" style={layerStyle(mix, 12 * (1 - mix), 0)}>
+                          {renderDesktopStep(toStep, toIndex)}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Desktop: content panel */}
+                <div className="hidden lg:flex lg:items-center lg:justify-center lg:self-center">
+                  <div className="w-full max-w-lg min-h-[340px] relative">
+                    <div style={layerStyle(1 - mix, 0, -10 * mix)}>
                       <StepPanel>{fromStep.screen}</StepPanel>
                     </div>
                     {toIndex !== fromIndex && (
-                      <div className="absolute inset-0 pointer-events-none" style={layerStyle(mix, 0, 8 * (1 - mix))}>
+                      <div className="absolute inset-0 pointer-events-none" style={layerStyle(mix, 0, 10 * (1 - mix))}>
                         <StepPanel>{toStep.screen}</StepPanel>
                       </div>
                     )}
                   </div>
-                </div>
-
-                {/* Desktop: single active step */}
-                <div className="hidden lg:block mt-10 pb-24">
-                  <div className="bg-white rounded-2xl border border-black/5 shadow-sm p-8 max-w-md min-h-[260px] relative overflow-hidden">
-                    <div style={layerStyle(1 - mix, -12 * mix, 0)}>{renderDesktopStep(fromStep, fromIndex)}</div>
-                    {toIndex !== fromIndex && (
-                      <div className="absolute inset-0 p-8 pointer-events-none" style={layerStyle(mix, 12 * (1 - mix), 0)}>
-                        {renderDesktopStep(toStep, toIndex)}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Desktop: content panel */}
-              <div className="hidden lg:flex lg:items-center lg:justify-center lg:self-center">
-                <div className="w-full max-w-lg min-h-[340px] relative">
-                  <div style={layerStyle(1 - mix, 0, -10 * mix)}>
-                    <StepPanel>{fromStep.screen}</StepPanel>
-                  </div>
-                  {toIndex !== fromIndex && (
-                    <div className="absolute inset-0 pointer-events-none" style={layerStyle(mix, 0, 10 * (1 - mix))}>
-                      <StepPanel>{toStep.screen}</StepPanel>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
