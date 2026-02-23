@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useReducedMotion } from 'framer-motion';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { motion, useScroll, useTransform, useSpring, useMotionValueEvent, useReducedMotion, type MotionValue } from 'framer-motion';
 import { ArrowRight, Check, CheckCircle2, CreditCard, MessageCircle, Plus, Search, Send, Sparkles, Users } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -22,12 +22,8 @@ type Step = {
 
 export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const pinnedLayerRef = useRef<HTMLDivElement>(null);
-  const renderedStepRef = useRef(0);
-  const lastRawStepRef = useRef(0);
-  const scrollDirectionRef = useRef<1 | -1 | 0>(0);
   const reduceMotion = useReducedMotion();
-  const [scrollStep, setScrollStep] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const steps: Step[] = useMemo(
     () => [
@@ -72,120 +68,185 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
         screen: <WorkCarriedOutScreen reduceMotion={!!reduceMotion} />,
       },
     ],
-    [onOpenWizard, reduceMotion]
+    [reduceMotion]
   );
 
-  const maxStep = Math.max(steps.length - 1, 0);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  });
 
-  useEffect(() => {
-    let rafId = 0;
+  const rawStep = useTransform(scrollYProgress, [0, 1], [0, steps.length - 1]);
 
-    const tick = () => {
-      const container = containerRef.current;
-      const pinnedLayer = pinnedLayerRef.current;
-
-      if (container && pinnedLayer) {
-        const viewportHeight = Math.max(window.innerHeight || 0, 1);
-        const stickyTopPx = 80;
-        const panelHeight = Math.max(viewportHeight - stickyTopPx, 1);
-        const pinRange = Math.max(container.offsetHeight - panelHeight, 0);
-        const rect = container.getBoundingClientRect();
-        const traveled = pinRange <= 0 ? 0 : Math.max(0, Math.min(pinRange, stickyTopPx - rect.top));
-
-        // Keep the pinned layer locked to the viewport while inside the section.
-        pinnedLayer.style.transform = `translate3d(0, ${traveled.toFixed(3)}px, 0)`;
-
-        const rawStep = pinRange <= 0 || maxStep === 0 ? 0 : (traveled / pinRange) * maxStep;
-        const delta = rawStep - lastRawStepRef.current;
-        if (Math.abs(delta) > 0.001) {
-          scrollDirectionRef.current = delta > 0 ? 1 : -1;
-        }
-        lastRawStepRef.current = rawStep;
-
-        let nextStep = rawStep;
-        if (reduceMotion) {
-          nextStep = Math.round(rawStep);
-        } else {
-          const base = Math.floor(rawStep);
-          const local = rawStep - base;
-          const assistStrength = 0.52;
-          const assistPower = 1.85;
-          const directedLocal =
-            scrollDirectionRef.current > 0
-              ? 1 - Math.pow(1 - local, assistPower)
-              : scrollDirectionRef.current < 0
-                ? Math.pow(local, assistPower)
-                : local;
-          const assistedLocal = local * (1 - assistStrength) + directedLocal * assistStrength;
-          nextStep = base + assistedLocal;
-        }
-
-        if (Math.abs(renderedStepRef.current - nextStep) >= 0.001) {
-          renderedStepRef.current = nextStep;
-          setScrollStep(nextStep);
-        }
-      }
-
-      rafId = window.requestAnimationFrame(tick);
-    };
-
-    tick();
-
-    return () => {
-      window.cancelAnimationFrame(rafId);
-    };
-  }, [maxStep, reduceMotion]);
+  useMotionValueEvent(rawStep, 'change', (latest) => {
+    const rounded = Math.max(0, Math.min(steps.length - 1, Math.round(latest)));
+    if (rounded !== activeIndex) {
+      setActiveIndex(rounded);
+    }
+  });
 
   const jumpToStep = useCallback(
     (index: number) => {
       const container = containerRef.current;
       if (!container) return;
 
-      const clampedIndex = Math.max(0, Math.min(maxStep, index));
+      const clampedIndex = Math.max(0, Math.min(steps.length - 1, index));
       const rect = container.getBoundingClientRect();
-      const start = window.scrollY + rect.top;
-      const viewport = Math.max(window.innerHeight || 0, 1);
-      const stickyTopPx = 80;
-      const panelHeight = Math.max(viewport - stickyTopPx, 1);
-      const pinRange = Math.max(container.offsetHeight - panelHeight, 0);
-      const progress = maxStep === 0 ? 0 : clampedIndex / maxStep;
-      const targetY = start - stickyTopPx + progress * pinRange;
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const offsetTop = rect.top + scrollTop;
+      const viewportHeight = window.innerHeight;
 
-      renderedStepRef.current = clampedIndex;
-      setScrollStep(clampedIndex);
+      const scrollableDistance = container.offsetHeight - viewportHeight;
+      const progressRatio = steps.length <= 1 ? 0 : clampedIndex / (steps.length - 1);
+
+      const targetY = offsetTop + progressRatio * scrollableDistance;
 
       window.scrollTo({ top: targetY, behavior: reduceMotion ? 'auto' : 'smooth' });
     },
-    [maxStep, reduceMotion]
+    [reduceMotion, steps.length]
   );
 
-  const clampedStep = Math.max(0, Math.min(maxStep, scrollStep));
-  const fromIndex = Math.floor(clampedStep);
-  const toIndex = Math.min(maxStep, fromIndex + 1);
-  const mix = toIndex === fromIndex ? 0 : clampedStep - fromIndex;
-  const activeIndex = Math.max(0, Math.min(maxStep, Math.round(clampedStep)));
-  const fromStep = steps[fromIndex] ?? steps[0];
-  const toStep = steps[toIndex] ?? fromStep;
+  return (
+    <section
+      ref={containerRef}
+      className="relative bg-white border-b-2 border-black z-30"
+      style={{ height: `${steps.length * 90}vh` }}
+    >
+      <div className="sticky top-0 inset-x-0 h-screen flex flex-col justify-center overflow-hidden">
+        {/* Background Grid */}
+        <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden>
+          <div
+            className="absolute inset-0 opacity-[0.025]"
+            style={{
+              backgroundImage:
+                'linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)',
+              backgroundSize: '48px 48px',
+            }}
+          />
+          <div className="absolute inset-0 bg-white/85" />
+        </div>
 
-  if (!fromStep || !toStep) {
-    return null;
-  }
+        <div className="mx-auto max-w-[1400px] px-6 md:px-12 h-full w-full flex items-center justify-center py-8 md:py-12 relative z-10 pt-[80px]">
+          <div className="w-full grid lg:grid-cols-2 gap-10 lg:gap-16 lg:items-center">
+            {/* Narrative */}
+            <div className="relative">
+              <h2 className="mt-6 md:mt-8 hidden lg:block text-4xl md:text-5xl font-display font-semibold tracking-tight leading-[1.1]">
+                Gestión simplificada,
+                <br />
+                <span className="text-accent">paso a paso.</span>
+              </h2>
 
-  const layerStyle = (opacity: number, offsetX: number, offsetY: number): React.CSSProperties => ({
-    opacity,
-    transform: reduceMotion ? 'translate3d(0, 0, 0)' : `translate3d(${offsetX}px, ${offsetY}px, 0)`,
-    transition: 'none',
-    willChange: 'opacity, transform',
-  });
+              <p className="mt-4 hidden lg:block font-mono text-base md:text-lg text-black/70 max-w-lg">
+                Una plataforma diseñada para optimizar sus tiempos de contratación.
+              </p>
 
-  const renderDesktopStep = (step: Step, index: number) => (
-    <>
+              {/* Mobile: compact active step */}
+              <div className="mt-8 lg:hidden flex flex-col h-full">
+                <div className="relative min-h-[96px]">
+                  {steps.map((step, i) => (
+                    <NarrativeMobileLayer key={step.key} step={step} index={i} rawStep={rawStep} />
+                  ))}
+                </div>
+
+                <div className="mt-5 flex items-center justify-between relative z-20">
+                  <Button size="sm" variant="outline" onClick={() => jumpToStep(activeIndex - 1)} disabled={activeIndex === 0} className="pointer-events-auto">
+                    Anterior
+                  </Button>
+                  <div className="font-mono text-xs font-bold uppercase tracking-widest text-black/70">
+                    {activeIndex + 1}/{steps.length}
+                  </div>
+                  <Button size="sm" onClick={() => jumpToStep(activeIndex + 1)} disabled={activeIndex === steps.length - 1} className="pointer-events-auto">
+                    Siguiente
+                  </Button>
+                </div>
+
+                <div className="mt-6 relative min-h-[480px]">
+                  {steps.map((step, i) => (
+                    <ScreenLayer key={step.key} screen={step.screen} index={i} rawStep={rawStep} yOffset={20} />
+                  ))}
+                </div>
+              </div>
+
+              {/* Desktop: single active step */}
+              <div className="hidden lg:block mt-10 pb-24">
+                <div className="bg-white rounded-2xl border border-black/5 shadow-sm min-h-[290px] relative overflow-hidden pointer-events-none">
+                  {steps.map((step, i) => (
+                    <NarrativeDesktopLayer key={step.key} step={step} index={i} total={steps.length} rawStep={rawStep} reduceMotion={!!reduceMotion} />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop: content panel */}
+            <div className="hidden lg:flex lg:items-center lg:justify-center lg:self-center w-full">
+              <div className="w-full max-w-lg min-h-[550px] relative">
+                {steps.map((step, i) => (
+                  <ScreenLayer key={step.key} screen={step.screen} index={i} rawStep={rawStep} yOffset={80} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ScreenLayer({ screen, index, rawStep, yOffset = 40 }: { screen: React.ReactNode; index: number; rawStep: MotionValue<number>; yOffset?: number }) {
+  const opacity = useTransform(rawStep, [index - 0.6, index, index + 0.6], [0, 1, 0]);
+  const y = useTransform(rawStep, [index - 1, index, index + 1], [yOffset, 0, -yOffset]);
+  const pointerEvents = useTransform(rawStep, (v) => (Math.round(v) === index ? 'auto' : 'none'));
+
+  return (
+    <motion.div className="absolute inset-0 w-full flex flex-col justify-center" style={{ opacity, y, pointerEvents: pointerEvents as any }}>
+      <div className="w-full shrink-0">
+        <StepPanel>{screen}</StepPanel>
+      </div>
+    </motion.div>
+  );
+}
+
+function NarrativeMobileLayer({ step, index, rawStep }: { step: Step; index: number; rawStep: MotionValue<number> }) {
+  const opacity = useTransform(rawStep, [index - 0.6, index, index + 0.6], [0, 1, 0]);
+  const y = useTransform(rawStep, [index - 1, index, index + 1], [20, 0, -20]);
+  const pointerEvents = useTransform(rawStep, (v) => (Math.round(v) === index ? 'auto' : 'none'));
+
+  return (
+    <motion.div className="absolute inset-0 w-full flex flex-col justify-center" style={{ opacity, y, pointerEvents: pointerEvents as any }}>
+      <div className="w-full shrink-0">
+        <div className="text-2xl font-display font-bold uppercase tracking-tight">{step.title}</div>
+        <div className="mt-2 font-mono text-sm text-black/80">{step.description}</div>
+      </div>
+    </motion.div>
+  );
+}
+
+function NarrativeDesktopLayer({
+  step,
+  index,
+  total,
+  rawStep,
+  reduceMotion,
+}: {
+  step: Step;
+  index: number;
+  total: number;
+  rawStep: MotionValue<number>;
+  reduceMotion: boolean;
+}) {
+  const opacity = useTransform(rawStep, [index - 0.6, index, index + 0.6], [0, 1, 0]);
+  const xOffset = reduceMotion ? 0 : 60;
+  const x = useTransform(rawStep, [index - 1, index, index + 1], [xOffset, 0, -xOffset]);
+  const pointerEvents = useTransform(rawStep, (v) => (Math.round(v) === index ? 'auto' : 'none'));
+
+  return (
+    <motion.div className="absolute inset-0 w-full p-8 flex flex-col justify-center" style={{ opacity, x, pointerEvents: pointerEvents as any }}>
       <div className="flex items-center gap-4 mb-6">
         <div className="w-12 h-12 rounded-lg bg-primary text-white flex items-center justify-center shadow-sm">
           {React.createElement(step.icon, { size: 24 })}
         </div>
         <div className="font-mono text-xs font-bold uppercase tracking-widest text-black/40">
-          Paso {index + 1}/{steps.length}
+          Paso {index + 1}/{total}
         </div>
       </div>
 
@@ -193,124 +254,17 @@ export function ScrollProcessAnimation({ onOpenWizard }: { onOpenWizard: () => v
       <p className="text-lg text-black/60 leading-relaxed font-sans">{step.description}</p>
 
       <div className="mt-8 flex gap-2">
-        {steps.map((_, i) => (
+        {Array.from({ length: total }).map((_, i) => (
           <div
             key={`${step.key}-dot-${i}`}
             className={cn(
-              'h-1.5 rounded-full transition-all duration-200',
+              'h-1.5 rounded-full transition-all duration-300',
               i === index ? 'w-8 bg-accent' : 'w-2 bg-black/10'
             )}
           />
         ))}
       </div>
-    </>
-  );
-
-  const storyHeightVh = Math.max(360, steps.length * 84);
-
-  return (
-    <section className="relative bg-white border-b-2 border-black z-30">
-      <div ref={containerRef} className="relative" style={{ height: `${storyHeightVh}vh`, position: 'relative' }}>
-        <div ref={pinnedLayerRef} className="absolute inset-x-0 top-0 transform-gpu will-change-transform">
-          <div className="h-[calc(100vh-5rem)] flex flex-col justify-center">
-            {/* Background */}
-            <div className="absolute inset-0" aria-hidden>
-              <div
-                className="absolute inset-0 opacity-[0.025]"
-                style={{
-                  backgroundImage:
-                    'linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)',
-                  backgroundSize: '48px 48px',
-                }}
-              />
-              <div className="absolute inset-0 bg-white/85" />
-            </div>
-
-            <div className="mx-auto max-w-[1400px] px-6 md:px-12 h-full w-full flex items-center justify-center py-8 md:py-12">
-              <div className="w-full grid lg:grid-cols-2 gap-10 lg:gap-16 lg:items-center">
-                {/* Narrative */}
-                <div className="relative">
-                  <h2 className="mt-6 md:mt-8 hidden lg:block text-4xl md:text-5xl font-display font-semibold tracking-tight leading-[1.1]">
-                    Gestión simplificada,
-                    <br />
-                    <span className="text-accent">paso a paso.</span>
-                  </h2>
-
-                  <p className="mt-4 hidden lg:block font-mono text-base md:text-lg text-black/70 max-w-lg">
-                    Una plataforma diseñada para optimizar sus tiempos de contratación.
-                  </p>
-
-                  {/* Mobile: compact active step */}
-                  <div className="mt-8 lg:hidden">
-                    <div className="relative min-h-[84px]">
-                      <div style={layerStyle(1 - mix, 0, -6 * mix)}>
-                        <div className="text-2xl font-display font-bold uppercase tracking-tight">{fromStep.title}</div>
-                        <div className="mt-2 font-mono text-sm text-black/80">{fromStep.description}</div>
-                      </div>
-                      {toIndex !== fromIndex && (
-                        <div className="absolute inset-0 pointer-events-none" style={layerStyle(mix, 0, 6 * (1 - mix))}>
-                          <div className="text-2xl font-display font-bold uppercase tracking-tight">{toStep.title}</div>
-                          <div className="mt-2 font-mono text-sm text-black/80">{toStep.description}</div>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="mt-5 flex items-center justify-between">
-                      <Button size="sm" variant="outline" onClick={() => jumpToStep(Math.max(0, activeIndex - 1))} disabled={activeIndex === 0}>
-                        Anterior
-                      </Button>
-                      <div className="font-mono text-xs font-bold uppercase tracking-widest text-black/70">
-                        {activeIndex + 1}/{steps.length}
-                      </div>
-                      <Button size="sm" onClick={() => jumpToStep(Math.min(maxStep, activeIndex + 1))} disabled={activeIndex === maxStep}>
-                        Siguiente
-                      </Button>
-                    </div>
-
-                    <div className="mt-6 relative min-h-[340px]">
-                      <div style={layerStyle(1 - mix, 0, -8 * mix)}>
-                        <StepPanel>{fromStep.screen}</StepPanel>
-                      </div>
-                      {toIndex !== fromIndex && (
-                        <div className="absolute inset-0 pointer-events-none" style={layerStyle(mix, 0, 8 * (1 - mix))}>
-                          <StepPanel>{toStep.screen}</StepPanel>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Desktop: single active step */}
-                  <div className="hidden lg:block mt-10 pb-24">
-                    <div className="bg-white rounded-2xl border border-black/5 shadow-sm p-8 max-w-md min-h-[260px] relative overflow-hidden">
-                      <div style={layerStyle(1 - mix, -12 * mix, 0)}>{renderDesktopStep(fromStep, fromIndex)}</div>
-                      {toIndex !== fromIndex && (
-                        <div className="absolute inset-0 p-8 pointer-events-none" style={layerStyle(mix, 12 * (1 - mix), 0)}>
-                          {renderDesktopStep(toStep, toIndex)}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Desktop: content panel */}
-                <div className="hidden lg:flex lg:items-center lg:justify-center lg:self-center">
-                  <div className="w-full max-w-lg min-h-[340px] relative">
-                    <div style={layerStyle(1 - mix, 0, -10 * mix)}>
-                      <StepPanel>{fromStep.screen}</StepPanel>
-                    </div>
-                    {toIndex !== fromIndex && (
-                      <div className="absolute inset-0 pointer-events-none" style={layerStyle(mix, 0, 10 * (1 - mix))}>
-                        <StepPanel>{toStep.screen}</StepPanel>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    </motion.div>
   );
 }
 function StepPanel({ children }: { children: React.ReactNode }) {
