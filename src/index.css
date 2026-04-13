@@ -84,7 +84,6 @@ main {
   width: 34px;
   height: 34px;
   object-fit: cover;
-  border: 1px solid var(--line);
 }
 
 .site-brand__text {
