@@ -1,4 +1,4 @@
-import type { Project, ProjectSlide } from '../types';
+import type { Project, ProjectSlide, StealthProject } from '../types';
 
 const espartanosPalette = {
   accent: '#ffd200',
@@ -29,17 +29,35 @@ export const projects: Project[] = [
       'Se usaron herramientas modernas de desarrollo, backend y despliegue para sostener una operación estable en producción.',
     results: ['Implementado en 3 semanas.', 'En uso activo.', 'Diseñado para operación real.'],
     visualsNote:
-      'Esta sección queda preparada para sumar capturas del producto, flujos de trabajo y material visual operativo.',
-    logoSrc: '/logos/espartanos.png',
-    mobileScreenshot: '/projects/espartanos-mobile.png',
+      'Vista real de la app de voluntariado en producción. Se incorporarán más capturas operativas por flujo.',
+    mobileScreenshot: '/projects/espartanos-iphone-left.png',
     palette: espartanosPalette,
+    visualMode: 'mockup',
   },
 ];
 
-export const inProgressItems = [
-  'Sistemas operativos internos',
-  'Herramientas para organizaciones',
-  'Proyectos exploratorios de hardware',
+export const stealthProjects: StealthProject[] = [
+  {
+    id: 'ops-01',
+    codename: 'OPS-01',
+    title: 'Sistemas operativos internos',
+    phase: 'Stealth mode',
+    note: 'Diseño operativo y validación interna en entornos controlados.',
+  },
+  {
+    id: 'org-02',
+    codename: 'ORG-02',
+    title: 'Herramientas para organizaciones',
+    phase: 'Stealth mode',
+    note: 'Desarrollo con equipos cerrados hasta confirmar uso real y continuidad.',
+  },
+  {
+    id: 'hw-03',
+    codename: 'HW-03',
+    title: 'Proyectos exploratorios de hardware',
+    phase: 'Stealth mode',
+    note: 'Exploración aplicada y pruebas de campo antes de publicación abierta.',
+  },
 ];
 
 export const projectSlides: ProjectSlide[] = [
@@ -49,48 +67,55 @@ export const projectSlides: ProjectSlide[] = [
     status: 'En producción',
     summary: 'Sistema operativo integral para una ONG con necesidades de ejecución diaria.',
     detail: 'Caso publicado con implementación activa y continuidad operacional.',
-    logoSrc: '/logos/espartanos.png',
-    mobileScreenshot: '/projects/espartanos-mobile.png',
+    phaseLabel: 'Caso publicado',
+    mobileScreenshot: '/projects/espartanos-iphone-left.png',
     palette: espartanosPalette,
     href: '/proyectos/espartanos',
+    visualMode: 'mockup',
   },
   {
     id: 'internal-ops',
     name: 'Sistemas operativos internos',
     status: 'En desarrollo',
-    summary: 'Arquitecturas de operación para equipos que trabajan con procesos críticos.',
-    detail: 'Trabajo en curso. Se publicará como caso cuando entre en operación estable.',
+    summary: 'Arquitectura operativa para equipos con procesos críticos.',
+    detail: 'En ejecución con equipos cerrados hasta validación de operación.',
+    phaseLabel: 'Stealth mode',
     mobileScreenshot: '/projects/internal-ops-mobile-shot.svg',
     palette: {
-      accent: '#38bdf8',
-      ink: '#0f172a',
-      paper: '#dbeafe',
+      accent: '#cfd8e3',
+      ink: '#161616',
+      paper: '#eceff2',
     },
+    visualMode: 'framed',
   },
   {
     id: 'org-tools',
     name: 'Herramientas para organizaciones',
     status: 'En desarrollo',
-    summary: 'Módulos de gestión para organizaciones que necesitan visibilidad operativa.',
-    detail: 'Trabajo en curso. Se publicará cuando exista despliegue productivo.',
+    summary: 'Módulos de gestión para organizaciones con operación activa.',
+    detail: 'En desarrollo con validación privada de flujo y adopción.',
+    phaseLabel: 'Stealth mode',
     mobileScreenshot: '/projects/org-tools-mobile-shot.svg',
     palette: {
-      accent: '#22d3ee',
-      ink: '#111827',
-      paper: '#ccfbf1',
+      accent: '#d6d9de',
+      ink: '#161616',
+      paper: '#f0f2f4',
     },
+    visualMode: 'framed',
   },
   {
     id: 'hardware-lab',
     name: 'Proyectos exploratorios de hardware',
     status: 'En desarrollo',
-    summary: 'Exploración aplicada para integrar dispositivos en flujos de operación real.',
-    detail: 'Trabajo en curso. Se documentará con evidencia de campo cuando corresponda.',
+    summary: 'Exploración aplicada para integrar hardware en operación real.',
+    detail: 'Trabajo privado hasta completar pruebas de campo.',
+    phaseLabel: 'Stealth mode',
     mobileScreenshot: '/projects/hardware-lab-mobile-shot.svg',
     palette: {
-      accent: '#f59e0b',
-      ink: '#111111',
-      paper: '#fde68a',
+      accent: '#d4d0c8',
+      ink: '#161616',
+      paper: '#f2f0ea',
     },
+    visualMode: 'framed',
   },
 ];

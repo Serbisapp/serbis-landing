@@ -1,24 +1,14 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { ProjectCarousel } from '../components/ProjectCarousel';
-import { inProgressItems, projectSlides, projects } from '../content/projects';
+import { projectSlides, projects, stealthProjects } from '../content/projects';
 
 export function HomePage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-  const [heroSlideIndex, setHeroSlideIndex] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setHeroSlideIndex((prev) => (prev + 1) % projectSlides.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const activeHeroSlide = projectSlides[heroSlideIndex];
 
   const handleContactSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -48,7 +38,6 @@ export function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="hero__eyebrow">Institucional</p>
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -106,31 +95,27 @@ export function HomePage() {
           >
             <div className="hero-art__plate hero-art__plate--base" />
             <div className="hero-art__plate hero-art__plate--accent" />
+            <motion.div
+              className="hero-art__card"
+              initial={{ opacity: 0, y: 15, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <p className="hero-art__kicker">Caso en producción</p>
+              <h3>Fundación Espartanos</h3>
+              <span>Suite operativa en uso activo</span>
+            </motion.div>
 
-            <AnimatePresence mode="popLayout">
-              <motion.div 
-                key={activeHeroSlide.id}
-                className="hero-art__card"
-                initial={{ opacity: 0, y: 15, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -15, scale: 0.98 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                style={{ 
-                  backgroundColor: activeHeroSlide.palette.accent, 
-                  color: activeHeroSlide.palette.ink 
-                }}
-              >
-                {activeHeroSlide.logoSrc ? (
-                  <img src={activeHeroSlide.logoSrc} alt="" role="presentation" />
-                ) : (
-                  <div style={{ width: 68, height: 68, background: activeHeroSlide.palette.paper, border: '1px solid rgba(18, 18, 18, 0.3)' }} />
-                )}
-                <div>
-                  <p>{activeHeroSlide.name}</p>
-                  <span>{activeHeroSlide.status}</span>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+            <motion.img
+              src="/projects/espartanos-iphone-left.png"
+              alt=""
+              role="presentation"
+              className="hero-art__phone"
+              initial={{ opacity: 0, y: 24, rotate: 6 }}
+              animate={{ opacity: 1, y: 0, rotate: 0 }}
+              transition={{ duration: 0.75, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            />
+            <div className="hero-art__stamp">DEPLOYED IN OPERATION</div>
           </motion.aside>
         </div>
       </section>
@@ -165,14 +150,19 @@ export function HomePage() {
           <div className="section-head">
             <p className="section-head__index">02</p>
             <h2>En desarrollo</h2>
-            <p>Trabajo en curso sin detalle comercial innecesario.</p>
+            <p>Pipeline activo en modo stealth. Sin publicación abierta hasta validar operación real.</p>
           </div>
 
-          <ul className="development-list">
-            {inProgressItems.map((item) => (
-              <li key={item}>{item}</li>
+          <div className="stealth-grid">
+            {stealthProjects.map((project) => (
+              <article key={project.id} className="stealth-item">
+                <p className="stealth-item__code">{project.codename}</p>
+                <h3>{project.title}</h3>
+                <p className="stealth-item__phase">{project.phase}</p>
+                <p className="stealth-item__note">{project.note}</p>
+              </article>
             ))}
-          </ul>
+          </div>
         </div>
       </motion.section>
 

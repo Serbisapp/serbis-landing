@@ -59,7 +59,15 @@ export function ProjectPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }} 
           >
-            <PhoneFrame src={project.mobileScreenshot} alt={`Captura móvil de ${project.name}`} />
+            {project.visualMode === 'mockup' ? (
+              <img
+                src={project.mobileScreenshot}
+                alt={`Captura móvil de ${project.name}`}
+                className="project-hero__mockup"
+              />
+            ) : (
+              <PhoneFrame src={project.mobileScreenshot} alt={`Captura móvil de ${project.name}`} />
+            )}
           </motion.div>
         </div>
       </section>
@@ -106,9 +114,11 @@ export function ProjectPage() {
           <motion.div className="project-section" variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <h2>Visuales</h2>
             <div className="visual-placeholder">
-              {project.logoSrc ? (
-                <img src={project.logoSrc} alt={`Logo ${project.name}`} className="visual-placeholder__logo" />
-              ) : null}
+              <img
+                src={project.mobileScreenshot}
+                alt={`Vista de ${project.name}`}
+                className="visual-placeholder__mockup"
+              />
               <p>{project.visualsNote}</p>
             </div>
           </motion.div>

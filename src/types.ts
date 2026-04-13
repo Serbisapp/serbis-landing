@@ -1,4 +1,5 @@
 export type ProjectStatus = 'En producción' | 'En desarrollo';
+export type ProjectVisualMode = 'framed' | 'mockup';
 
 export interface ProjectPalette {
   accent: string;
@@ -20,6 +21,7 @@ export interface Project {
   logoSrc?: string;
   mobileScreenshot: string;
   palette: ProjectPalette;
+  visualMode?: ProjectVisualMode;
 }
 
 export interface ProjectSlide {
@@ -28,8 +30,18 @@ export interface ProjectSlide {
   status: ProjectStatus;
   summary: string;
   detail: string;
+  phaseLabel?: string;
   logoSrc?: string;
   mobileScreenshot: string;
   palette: ProjectPalette;
   href?: string;
+  visualMode?: ProjectVisualMode;
+}
+
+export interface StealthProject {
+  id: string;
+  codename: string;
+  title: string;
+  phase: string;
+  note: string;
 }

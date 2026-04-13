@@ -16,8 +16,13 @@ function formatIndex(value: number) {
 
 export function ProjectCarousel({ slides }: ProjectCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const showControls = slides.length > 1;
 
   const move = (delta: number) => {
+    if (!showControls) {
+      return;
+    }
+
     setActiveIndex((current) => {
       const next = (current + delta + slides.length) % slides.length;
       return next;
@@ -25,6 +30,10 @@ export function ProjectCarousel({ slides }: ProjectCarouselProps) {
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!showControls) {
+      return;
+    }
+
     if (event.key === 'ArrowRight') {
       event.preventDefault();
       move(1);
@@ -42,7 +51,7 @@ export function ProjectCarousel({ slides }: ProjectCarouselProps) {
         <motion.div
           className="project-carousel__track"
           animate={{ x: `-${activeIndex * 100}%` }}
-          transition={{ type: "spring", stiffness: 280, damping: 30, mass: 1 }}
+          transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
         >
           {slides.map((slide, index) => {
             const slideStyle = {
@@ -59,31 +68,35 @@ export function ProjectCarousel({ slides }: ProjectCarouselProps) {
                   </p>
 
                   <div className="project-slide__header">
-                    <div className="project-slide__identity">
-                      {slide.logoSrc ? (
-                        <img src={slide.logoSrc} alt={`Logo ${slide.name}`} className="project-slide__logo" />
-                      ) : null}
-                      <h3>{slide.name}</h3>
-                    </div>
+                    <h3>{slide.name}</h3>
                     <StatusTag status={slide.status} />
                   </div>
 
+                  {slide.phaseLabel ? <p className="project-slide__phase">{slide.phaseLabel}</p> : null}
                   <p className="project-slide__summary">{slide.summary}</p>
                   <p className="project-slide__detail">{slide.detail}</p>
 
                   <div className="project-slide__action">
                     {slide.href ? (
                       <Link to={slide.href} className="text-link">
-                        Abrir proyecto
+                        Ver caso
                       </Link>
                     ) : (
-                      <span>Detalle en preparación</span>
+                      <span>Acceso reservado</span>
                     )}
                   </div>
                 </div>
 
                 <div className="project-slide__visual">
-                  <PhoneFrame src={slide.mobileScreenshot} alt={`Captura móvil de ${slide.name}`} />
+                  {slide.visualMode === 'mockup' ? (
+                    <img
+                      src={slide.mobileScreenshot}
+                      alt={`Captura móvil de ${slide.name}`}
+                      className="project-slide__mockup"
+                    />
+                  ) : (
+                    <PhoneFrame src={slide.mobileScreenshot} alt={`Captura móvil de ${slide.name}`} />
+                  )}
                 </div>
               </article>
             );
@@ -91,25 +104,27 @@ export function ProjectCarousel({ slides }: ProjectCarouselProps) {
         </motion.div>
       </div>
 
-      <div className="project-carousel__controls">
-        <button type="button" className="carousel-button" onClick={() => move(-1)} aria-label="Proyecto anterior">
-          Prev
-        </button>
-        <div className="carousel-dots" aria-hidden="true">
-          {slides.map((slide, index) => (
-            <button
-              key={slide.id}
-              type="button"
-              className={index === activeIndex ? 'carousel-dot is-active' : 'carousel-dot'}
-              onClick={() => setActiveIndex(index)}
-              aria-label={`Ir al proyecto ${index + 1}`}
-            />
-          ))}
+      {showControls ? (
+        <div className="project-carousel__controls">
+          <button type="button" className="carousel-button" onClick={() => move(-1)} aria-label="Proyecto anterior">
+            Prev
+          </button>
+          <div className="carousel-dots" aria-hidden="true">
+            {slides.map((slide, index) => (
+              <button
+                key={slide.id}
+                type="button"
+                className={index === activeIndex ? 'carousel-dot is-active' : 'carousel-dot'}
+                onClick={() => setActiveIndex(index)}
+                aria-label={`Ir al proyecto ${index + 1}`}
+              />
+            ))}
+          </div>
+          <button type="button" className="carousel-button" onClick={() => move(1)} aria-label="Proyecto siguiente">
+            Next
+          </button>
         </div>
-        <button type="button" className="carousel-button" onClick={() => move(1)} aria-label="Proyecto siguiente">
-          Next
-        </button>
-      </div>
+      ) : null}
     </div>
   );
 }
