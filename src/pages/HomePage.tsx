@@ -27,7 +27,7 @@ export function HomePage() {
       `Nombre: ${name || '-'}\nEmail: ${email || '-'}\n\nMensaje:\n${message || '-'}`,
     );
 
-    window.location.href = `mailto:hola@serbis.app?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:admin@serbis.app?subject=${subject}&body=${body}`;
   };
 
   const sectionVariants: Variants = {
@@ -194,12 +194,12 @@ export function HomePage() {
 
             <p className="contact-line">
               <span>Email</span>
-              <a href="mailto:hola@serbis.app" className="text-link">
-                hola@serbis.app
+              <a href="mailto:admin@serbis.app" className="text-link">
+                admin@serbis.app
               </a>
             </p>
 
-            <a href="mailto:hola@serbis.app" className="button button--ghost">
+            <a href="mailto:admin@serbis.app" className="button button--ghost">
               Escribir por email
             </a>
           </div>
