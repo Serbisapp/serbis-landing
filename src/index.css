@@ -348,6 +348,36 @@ main {
   max-width: 64ch;
 }
 
+.project-single {
+  margin-top: 1.8rem;
+  max-width: 880px;
+  border: 1px solid var(--line-strong);
+  background: rgba(251, 250, 246, 0.9);
+  padding: 1rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.project-single__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.project-single h3 {
+  margin: 0;
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: clamp(1.22rem, 2.2vw, 1.7rem);
+  letter-spacing: -0.02em;
+}
+
+.project-single p {
+  margin: 0;
+  color: var(--ink-soft);
+  max-width: 64ch;
+}
+
 .project-carousel {
   margin-top: 1.8rem;
   display: grid;

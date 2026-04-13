@@ -114,11 +114,6 @@ export function ProjectPage() {
           <motion.div className="project-section" variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <h2>Visuales</h2>
             <div className="visual-placeholder">
-              <img
-                src={project.mobileScreenshot}
-                alt={`Vista de ${project.name}`}
-                className="visual-placeholder__mockup"
-              />
               <p>{project.visualsNote}</p>
             </div>
           </motion.div>

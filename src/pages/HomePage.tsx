@@ -2,13 +2,15 @@ import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { ProjectCarousel } from '../components/ProjectCarousel';
-import { projectSlides, projects, stealthProjects } from '../content/projects';
+import { Link } from 'react-router-dom';
+import { StatusTag } from '../components/StatusTag';
+import { projects } from '../content/projects';
 
 export function HomePage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const featuredProject = projects[0];
 
   const handleContactSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -106,15 +108,6 @@ export function HomePage() {
               <span>Suite operativa en uso activo</span>
             </motion.div>
 
-            <motion.img
-              src="/projects/espartanos-iphone-left.png"
-              alt=""
-              role="presentation"
-              className="hero-art__phone"
-              initial={{ opacity: 0, y: 24, rotate: 6 }}
-              animate={{ opacity: 1, y: 0, rotate: 0 }}
-              transition={{ duration: 0.75, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            />
             <div className="hero-art__stamp">DEPLOYED IN OPERATION</div>
           </motion.aside>
         </div>
@@ -132,37 +125,21 @@ export function HomePage() {
           <div className="section-head">
             <p className="section-head__index">01</p>
             <h2>Proyectos</h2>
-            <p>Archivo visual de proyectos en producción y líneas activas de trabajo.</p>
-          </div>
-          <ProjectCarousel slides={projectSlides} />
-        </div>
-      </motion.section>
-
-      <motion.section 
-        id="en-desarrollo" 
-        className="section"
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-      >
-        <div className="shell">
-          <div className="section-head">
-            <p className="section-head__index">02</p>
-            <h2>En desarrollo</h2>
-            <p>Pipeline activo en modo stealth. Sin publicación abierta hasta validar operación real.</p>
+            <p>Proyecto activo y publicado.</p>
           </div>
 
-          <div className="stealth-grid">
-            {stealthProjects.map((project) => (
-              <article key={project.id} className="stealth-item">
-                <p className="stealth-item__code">{project.codename}</p>
-                <h3>{project.title}</h3>
-                <p className="stealth-item__phase">{project.phase}</p>
-                <p className="stealth-item__note">{project.note}</p>
-              </article>
-            ))}
-          </div>
+          {featuredProject ? (
+            <article className="project-single">
+              <div className="project-single__head">
+                <h3>{featuredProject.name}</h3>
+                <StatusTag status={featuredProject.status} />
+              </div>
+              <p>{featuredProject.shortDescription}</p>
+              <Link to={`/proyectos/${featuredProject.slug}`} className="text-link">
+                Ver caso completo
+              </Link>
+            </article>
+          ) : null}
         </div>
       </motion.section>
 
@@ -177,7 +154,7 @@ export function HomePage() {
         <div className="shell contact-layout">
           <div>
             <div className="section-head">
-              <p className="section-head__index">03</p>
+              <p className="section-head__index">02</p>
               <h2>Contacto</h2>
               <p>Canal directo para conversaciones de proyecto.</p>
             </div>

@@ -15,9 +15,6 @@ export function SiteHeader() {
               <a href="/#proyectos">Proyectos</a>
             </li>
             <li>
-              <a href="/#en-desarrollo">En desarrollo</a>
-            </li>
-            <li>
               <a href="/#contacto">Contacto</a>
             </li>
           </ul>
