@@ -111,12 +111,6 @@ export function ProjectPage() {
             </ul>
           </motion.div>
 
-          <motion.div className="project-section" variants={sectionVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <h2>Visuales</h2>
-            <div className="visual-placeholder">
-              <p>{project.visualsNote}</p>
-            </div>
-          </motion.div>
         </div>
       </section>
     </motion.div>
