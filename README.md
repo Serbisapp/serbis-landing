@@ -1,11 +1,14 @@
-# Serbis Landing (Standalone)
+# Serbis Institucional (Dev)
 
-This folder is an isolated landing-page app, separate from the main Serbis platform code.
+Web institucional mínima para presentar proyectos de Serbis.
 
-## Run locally
+## Requisitos
+
+- Node.js 20+
+
+## Correr en desarrollo
 
 ```bash
-cd landing-page
 npm install
 npm run dev
 ```
@@ -13,23 +16,18 @@ npm run dev
 ## Build
 
 ```bash
-cd landing-page
 npm run build
+npm run preview
 ```
 
-## Deploy to GitHub Pages
+## Estructura
 
-When deploying to GitHub Pages, set the base path to your repository name:
+- `src/content/projects.ts`: fuente de datos de proyectos y líneas en desarrollo.
+- `src/pages/HomePage.tsx`: home con hero, proyectos, en desarrollo y contacto.
+- `src/pages/ProjectPage.tsx`: template reutilizable para páginas de proyecto por `slug`.
 
-```bash
-cd landing-page
-VITE_BASE_PATH=/<YOUR_REPO_NAME>/ npm run build
-```
+## Agregar un proyecto nuevo
 
-Then publish the generated `landing-page/dist` folder to GitHub Pages.
-
-If your repo is `serbis-landing`, use:
-
-```bash
-VITE_BASE_PATH=/serbis-landing/ npm run build
-```
+1. Agregar un nuevo objeto en `src/content/projects.ts`.
+2. Usar un `slug` único.
+3. El detalle quedará disponible automáticamente en `/proyectos/:slug`.
