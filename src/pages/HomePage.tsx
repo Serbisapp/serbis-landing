@@ -5,12 +5,44 @@ import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { StatusTag } from '../components/StatusTag';
 import { projects } from '../content/projects';
+import { SeoHead } from '../seo/SeoHead';
+import { CONTACT_EMAIL, SITE_LANGUAGE, SITE_NAME, SITE_URL } from '../seo/site';
 
 export function HomePage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const featuredProject = projects[0];
+  const homeStructuredData = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: `${SITE_URL}/favicon.ico`,
+      email: CONTACT_EMAIL,
+      sameAs: [SITE_URL, 'https://www.serbis.app'],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: SITE_NAME,
+      url: SITE_URL,
+      inLanguage: SITE_LANGUAGE,
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'Proyectos publicados por Serbis',
+      numberOfItems: projects.length,
+      itemListElement: projects.map((project, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: project.name,
+        url: `${SITE_URL}/proyectos/${project.slug}`,
+      })),
+    },
+  ];
 
   const handleContactSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -19,7 +51,7 @@ export function HomePage() {
       `Nombre: ${name || '-'}\nEmail: ${email || '-'}\n\nMensaje:\n${message || '-'}`,
     );
 
-    window.location.href = `mailto:admin@serbis.app?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
   };
 
   const sectionVariants: Variants = {
@@ -29,6 +61,23 @@ export function HomePage() {
 
   return (
     <>
+      <SeoHead
+        title="Serbis | Sistemas, productos y herramientas en el mundo real"
+        description="Serbis construye sistemas, productos y herramientas para operaciones reales. Publicamos casos concretos, sin promesas infladas."
+        path="/"
+        image="/og/serbis-og.png"
+        imageAlt="Identidad visual de Serbis"
+        type="website"
+        keywords={[
+          'desarrollo de software',
+          'sistemas operativos internos',
+          'proyectos tecnológicos reales',
+          'suite operativa para organizaciones',
+          'implementación de productos digitales',
+        ]}
+        structuredData={homeStructuredData}
+      />
+
       <section className="hero" id="inicio">
         <div className="hero__layer hero__layer--grid" aria-hidden="true" />
         <div className="hero__layer hero__layer--slab" aria-hidden="true" />
@@ -161,12 +210,12 @@ export function HomePage() {
 
             <p className="contact-line">
               <span>Email</span>
-              <a href="mailto:admin@serbis.app" className="text-link">
-                admin@serbis.app
+              <a href={`mailto:${CONTACT_EMAIL}`} className="text-link">
+                {CONTACT_EMAIL}
               </a>
             </p>
 
-            <a href="mailto:admin@serbis.app" className="button button--ghost">
+            <a href={`mailto:${CONTACT_EMAIL}`} className="button button--ghost">
               Escribir por email
             </a>
           </div>

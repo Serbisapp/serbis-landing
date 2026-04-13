@@ -5,6 +5,8 @@ import { Link, Navigate, useParams } from 'react-router-dom';
 import { PhoneFrame } from '../components/PhoneFrame';
 import { StatusTag } from '../components/StatusTag';
 import { projects } from '../content/projects';
+import { SeoHead } from '../seo/SeoHead';
+import { SITE_LANGUAGE, SITE_NAME, SITE_URL } from '../seo/site';
 
 export function ProjectPage() {
   const { slug } = useParams();
@@ -13,6 +15,60 @@ export function ProjectPage() {
   if (!project) {
     return <Navigate to="/not-found" replace />;
   }
+
+  const projectPath = `/proyectos/${project.slug}`;
+  const projectTitle = `${project.name} | Proyecto en producción | ${SITE_NAME}`;
+  const projectDescription = `${project.shortDescription} Implementado en operación real con foco en estabilidad y ejecución.`;
+  const projectStructuredData = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: projectTitle,
+      description: projectDescription,
+      url: `${SITE_URL}${projectPath}`,
+      inLanguage: SITE_LANGUAGE,
+      isPartOf: {
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Inicio',
+          item: SITE_URL,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: project.name,
+          item: `${SITE_URL}${projectPath}`,
+        },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'CreativeWork',
+      name: project.name,
+      headline: project.name,
+      description: project.shortDescription,
+      about: project.context,
+      keywords: ['software', 'operaciones', 'proyecto real', 'Fundación Espartanos'],
+      inLanguage: SITE_LANGUAGE,
+      url: `${SITE_URL}${projectPath}`,
+      image: `${SITE_URL}${project.mobileScreenshot}`,
+      creator: {
+        '@type': 'Organization',
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+    },
+  ];
 
   const projectStyle = {
     '--project-accent': project.palette.accent,
@@ -31,6 +87,23 @@ export function ProjectPage() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
+      <SeoHead
+        title={projectTitle}
+        description={projectDescription}
+        path={projectPath}
+        image="/og/espartanos-og.png"
+        imageAlt={`Captura de la app de ${project.name}`}
+        type="article"
+        keywords={[
+          'fundación espartanos',
+          'software para ONG',
+          'panel administrativo',
+          'app para voluntarios',
+          'sistema de asistencia',
+        ]}
+        structuredData={projectStructuredData}
+      />
+
       <section className="project-hero" style={projectStyle}>
         <div className="project-hero__layer" aria-hidden="true" />
 
