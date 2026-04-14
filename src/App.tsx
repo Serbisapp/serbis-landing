@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
+import { ScrollToTop } from './components/ScrollToTop';
 import { SiteFooter } from './components/SiteFooter';
 import { SiteHeader } from './components/SiteHeader';
 import { HomePage } from './pages/HomePage';
@@ -8,6 +9,7 @@ import { ProjectPage } from './pages/ProjectPage';
 function App() {
   return (
     <div className="app-shell">
+      <ScrollToTop />
       <SiteHeader />
       <main>
         <Routes>
