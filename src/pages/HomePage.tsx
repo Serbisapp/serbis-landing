@@ -32,6 +32,12 @@ export function HomePage() {
     },
     {
       '@context': 'https://schema.org',
+      '@type': 'SiteNavigationElement',
+      name: ['Inicio', 'Proyectos', 'Contacto'],
+      url: [`${SITE_URL}/`, `${SITE_URL}/proyectos`, `${SITE_URL}/#contacto`],
+    },
+    {
+      '@context': 'https://schema.org',
       '@type': 'ItemList',
       name: 'Proyectos publicados por Serbis',
       numberOfItems: projects.length,
@@ -119,9 +125,9 @@ export function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <a href="#proyectos" className="button button--solid">
+              <Link to="/proyectos" className="button button--solid">
                 Ver proyectos
-              </a>
+              </Link>
               <a href="#contacto" className="button button--ghost">
                 Contacto
               </a>
@@ -186,6 +192,9 @@ export function HomePage() {
               <p>{featuredProject.shortDescription}</p>
               <Link to={`/proyectos/${featuredProject.slug}`} className="text-link">
                 Ver caso completo
+              </Link>
+              <Link to="/proyectos" className="text-link">
+                Ver índice de proyectos
               </Link>
             </article>
           ) : null}

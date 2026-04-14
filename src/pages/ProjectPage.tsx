@@ -41,11 +41,17 @@ export function ProjectPage() {
           '@type': 'ListItem',
           position: 1,
           name: 'Inicio',
-          item: SITE_URL,
+          item: `${SITE_URL}/`,
         },
         {
           '@type': 'ListItem',
           position: 2,
+          name: 'Proyectos',
+          item: `${SITE_URL}/proyectos`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
           name: project.name,
           item: `${SITE_URL}${projectPath}`,
         },
@@ -115,6 +121,10 @@ export function ProjectPage() {
             transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}  
           >
             <p>
+              <Link to="/proyectos" className="text-link">
+                Volver a proyectos
+              </Link>
+              {' · '}
               <Link to="/" className="text-link">
                 Volver al inicio
               </Link>

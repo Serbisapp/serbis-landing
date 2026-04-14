@@ -9,6 +9,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
+        projects: resolve(__dirname, 'proyectos/index.html'),
         espartanos: resolve(__dirname, 'proyectos/espartanos/index.html'),
       },
     },

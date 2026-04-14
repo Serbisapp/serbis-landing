@@ -12,7 +12,7 @@ export function SiteHeader() {
         <nav aria-label="Navegación principal">
           <ul className="site-nav">
             <li>
-              <a href="/#proyectos">Proyectos</a>
+              <Link to="/proyectos">Proyectos</Link>
             </li>
             <li>
               <a href="/#contacto">Contacto</a>
