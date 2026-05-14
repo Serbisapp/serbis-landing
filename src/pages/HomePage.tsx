@@ -108,7 +108,7 @@ export function HomePage() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              Construimos sistemas, productos y herramientas en el mundo real.
+              De idea ambiciosa a producto real.
             </motion.p>
             <motion.p 
               className="hero__line"
@@ -116,7 +116,7 @@ export function HomePage() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.3 }}
             >
-              Trabajo en software, operaciones y ejecución de proyectos reales con documentación clara.
+              Estrategia, diseño, código e integración en un solo equipo.
             </motion.p>
 
             <motion.div 
