@@ -11,25 +11,30 @@ export const projects: Project[] = [
     slug: 'espartanos',
     name: 'Fundación Espartanos',
     shortDescription:
-      'Suite operativa para coordinar voluntarios, asistencia y gestión diaria de una ONG con operación activa.',
+      'Plataforma digital para gestionar de punta a punta el programa de voluntariado de Fundación Espartanos.',
     status: 'En producción',
     context:
-      'Fundación Espartanos es una ONG con necesidades operativas reales y flujos de trabajo que no podían seguir creciendo con herramientas desconectadas.',
+      'Es el sistema operativo de la comunidad de voluntariado de Espartanos: las personas se registran, son aprobadas, se anotan a actividades, reciben novedades y se mantienen conectadas, mientras coordinación opera todo desde un panel administrativo.',
     problem: [
-      'Procesos fragmentados entre áreas y equipos.',
-      'Gestión manual en tareas críticas de coordinación.',
-      'Falta de visibilidad sobre el estado operativo en tiempo real.',
+      'El ciclo de voluntariado necesitaba un flujo completo, desde onboarding hasta participación en actividades.',
+      'Coordinación operaba aprobaciones, agenda, asistencia y comunicaciones en procesos dispersos.',
+      'La fundación necesitaba mantener los registros institucionales y reportes sincronizados con Salesforce.',
     ],
     solution: [
-      'App para voluntarios.',
-      'Panel administrativo centralizado.',
-      'Sistema de asistencia integrado a la operación diaria.',
+      'App de voluntariado (mobile/web) para onboarding, actividades, actualizaciones de comunidad, perfil y recordatorios.',
+      'Dashboard administrativo para aprobaciones, planificación de actividades, asistencia, comunicaciones, configuración y métricas.',
+      'Backend con almacenamiento de datos, reglas de capacidad/lista de espera/aprobaciones y envío de notificaciones.',
+      'Integración con Salesforce para espejar en CRM los datos de voluntarios, eventos e inscripciones.',
     ],
     technology:
-      'Se usaron herramientas modernas de desarrollo, backend y despliegue para sostener una operación estable en producción.',
-    results: ['Implementado en 3 semanas.', 'En uso activo.', 'Diseñado para operación real.'],
+      'La arquitectura conecta app, panel administrativo, backend e integración CRM para operar el programa de voluntariado end to end con una base única de datos y reglas.',
+    results: [
+      'Operación del programa de voluntariado centralizada de punta a punta.',
+      'Mejor coordinación de actividades, asistencia y comunicaciones.',
+      'Datos operativos e institucionales alineados entre la plataforma y Salesforce.',
+    ],
     visualsNote:
-      'Vista real de la app de voluntariado en producción. Se incorporarán más capturas operativas por flujo.',
+      'Vista real de la app de voluntariado en producción, integrada con la operación diaria de Fundación Espartanos.',
     mobileScreenshot: '/projects/espartanos-iphone-left.png',
     palette: espartanosPalette,
     visualMode: 'mockup',
