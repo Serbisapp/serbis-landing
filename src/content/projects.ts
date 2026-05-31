@@ -10,8 +10,7 @@ export const projects: Project[] = [
   {
     slug: 'espartanos',
     name: 'Fundación Espartanos',
-    shortDescription:
-      'Plataforma digital para gestionar de punta a punta el programa de voluntariado de Fundación Espartanos.',
+    shortDescription: 'Plataforma operativa para gestión de voluntariado.',
     status: 'En producción',
     context:
       'Es el sistema operativo de la comunidad de voluntariado de Espartanos: las personas se registran, son aprobadas, se anotan a actividades, reciben novedades y se mantienen conectadas, mientras coordinación opera todo desde un panel administrativo.',

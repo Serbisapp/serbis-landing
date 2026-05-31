@@ -6,8 +6,7 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="shell site-footer__inner">
         <p>Serbis SAS</p>
-        <p>2026</p>
-        <p>Software, operaciones y proyectos reales.</p>
+        <p>Software a medida, automatización y sistemas operativos para organizaciones.</p>
         <div className="site-footer__links">
           <Link to="/proyectos" className="text-link">
             Proyectos

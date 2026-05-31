@@ -3,7 +3,6 @@ import type { Variants } from 'framer-motion';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { StatusTag } from '../components/StatusTag';
 import { projects } from '../content/projects';
 import { SeoHead } from '../seo/SeoHead';
 import { CONTACT_EMAIL, SITE_LANGUAGE, SITE_NAME, SITE_URL } from '../seo/site';
@@ -68,18 +67,18 @@ export function HomePage() {
   return (
     <>
       <SeoHead
-        title="Serbis | Sistemas, productos y herramientas en el mundo real"
-        description="Serbis construye sistemas, productos y herramientas para operaciones reales. Publicamos casos concretos, sin promesas infladas."
+        title="Serbis | Software a medida"
+        description="Software a medida para empresas y organizaciones que necesitan operar mejor. Diseñamos y desarrollamos herramientas digitales simples para ordenar procesos, automatizar tareas y transformar operaciones manuales en sistemas claros y escalables."
         path="/"
         image="/og/serbis-og.png"
         imageAlt="Identidad visual de Serbis"
         type="website"
         keywords={[
-          'desarrollo de software',
-          'sistemas operativos internos',
-          'proyectos tecnológicos reales',
-          'suite operativa para organizaciones',
-          'implementación de productos digitales',
+          'software a medida',
+          'automatización de procesos',
+          'sistemas internos',
+          'dashboards',
+          'integraciones',
         ]}
         structuredData={homeStructuredData}
       />
@@ -100,7 +99,7 @@ export function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             >
-              Serbis
+              Software a medida para empresas y organizaciones que necesitan operar mejor.
             </motion.h1>
             <motion.p 
               className="hero__subtitle"
@@ -108,7 +107,7 @@ export function HomePage() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              De idea ambiciosa a producto real.
+              Diseñamos y desarrollamos herramientas digitales simples para ordenar procesos, automatizar tareas y transformar operaciones manuales en sistemas claros y escalables.
             </motion.p>
             <motion.p 
               className="hero__line"
@@ -116,7 +115,7 @@ export function HomePage() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.3 }}
             >
-              Estrategia, diseño, código e integración en un solo equipo.
+              Creamos plataformas, dashboards, sistemas internos, automatizaciones e integraciones para equipos que quieren moverse más rápido sin depender de planillas, formularios sueltos o procesos por WhatsApp.
             </motion.p>
 
             <motion.div 
@@ -129,18 +128,9 @@ export function HomePage() {
                 Ver proyectos
               </Link>
               <a href="#contacto" className="button button--ghost">
-                Contacto
+                Contactar
               </a>
             </motion.div>
-
-            <motion.p 
-              className="hero__meta"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-            >
-              Casos publicados: {projects.length}
-            </motion.p>
           </motion.div>
 
           <motion.aside 
@@ -158,12 +148,12 @@ export function HomePage() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             >
-              <p className="hero-art__kicker">Caso en producción</p>
+              <p className="hero-art__kicker">Proyecto destacado</p>
               <h3>Fundación Espartanos</h3>
-              <span>Suite operativa en uso activo</span>
+              <span>Plataforma operativa para gestión de voluntariado</span>
             </motion.div>
 
-            <div className="hero-art__stamp">DEPLOYED IN OPERATION</div>
+            <div className="hero-art__stamp">EN PRODUCCIÓN</div>
           </motion.aside>
         </div>
       </section>
@@ -180,21 +170,27 @@ export function HomePage() {
           <div className="section-head">
             <p className="section-head__index">01</p>
             <h2>Proyectos</h2>
-            <p>Proyecto activo y publicado.</p>
+            <p>Soluciones desarrolladas para problemas concretos.</p>
           </div>
 
           {featuredProject ? (
             <article className="project-single">
               <div className="project-single__head">
-                <h3>{featuredProject.name}</h3>
-                <StatusTag status={featuredProject.status} />
+                <h3>Fundación Espartanos</h3>
               </div>
-              <p>{featuredProject.shortDescription}</p>
+              <p className="project-single__tagline">Plataforma operativa para gestión de voluntariado</p>
+              <p>
+                Desarrollamos una suite digital para coordinar voluntarios, actividades, inscripciones y
+                seguimiento operativo dentro de Fundación Espartanos.
+              </p>
+              <p className="project-single__fact">
+                <strong>Estado:</strong> En producción
+              </p>
+              <p className="project-single__fact">
+                <strong>Tipo:</strong> Sistema interno / plataforma operativa
+              </p>
               <Link to={`/proyectos/${featuredProject.slug}`} className="text-link">
                 Ver caso completo
-              </Link>
-              <Link to="/proyectos" className="text-link">
-                Ver índice de proyectos
               </Link>
             </article>
           ) : null}
@@ -214,8 +210,12 @@ export function HomePage() {
             <div className="section-head">
               <p className="section-head__index">02</p>
               <h2>Contacto</h2>
-              <p>Canal directo para conversaciones de proyecto.</p>
+              <p>¿Tenés un proceso que se puede ordenar, automatizar o convertir en software?</p>
             </div>
+            <p className="contact-copy">
+              Trabajamos con empresas, fundaciones y equipos que necesitan soluciones concretas: desde una
+              landing o dashboard hasta una plataforma completa.
+            </p>
 
             <p className="contact-line">
               <span>Email</span>
@@ -260,7 +260,7 @@ export function HomePage() {
               />
             </label>
             <button type="submit" className="button button--solid">
-              Enviar contacto
+              Enviar
             </button>
           </form>
         </div>

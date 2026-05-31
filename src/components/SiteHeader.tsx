@@ -4,8 +4,8 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="shell site-header__inner">
-        <Link to="/" className="site-brand" aria-label="Ir al inicio de Serbis">
-          <img src="/favicon.ico" alt="Logo Serbis" className="site-brand__mark" />
+        <Link to="/" className="site-brand" aria-label="Serbis | Software a medida">
+          <img src="/favicon.ico" alt="" aria-hidden="true" className="site-brand__mark" />
           <span className="site-brand__text">Serbis</span>
         </Link>
 
