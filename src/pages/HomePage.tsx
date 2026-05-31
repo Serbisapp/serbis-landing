@@ -99,7 +99,7 @@ export function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             >
-              Software a medida para empresas y organizaciones que necesitan operar mejor.
+              Serbis
             </motion.h1>
             <motion.p 
               className="hero__subtitle"
@@ -107,15 +107,7 @@ export function HomePage() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              Diseñamos y desarrollamos herramientas digitales simples para ordenar procesos, automatizar tareas y transformar operaciones manuales en sistemas claros y escalables.
-            </motion.p>
-            <motion.p 
-              className="hero__line"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-            >
-              Creamos plataformas, dashboards, sistemas internos, automatizaciones e integraciones para equipos que quieren moverse más rápido sin depender de planillas, formularios sueltos o procesos por WhatsApp.
+              Software a medida para empresas y organizaciones que necesitan operar mejor.
             </motion.p>
 
             <motion.div 
@@ -157,6 +149,26 @@ export function HomePage() {
           </motion.aside>
         </div>
       </section>
+
+      <motion.section
+        className="section section--overview"
+        variants={sectionVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+      >
+        <div className="shell overview-copy">
+          <p>
+            Diseñamos y desarrollamos herramientas digitales simples para ordenar procesos, automatizar
+            tareas y transformar operaciones manuales en sistemas claros y escalables.
+          </p>
+          <p>
+            Creamos plataformas, dashboards, sistemas internos, automatizaciones e integraciones para equipos
+            que quieren moverse más rápido sin depender de planillas, formularios sueltos o procesos por
+            WhatsApp.
+          </p>
+        </div>
+      </motion.section>
 
       <motion.section 
         id="proyectos" 
